@@ -16,7 +16,7 @@ spec:
     TRTLLMWorker:
       envFromSecret: hf-token-secret
       componentType: worker
-      replicas: 32
+      replicas: 8
       resources:
         limits:
           gpu: "1"
