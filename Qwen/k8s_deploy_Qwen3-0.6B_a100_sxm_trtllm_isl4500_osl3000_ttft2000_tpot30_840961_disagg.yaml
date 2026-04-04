@@ -1,0 +1,167 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-disagg
+  namespace: None
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:0.9.0
+          imagePullPolicy: IfNotPresent
+    TRTLLMPrefillWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: prefill
+      replicas: 1
+      resources:
+        limits:
+          gpu: "1"
+      extraPodSpec:
+        volumes:
+          - name: engine-configs
+            emptyDir: {}
+          - name: tmp
+            emptyDir:
+              medium: Memory
+              sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:0.9.0
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: engine-configs
+              mountPath: /workspace/engine_configs
+            - name: tmp
+              mountPath: /tmp
+          command: ["/bin/bash","-c"]
+          args:
+            - |
+              set -euo pipefail
+              mkdir -p /workspace/engine_configs
+              cat > /workspace/engine_configs/prefill_config.yaml <<'YAML'
+              backend: pytorch
+              tensor_parallel_size: 1
+              pipeline_parallel_size: 1
+              enable_attention_dp: False
+              enable_chunked_prefill: False
+              max_batch_size: 1
+              max_num_tokens: 6016
+              kv_cache_config:
+                free_gpu_memory_fraction: 0.8  # Fraction of GPU memory usable for KV-cache
+                dtype: auto
+                enable_block_reuse: False
+              cuda_graph_config:
+                enable_padding: False # Pad CUDA graph
+                batch_sizes: [1,2,4,8,16,32,64,128,256]
+              disable_overlap_scheduler: True
+              print_iter_log: False
+              YAML
+              args=(                "--model-path"                "Qwen/Qwen3-0.6B"                "--served-model-name"                "Qwen/Qwen3-0.6B"                "--tensor-parallel-size"                "1"                "--pipeline-parallel-size"                "1"                "--expert-parallel-size"                "1"                "--max-batch-size"                "1"                "--max-num-tokens"                "6016"                "--override-engine-args"                "{\"cache_transceiver_config\": {\"max_tokens_in_buffer\": 9024}, \"disable_overlap_scheduler\": true, \"kv_cache_config\": {\"dtype\": \"auto\", \"tokens_per_block\": 32}}"                --extra-engine-args "/workspace/engine_configs/prefill_config.yaml"
+              )
+              args+=(--disaggregation-mode prefill)
+              exec python3 -m dynamo.trtllm "${args[@]}"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+    TRTLLMDecodeWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: decode
+      replicas: 3
+      resources:
+        limits:
+          gpu: "1"
+      extraPodSpec:
+        volumes:
+          - name: engine-configs
+            emptyDir: {}
+          - name: tmp
+            emptyDir:
+              medium: Memory
+              sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:0.9.0
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: engine-configs
+              mountPath: /workspace/engine_configs
+            - name: tmp
+              mountPath: /tmp
+          command: ["/bin/bash","-c"]
+          args:
+            - |
+              set -euo pipefail
+              mkdir -p /workspace/engine_configs
+              cat > /workspace/engine_configs/decode_config.yaml <<'YAML'
+              backend: pytorch
+              tensor_parallel_size: 1
+              pipeline_parallel_size: 1
+              enable_attention_dp: False
+              enable_chunked_prefill: False
+              max_batch_size: 512
+              max_num_tokens: 512
+              kv_cache_config:
+                free_gpu_memory_fraction: 0.8  # Fraction of GPU memory usable for KV-cache
+                dtype: auto
+                enable_block_reuse: False
+              cuda_graph_config:
+                enable_padding: False # Pad CUDA graph
+                batch_sizes: [1,2,4,8,16,32,64,128,256]
+              disable_overlap_scheduler: False
+              print_iter_log: False
+              YAML
+              args=(                "--model-path"                "Qwen/Qwen3-0.6B"                "--served-model-name"                "Qwen/Qwen3-0.6B"                "--tensor-parallel-size"                "1"                "--pipeline-parallel-size"                "1"                "--expert-parallel-size"                "1"                "--max-batch-size"                "512"                "--max-num-tokens"                "512"                "--override-engine-args"                "{\"cache_transceiver_config\": {\"max_tokens_in_buffer\": 9024}, \"disable_overlap_scheduler\": false, \"kv_cache_config\": {\"dtype\": \"auto\", \"tokens_per_block\": 32}}"                --extra-engine-args "/workspace/engine_configs/decode_config.yaml"
+              )
+              args+=(--disaggregation-mode decode)
+              exec python3 -m dynamo.trtllm "${args[@]}"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
