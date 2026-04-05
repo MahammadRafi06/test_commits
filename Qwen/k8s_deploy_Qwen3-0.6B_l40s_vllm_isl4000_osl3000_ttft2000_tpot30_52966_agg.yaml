@@ -10,6 +10,13 @@ spec:
       componentType: frontend
       replicas: 1
       extraPodSpec:
+        nodeSelector:
+          workload: model-serving
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: model-serving
+            effect: NoSchedule
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:0.9.0
           imagePullPolicy: IfNotPresent
