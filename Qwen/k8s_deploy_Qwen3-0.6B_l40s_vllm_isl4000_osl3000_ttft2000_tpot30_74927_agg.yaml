@@ -1,0 +1,49 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-agg
+  namespace: None
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:0.9.0
+          imagePullPolicy: IfNotPresent
+    VllmWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      replicas: 1
+      resources:
+        limits:
+          gpu: "1"
+      extraPodSpec:
+      
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:0.9.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+            - python3
+            - -m
+            - dynamo.vllm
+          args:
+            - --model
+            - "Qwen/Qwen3-0.6B"
+            - "--tensor-parallel-size"
+            - "1"
+            - "--pipeline-parallel-size"
+            - "1"
+            - "--data-parallel-size"
+            - "1"
+            - "--kv-cache-dtype"
+            - "auto"
+            - "--max-model-len"
+            - "8500"
+            - "--max-num-seqs"
+            - "512"
+            - "--max-num-batched-tokens"
+            - "6012"
