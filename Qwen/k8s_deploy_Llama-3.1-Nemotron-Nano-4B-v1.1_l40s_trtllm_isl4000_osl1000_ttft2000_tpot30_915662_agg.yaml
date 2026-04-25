@@ -30,6 +30,8 @@ spec:
             value: /home/dynamo/.cache/huggingface/hub
           - name: TRANSFORMERS_CACHE
             value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_MODULES_CACHE
+            value: /tmp/huggingface/modules
           - name: HF_HUB_OFFLINE
             value: '1'
           - name: TRANSFORMERS_OFFLINE
@@ -46,6 +48,8 @@ spec:
         value: /home/dynamo/.cache/huggingface/hub
       - name: TRANSFORMERS_CACHE
         value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_MODULES_CACHE
+        value: /tmp/huggingface/modules
       - name: HF_HUB_OFFLINE
         value: '1'
       - name: TRANSFORMERS_OFFLINE
@@ -129,6 +133,8 @@ spec:
             value: /home/dynamo/.cache/huggingface/hub
           - name: TRANSFORMERS_CACHE
             value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_MODULES_CACHE
+            value: /tmp/huggingface/modules
           - name: HF_HUB_OFFLINE
             value: '1'
           - name: TRANSFORMERS_OFFLINE
@@ -145,6 +151,8 @@ spec:
         value: /home/dynamo/.cache/huggingface/hub
       - name: TRANSFORMERS_CACHE
         value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_MODULES_CACHE
+        value: /tmp/huggingface/modules
       - name: HF_HUB_OFFLINE
         value: '1'
       - name: TRANSFORMERS_OFFLINE
@@ -161,6 +169,8 @@ spec:
     value: /home/dynamo/.cache/huggingface/hub
   - name: TRANSFORMERS_CACHE
     value: /home/dynamo/.cache/huggingface/hub
+  - name: HF_MODULES_CACHE
+    value: /tmp/huggingface/modules
   - name: HF_HUB_OFFLINE
     value: '1'
   - name: TRANSFORMERS_OFFLINE
