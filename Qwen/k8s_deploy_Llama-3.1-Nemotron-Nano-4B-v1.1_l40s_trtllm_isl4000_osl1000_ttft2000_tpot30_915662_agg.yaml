@@ -11,7 +11,6 @@ metadata:
 spec:
   services:
     Frontend:
-      envFromSecret: hf-token-secret
       componentType: frontend
       replicas: 1
       extraPodSpec:
@@ -55,7 +54,6 @@ spec:
       - name: TRANSFORMERS_OFFLINE
         value: '1'
     TRTLLMWorker:
-      envFromSecret: hf-token-secret
       componentType: worker
       replicas: 1
       resources:
