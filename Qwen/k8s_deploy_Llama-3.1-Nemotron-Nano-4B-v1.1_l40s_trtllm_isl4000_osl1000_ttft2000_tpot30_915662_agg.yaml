@@ -1,0 +1,157 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-agg
+  namespace: model-serving
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+  labels:
+    clustra.ai/model-cache-id: shared-hf-cache
+    clustra.ai/model-cache-policy: read-write
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          - name: HF_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HUGGINGFACE_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: TRANSFORMERS_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+      volumeMounts:
+      - name: model-cache
+        mountPoint: /home/dynamo/.cache/huggingface
+      envs:
+      - name: HF_HOME
+        value: /home/dynamo/.cache/huggingface
+      - name: HF_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HUGGINGFACE_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: TRANSFORMERS_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_HUB_OFFLINE
+        value: '1'
+      - name: TRANSFORMERS_OFFLINE
+        value: '1'
+    TRTLLMWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      replicas: 1
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        volumes:
+        - name: engine-configs
+          emptyDir: {}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: engine-configs
+            mountPath: /workspace/engine_configs
+          - name: tmp
+            mountPath: /tmp
+          command:
+          - /bin/bash
+          - -c
+          args:
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/agg_config.yaml\
+            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
+            \ 20\nmax_num_tokens: 4544\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
+            \ enable_block_reuse: False\ncuda_graph_config:\n  enable_padding: False\
+            \ # Pad CUDA graph\n  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler:\
+            \ False\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"/home/dynamo/.cache/huggingface/hub/models--nvidia--Llama-3.1-Nemotron-Nano-4B-v1.1/snapshots/d552708a9d575fa8d4a690b988fd870d65279f98\"\
+            \n  --served-model-name \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n \
+            \ --extra-engine-args \"/workspace/engine_configs/agg_config.yaml\"\n\
+            )\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          env:
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          - name: HF_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HUGGINGFACE_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: TRANSFORMERS_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+      volumeMounts:
+      - name: model-cache
+        mountPoint: /home/dynamo/.cache/huggingface
+      envs:
+      - name: HF_HOME
+        value: /home/dynamo/.cache/huggingface
+      - name: HF_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HUGGINGFACE_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: TRANSFORMERS_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_HUB_OFFLINE
+        value: '1'
+      - name: TRANSFORMERS_OFFLINE
+        value: '1'
+  pvcs:
+  - name: model-cache
+    create: false
+  envs:
+  - name: HF_HOME
+    value: /home/dynamo/.cache/huggingface
+  - name: HF_HUB_CACHE
+    value: /home/dynamo/.cache/huggingface/hub
+  - name: HUGGINGFACE_HUB_CACHE
+    value: /home/dynamo/.cache/huggingface/hub
+  - name: TRANSFORMERS_CACHE
+    value: /home/dynamo/.cache/huggingface/hub
+  - name: HF_HUB_OFFLINE
+    value: '1'
+  - name: TRANSFORMERS_OFFLINE
+    value: '1'
