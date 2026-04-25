@@ -16,7 +16,7 @@ spec:
       replicas: 1
       extraPodSpec:
         mainContainer:
-          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.0.1
           imagePullPolicy: IfNotPresent
           env:
           - name: HF_HOME
@@ -55,6 +55,13 @@ spec:
         limits:
           gpu: '1'
       extraPodSpec:
+        nodeSelector:
+          workload: model-serving
+        tolerations:
+        - key: dedicated
+          operator: Equal
+          value: model-serving
+          effect: NoSchedule
         volumes:
         - name: engine-configs
           emptyDir: {}
@@ -63,7 +70,7 @@ spec:
             medium: Memory
             sizeLimit: 10Gi
         mainContainer:
-          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.0.1
           workingDir: /workspace/components/backends/trtllm
           imagePullPolicy: IfNotPresent
           volumeMounts:
