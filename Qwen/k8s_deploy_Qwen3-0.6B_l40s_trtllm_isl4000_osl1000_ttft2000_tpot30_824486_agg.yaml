@@ -1,7 +1,7 @@
 apiVersion: nvidia.com/v1alpha1
 kind: DynamoGraphDeployment
 metadata:
-  name: dynamo-agg
+  name: dynamo-agg-qwen
   namespace: model-serving
   annotations:
     argocd.argoproj.io/sync-wave: '0'
