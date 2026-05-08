@@ -1,0 +1,67 @@
+# ── PVCs ─────────────────────────────────────────────────────────────────────
+model_cache_pvc_name: model-cache
+model_cache_pvc_create: false
+
+compilation_cache_pvc_name: compilation-cache
+compilation_cache_pvc_create: false
+
+# ── Global env vars (applied to all services) ────────────────────────────────
+global_logging_env_name: DYN_LOGGING_JSONL
+global_logging_env_value: "true"
+
+global_otel_enabled_name: OTEL_EXPORT_ENABLED
+global_otel_enabled_value: "true"
+
+global_otel_endpoint_name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+global_otel_endpoint_value: http://tempo.observability.svc.cluster.local:4317
+
+# ── Shared across services ────────────────────────────────────────────────────
+image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag   # update tag before deploy
+deployment_name: vllm-disagg
+hf_secret: hf-token-secret
+hf_cache_path: /home/dynamo/.cache/huggingface
+vllm_cache_path: /home/dynamo/.cache/vllm
+use_compilation_cache: true
+hf_home_env_name: HF_HOME
+otel_service_name_key: OTEL_SERVICE_NAME
+ipc_lock_capability: IPC_LOCK
+
+# ── Shared worker node config ─────────────────────────────────────────────────
+instance_type: p5.48xlarge
+capacity_type: reserved
+ephemeral_storage: 2Gi
+
+gpu_toleration_key: nvidia.com/gpu
+gpu_toleration_operator: Exists
+gpu_toleration_effect: NoSchedule
+
+topology_zone_key: topology.kubernetes.io/zone
+hostname_key: kubernetes.io/hostname
+worker_component_type: worker
+prefill_component_name: VllmPrefillWorker
+anti_affinity_weight: 100
+
+# ── Frontend ──────────────────────────────────────────────────────────────────
+frontend_replicas: 1
+frontend_cpu_req: "8"
+frontend_cpu_lim: "8"
+frontend_router_mode_key: DYN_ROUTER_MODE
+frontend_router_mode: kv
+frontend_otel_service_name: dynamo-frontend
+
+# ── VllmDecodeWorker ──────────────────────────────────────────────────────────
+decode_replicas: 1
+decode_workdir: /workspace/examples/backends/vllm
+decode_otel_service_name: dynamo-worker-decode
+efa_count_lim_dec: "8"
+efa_count_req_dec: "8"
+
+# ── VllmPrefillWorker ─────────────────────────────────────────────────────────
+prefill_memory_lim_pre: 200Gi
+prefill_memory_req_pre: 200Gi
+prefill_workdir: /workspace/examples/backends/vllm
+prefill_otel_service_name: dynamo-worker-prefill
+efa_count_lim_pre: "8"
+efa_count_req_pre: "8"
+kvbm_env_name: DYN_KVBM_CPU_CACHE_GB
+kvbm_cpu_cache_gb: "100"

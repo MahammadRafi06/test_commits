@@ -1,0 +1,107 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  # name: vllm-agg-failover
+  annotations:
+    nvidia.com/dynamo-kube-discovery-mode: container
+spec:
+  pvcs:
+    - name: model-cache
+      create: false
+  envs:
+    - name: DYN_LOGGING_JSONL              # For Tracings
+      value: "true"
+    - name: OTEL_EXPORT_ENABLED            # For Tracings 
+      value: "true"
+    - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT  # For Tracings
+      value: "http://tempo.observability.svc.cluster.local:4317"
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      # componentType: frontend
+      replicas: {{1}}
+      volumeMounts:
+        - name: model-cache
+          mountPoint: /opt/models
+      extraPodSpec:
+        mainContainer:
+          image: {{nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag}}
+      envs:
+        - name: DYN_ROUTER_MODE
+          value: {{kv}}
+        - name: OTEL_SERVICE_NAME # Tracing
+          value: "dynamo-frontend"
+        - name: HF_HOME
+          value: /opt/models
+        - name: HF_HUB_OFFLINE
+          value: "1"
+    VllmWorker:
+      envFromSecret: hf-token-secret
+      # componentType: worker
+      # replicas: 1
+      # multinode:
+      # nodeCount: 2
+      volumeMounts:
+        - name: model-cache
+          mountPoint: /opt/models
+      resources:
+        limits:
+          # gpu: "2"
+          memory: "250Gi"  # For KVBM
+        requests:
+          memory: "200Gi" # For KVBM
+          custom:
+            ephemeral-storage: {{"2Gi"}} # required for router as well
+        envs: # For KVBM
+        - name: DYN_KVBM_CPU_CACHE_GB
+          value: {{"100"}}
+      gpuMemoryService: # For GMS
+        enabled: true
+        mode: interPod
+      failover:         # For failover + GMS     
+        enabled: true
+        mode: interPod
+        numShadows: 1  
+      extraPodSpec:
+        nodeSelector:
+          node.kubernetes.io/instance-type: {{g6e.2xlarge}}
+        tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+        mainContainer:
+          image: {{nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag}}
+          workingDir: /workspace/examples/backends/vllm
+          # command:
+          #   - python3
+          #   - -m
+          #   - dynamo.vllm
+          # args:
+          #   - --model
+          #   - Qwen/Qwen3-0.6B
+          #   - --tensor-parallel-size
+          #   - "2"
+          #   - --load-format
+          #   - gms
+          env:
+            - name: OTEL_SERVICE_NAME # Tracing
+              value: "dynamo-worker-vllm"
+            - name: SERVED_MODEL_NAME
+              value: deepseek-ai/DeepSeek-V4-Pro
+            - name: MODEL_PATH
+              value: deepseek-ai/DeepSeek-V4-Pro
+            - name: HF_HOME
+              value: /opt/models
+            # Read weights from the PVC only; do not hit the HF Hub at startup.
+            - name: HF_HUB_OFFLINE
+              value: "1"
+            # Give the engine room to finish first-launch init.
+            - name: VLLM_ENGINE_READY_TIMEOUT_S
+              value: "5400"
+            # Stabilize TP/EP all-reduces and skip the IPC P2P probe.
+            - name: VLLM_SKIP_P2P_CHECK
+              value: "1"
+            - name: NCCL_CUMEM_ENABLE
+              value: "1"
+        sharedMemory:
+        size: 16Gi

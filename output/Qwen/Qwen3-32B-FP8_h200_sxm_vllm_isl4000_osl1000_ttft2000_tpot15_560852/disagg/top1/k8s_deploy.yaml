@@ -1,0 +1,87 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-disagg
+  namespace: None
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:0.9.0
+          imagePullPolicy: IfNotPresent
+    VllmPrefillWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: prefill
+      replicas: 8
+      resources:
+        limits:
+          gpu: "1"
+      extraPodSpec:
+      
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:0.9.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+            - python3
+            - -m
+            - dynamo.vllm
+          args:
+            - --model
+            - "Qwen/Qwen3-32B-FP8"
+            - "--tensor-parallel-size"
+            - "1"
+            - "--pipeline-parallel-size"
+            - "1"
+            - "--data-parallel-size"
+            - "1"
+            - "--kv-cache-dtype"
+            - "fp8"
+            - "--max-num-seqs"
+            - "1"
+            - "--max-num-batched-tokens"
+            - "5500"
+            - --is-prefill-worker
+            - --kv-transfer-config
+            - '{"kv_connector":"NixlConnector","kv_role":"kv_both"}'
+    VllmDecodeWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: decode
+      replicas: 3
+      resources:
+        limits:
+          gpu: "8"
+      extraPodSpec:
+      
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:0.9.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+            - python3
+            - -m
+            - dynamo.vllm
+          args:
+            - --model
+            - "Qwen/Qwen3-32B-FP8"
+            - "--tensor-parallel-size"
+            - "8"
+            - "--pipeline-parallel-size"
+            - "1"
+            - "--data-parallel-size"
+            - "1"
+            - "--kv-cache-dtype"
+            - "fp8"
+            - "--max-num-seqs"
+            - "512"
+            - "--max-num-batched-tokens"
+            - "512"
+            - --is-decode-worker
+            - --kv-transfer-config
+            - '{"kv_connector":"NixlConnector","kv_role":"kv_both"}'

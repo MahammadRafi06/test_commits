@@ -1,0 +1,167 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+spec:
+  pvcs:
+  - create: {{ model_cache_pvc_create | default(false) | lower }}
+    name: {{ model_cache_pvc_name | default("model-cache") }}
+  - create: {{ compilation_cache_pvc_create | default(false) | lower }}
+    name: {{ compilation_cache_pvc_name | default("compilation-cache") }}
+  envs:
+    - name: {{ global_logging_env_name | default("DYN_LOGGING_JSONL") }}
+      value: "{{ global_logging_env_value | default("true") }}"
+    - name: {{ global_otel_enabled_name | default("OTEL_EXPORT_ENABLED") }}
+      value: "{{ global_otel_enabled_value | default("true") }}"
+    - name: {{ global_otel_endpoint_name | default("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT") }}
+      value: "{{ global_otel_endpoint_value | default("http://tempo.observability.svc.cluster.local:4317") }}"
+
+  services:
+    Frontend:
+      # componentType: frontend
+      replicas: {{ frontend_replicas | default(1) }}
+      resources:
+        requests:
+          cpu: "{{ frontend_cpu_req | default("8") }}"
+        limits:
+          cpu: "{{ frontend_cpu_lim | default("8") }}"
+      volumeMounts:
+      - name: {{ model_cache_pvc_name | default("model-cache") }}
+        mountPoint: {{ hf_cache_path | default("/home/dynamo/.cache/huggingface") }}
+      extraPodSpec:
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: "{{ topology_zone_key | default("topology.kubernetes.io/zone") }}"
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-graph-deployment-name: "{{ deployment_name | default("vllm-disagg") }}"
+                    nvidia.com/dynamo-component-type: "{{ worker_component_type | default("worker") }}"
+        envs:
+          - name: {{ frontend_router_mode_key | default("DYN_ROUTER_MODE") }}
+            value: {{ frontend_router_mode | default("kv") }}
+          - name: {{ otel_service_name_key | default("OTEL_SERVICE_NAME") }}
+            value: "{{ frontend_otel_service_name | default("dynamo-frontend") }}"
+          - name: {{ hf_home_env_name | default("HF_HOME") }}
+            value: {{ hf_cache_path | default("/home/dynamo/.cache/huggingface") }}
+        mainContainer:
+          image: {{ image | default("nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag") }}
+
+    VllmDecodeWorker:
+      envFromSecret: {{ hf_secret | default("hf-token-secret") }}
+      # componentType: worker
+      # subComponentType: decode
+      replicas: {{ decode_replicas | default(1) }}
+      volumeMounts:
+      - name: {{ model_cache_pvc_name | default("model-cache") }}
+        mountPoint: {{ hf_cache_path | default("/home/dynamo/.cache/huggingface") }}
+      - name: {{ compilation_cache_pvc_name | default("compilation-cache") }}
+        mountPoint: {{ vllm_cache_path | default("/home/dynamo/.cache/vllm") }}
+        useAsCompilationCache: {{ use_compilation_cache | default(true) | lower }}
+      resources:
+        limits:
+          # gpu: "1"
+          custom:
+            vpc.amazonaws.com/efa: "{{ efa_count_lim_dec | default("8") }}"
+        requests:
+          custom:
+            # Increase this value for larger models
+            ephemeral-storage: "{{ ephemeral_storage | default("2Gi") }}"
+            vpc.amazonaws.com/efa: "{{ efa_count_req_dec | default("8") }}"
+      extraPodSpec:
+        nodeSelector:
+          node.kubernetes.io/instance-type: {{ instance_type | default("p5.48xlarge") }}
+          karpenter.sh/capacity-type: {{ capacity_type | default("reserved") }}
+        tolerations:
+        - key: "{{ gpu_toleration_key | default("nvidia.com/gpu") }}"
+          operator: "{{ gpu_toleration_operator | default("Exists") }}"
+          effect: "{{ gpu_toleration_effect | default("NoSchedule") }}"
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: "{{ topology_zone_key | default("topology.kubernetes.io/zone") }}"
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-graph-deployment-name: "{{ deployment_name | default("vllm-disagg") }}"
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: {{ anti_affinity_weight | default(100) }}
+                podAffinityTerm:
+                  labelSelector:
+                    matchLabels:
+                      nvidia.com/dynamo-component: "{{ prefill_component_name | default("VllmPrefillWorker") }}"
+                  topologyKey: "{{ hostname_key | default("kubernetes.io/hostname") }}"
+        mainContainer:
+          image: {{ image | default("nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag") }}
+          workingDir: {{ decode_workdir | default("/workspace/examples/backends/vllm") }}
+        env:
+          - name: {{ otel_service_name_key | default("OTEL_SERVICE_NAME") }}
+            value: "{{ decode_otel_service_name | default("dynamo-worker-decode") }}"
+          - name: {{ hf_home_env_name | default("HF_HOME") }}
+            value: {{ hf_cache_path | default("/home/dynamo/.cache/huggingface") }}
+        securityContext:
+          capabilities:
+            add:
+              - {{ ipc_lock_capability | default("IPC_LOCK") }}
+
+    VllmPrefillWorker:
+      envFromSecret: {{ hf_secret | default("hf-token-secret") }}
+      # componentType: worker
+      # subComponentType: prefill
+      # replicas: 1
+      volumeMounts:
+      - name: {{ model_cache_pvc_name | default("model-cache") }}
+        mountPoint: {{ hf_cache_path | default("/home/dynamo/.cache/huggingface") }}
+      - name: {{ compilation_cache_pvc_name | default("compilation-cache") }}
+        mountPoint: {{ vllm_cache_path | default("/home/dynamo/.cache/vllm") }}
+        useAsCompilationCache: {{ use_compilation_cache | default(true) | lower }}
+      resources:
+        limits:
+          memory: "{{ prefill_memory_lim_pre | default("200Gi") }}"
+          custom:
+            vpc.amazonaws.com/efa: "{{ efa_count_lim_pre | default("8") }}"
+        requests:
+          memory: "{{ prefill_memory_req_pre | default("200Gi") }}"
+          custom:
+            # Increase this value for larger models
+            ephemeral-storage: "{{ ephemeral_storage | default("2Gi") }}"
+            vpc.amazonaws.com/efa: "{{ efa_count_req_pre | default("8") }}"
+        envs:
+          - name: {{ kvbm_env_name | default("DYN_KVBM_CPU_CACHE_GB") }}
+            value: "{{ kvbm_cpu_cache_gb | default("100") }}"
+      extraPodSpec:
+        nodeSelector:
+          node.kubernetes.io/instance-type: {{ instance_type | default("p5.48xlarge") }}
+          karpenter.sh/capacity-type: {{ capacity_type | default("reserved") }}
+        tolerations:
+        - key: "{{ gpu_toleration_key | default("nvidia.com/gpu") }}"
+          operator: "{{ gpu_toleration_operator | default("Exists") }}"
+          effect: "{{ gpu_toleration_effect | default("NoSchedule") }}"
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: "{{ topology_zone_key | default("topology.kubernetes.io/zone") }}"
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-graph-deployment-name: "{{ deployment_name | default("vllm-disagg") }}"
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: {{ anti_affinity_weight | default(100) }}
+                podAffinityTerm:
+                  labelSelector:
+                    matchLabels:
+                      nvidia.com/dynamo-component: "{{ prefill_component_name | default("VllmPrefillWorker") }}"
+                  topologyKey: "{{ hostname_key | default("kubernetes.io/hostname") }}"
+        mainContainer:
+          image: {{ image | default("nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag") }}
+          workingDir: {{ prefill_workdir | default("/workspace/examples/backends/vllm") }}
+          env:
+            - name: {{ otel_service_name_key | default("OTEL_SERVICE_NAME") }}
+              value: "{{ prefill_otel_service_name | default("dynamo-worker-prefill") }}"
+            - name: {{ hf_home_env_name | default("HF_HOME") }}
+              value: {{ hf_cache_path | default("/home/dynamo/.cache/huggingface") }}
+          securityContext:
+            capabilities:
+              add:
+                - {{ ipc_lock_capability | default("IPC_LOCK") }}

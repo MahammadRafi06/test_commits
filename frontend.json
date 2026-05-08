@@ -1,0 +1,251 @@
+usage: __main__.py [-h] [--version] [-i | --interactive | --no-interactive]
+                   [--namespace NAMESPACE]
+                   [--kv-cache-block-size KV_CACHE_BLOCK_SIZE]
+                   [--http-host HTTP_HOST] [--http-port HTTP_PORT]
+                   [--serve-indexer | --no-serve-indexer]
+                   [--tls-cert-path TLS_CERT_PATH]
+                   [--tls-key-path TLS_KEY_PATH]
+                   [--router-mode {round-robin,random,power-of-two,kv,direct,least-loaded,device-aware-weighted}]
+                   [--router-min-initial-workers MIN_INITIAL_WORKERS]
+                   [--router-kv-overlap-score-weight OVERLAP_SCORE_WEIGHT]
+                   [--router-temperature ROUTER_TEMPERATURE]
+                   [--router-kv-events | --no-router-kv-events | --kv-events | --no-kv-events]
+                   [--router-durable-kv-events | --no-router-durable-kv-events | --durable-kv-events | --no-durable-kv-events]
+                   [--router-replica-sync | --no-router-replica-sync]
+                   [--router-track-active-blocks | --no-router-track-active-blocks | --track-active-blocks | --no-track-active-blocks]
+                   [--router-track-output-blocks | --no-router-track-output-blocks | --track-output-blocks | --no-track-output-blocks]
+                   [--router-assume-kv-reuse | --no-router-assume-kv-reuse | --assume-kv-reuse | --no-assume-kv-reuse]
+                   [--router-track-prefill-tokens | --no-router-track-prefill-tokens]
+                   [--router-prefill-load-model {none,aic}]
+                   [--router-snapshot-threshold ROUTER_SNAPSHOT_THRESHOLD]
+                   [--router-reset-states | --no-router-reset-states]
+                   [--router-ttl-secs ROUTER_TTL_SECS]
+                   [--router-max-tree-size ROUTER_MAX_TREE_SIZE]
+                   [--router-prune-target-ratio ROUTER_PRUNE_TARGET_RATIO]
+                   [--router-queue-threshold ROUTER_QUEUE_THRESHOLD]
+                   [--router-event-threads ROUTER_EVENT_THREADS]
+                   [--router-queue-policy {fcfs,wspt}]
+                   [--use-remote-indexer | --no-use-remote-indexer]
+                   [--aic-backend AIC_BACKEND] [--aic-system AIC_SYSTEM]
+                   [--aic-backend-version AIC_BACKEND_VERSION]
+                   [--aic-tp-size AIC_TP_SIZE]
+                   [--aic-model-path AIC_MODEL_PATH]
+                   [--namespace-prefix NAMESPACE_PREFIX]
+                   [--enforce-disagg | --no-enforce-disagg]
+                   [--migration-limit MIGRATION_LIMIT]
+                   [--migration-max-seq-len MIGRATION_MAX_SEQ_LEN]
+                   [--active-decode-blocks-threshold ACTIVE_DECODE_BLOCKS_THRESHOLD]
+                   [--active-prefill-tokens-threshold ACTIVE_PREFILL_TOKENS_THRESHOLD]
+                   [--active-prefill-tokens-threshold-frac ACTIVE_PREFILL_TOKENS_THRESHOLD_FRAC]
+                   [--model-name MODEL_NAME] [--model-path MODEL_PATH]
+                   [--metrics-prefix METRICS_PREFIX]
+                   [--kserve-grpc-server | --no-kserve-grpc-server]
+                   [--grpc-metrics-port GRPC_METRICS_PORT]
+                   [--dump-config-to DUMP_CONFIG_TO]
+                   [--discovery-backend {kubernetes,etcd,file,mem}]
+                   [--request-plane {nats,http,tcp}]
+                   [--event-plane {nats,zmq}]
+                   [--enable-anthropic-api | --no-enable-anthropic-api]
+                   [--strip-anthropic-preamble | --no-strip-anthropic-preamble]
+                   [--enable-streaming-tool-dispatch | --no-enable-streaming-tool-dispatch]
+                   [--enable-streaming-reasoning-dispatch | --no-enable-streaming-reasoning-dispatch]
+                   [--exclude-tools-when-tool-choice-none | --no-exclude-tools-when-tool-choice-none]
+                   [--dyn-chat-processor {dynamo,vllm,sglang}]
+                   [--dyn-debug-perf | --no-dyn-debug-perf]
+                   [--dyn-preprocess-workers PREPROCESS_WORKERS]
+                   [--tokenizer {default,fastokens}]
+
+Dynamo Frontend: HTTP+Pre-processor+Router
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+
+Dynamo Frontend Options:
+  -i, --interactive, --no-interactive
+                        Interactive text chat.
+                        env var: DYN_INTERACTIVE
+  --namespace NAMESPACE
+                        Dynamo namespace for model discovery scoping. Use for exact namespace matching. If --namespace-prefix is also specified, prefix takes precedence.
+                        env var: DYN_NAMESPACE | default: None
+  --kv-cache-block-size KV_CACHE_BLOCK_SIZE
+                        KV cache block size (u32).
+                        env var: DYN_KV_CACHE_BLOCK_SIZE | default: None
+  --http-host HTTP_HOST
+                        HTTP host for the engine (str).
+                        env var: DYN_HTTP_HOST | default: 0.0.0.0
+  --http-port HTTP_PORT
+                        HTTP port for the engine (u16).
+                        env var: DYN_HTTP_PORT | default: 8000
+  --serve-indexer, --no-serve-indexer
+                        Serve this frontend's local KV indexers over the request plane.
+                        env var: DYN_SERVE_INDEXER | default: False
+  --tls-cert-path TLS_CERT_PATH
+                        TLS certificate path, PEM format.
+                        env var: DYN_TLS_CERT_PATH | default: None
+  --tls-key-path TLS_KEY_PATH
+                        TLS certificate key path, PEM format.
+                        env var: DYN_TLS_KEY_PATH | default: None
+  --router-mode {round-robin,random,power-of-two,kv,direct,least-loaded,device-aware-weighted}
+                        How to route the request. power-of-two picks 2 random workers and routes to the one with fewer in-flight requests. least-loaded routes to the worker with the fewest active requests. device-aware-weighted routes based on worker device type (CPU/CUDA). In disaggregated prefill mode, both power-of-two and least-loaded skip bootstrap optimization and fall back to the synchronous prefill path.
+                        env var: DYN_ROUTER_MODE | default: round-robin
+  --router-min-initial-workers MIN_INITIAL_WORKERS
+                        Minimum number of workers required before router startup continues. This is exported as DYN_ROUTER_MIN_INITIAL_WORKERS so the generic push-router path and the KV router's config-ready worker gate share the same startup threshold. Set to 0 to disable the startup wait.
+                        env var: DYN_ROUTER_MIN_INITIAL_WORKERS | default: 0
+  --namespace-prefix NAMESPACE_PREFIX
+                        Dynamo namespace prefix for model discovery scoping. Discovers models from namespaces starting with this prefix (e.g., 'ns' matches 'ns', 'ns-abc123', 'ns-def456'). Takes precedence over --namespace if both are specified.
+                        env var: DYN_NAMESPACE_PREFIX | default: None
+  --enforce-disagg, --no-enforce-disagg
+                        Strictly enforce disaggregated mode. Requests will fail if the prefill router has not activated yet (e.g., prefill workers still registering). This is stricter than the default: without this flag, requests arriving before prefill workers are discovered fall through to aggregated decode-only routing.
+                        env var: DYN_ENFORCE_DISAGG | default: False
+  --migration-limit MIGRATION_LIMIT
+                        Maximum number of times a request may be migrated to a different engine worker. When > 0, enables request migration on worker disconnect.
+                        env var: DYN_MIGRATION_LIMIT | default: 0
+  --migration-max-seq-len MIGRATION_MAX_SEQ_LEN
+                        Maximum sequence length (prompt + generated tokens) for migration state tracking. Once the accumulated token count exceeds this limit, the request becomes non-migratable. Prevents unbounded memory growth from caching long sequences. Default: no limit.
+                        env var: DYN_MIGRATION_MAX_SEQ_LEN | default: None
+  --active-decode-blocks-threshold ACTIVE_DECODE_BLOCKS_THRESHOLD
+                        Threshold fraction (0.0-1.0) of KV cache block utilization above which a worker is considered busy. Pass 'None' on the CLI to disable this check. Default: 1.0.
+                        env var: DYN_ACTIVE_DECODE_BLOCKS_THRESHOLD | default: 1.0
+  --active-prefill-tokens-threshold ACTIVE_PREFILL_TOKENS_THRESHOLD
+                        Literal token count threshold for determining when a worker is considered busy based on prefill token utilization. When active prefill tokens exceed this threshold, the worker is marked as busy. Pass 'None' on the CLI to disable this check. Uses OR logic with --active-prefill-tokens-threshold-frac. Default: 10000000.
+                        env var: DYN_ACTIVE_PREFILL_TOKENS_THRESHOLD | default: 10000000
+  --active-prefill-tokens-threshold-frac ACTIVE_PREFILL_TOKENS_THRESHOLD_FRAC
+                        Fraction of max_num_batched_tokens for busy detection. Worker is busy when active_prefill_tokens > frac * max_num_batched_tokens. Pass 'None' on the CLI to disable this check. Uses OR logic with --active-prefill-tokens-threshold. Default: 10.0.
+                        env var: DYN_ACTIVE_PREFILL_TOKENS_THRESHOLD_FRAC | default: 10.0
+  --model-name MODEL_NAME
+                        Model name as a string (e.g., 'Llama-3.2-1B-Instruct')
+                        env var: DYN_MODEL_NAME | default: None
+  --model-path MODEL_PATH
+                        Path to model directory on disk (e.g., /tmp/model_cache/llama3.2_1B/)
+                        env var: DYN_MODEL_PATH | default: None
+  --metrics-prefix METRICS_PREFIX
+                        Prefix for Dynamo frontend metrics. If unset, uses DYN_METRICS_PREFIX env var or 'dynamo_frontend'.
+                        env var: DYN_METRICS_PREFIX | default: None
+  --kserve-grpc-server, --no-kserve-grpc-server
+                        Start KServe gRPC server.
+                        env var: DYN_KSERVE_GRPC_SERVER | default: False
+  --grpc-metrics-port GRPC_METRICS_PORT
+                        HTTP metrics port for gRPC service (u16). Only used with --kserve-grpc-server. Defaults to 8788.
+                        env var: DYN_GRPC_METRICS_PORT | default: 8788
+  --dump-config-to DUMP_CONFIG_TO
+                        Dump config to the specified file path.
+                        env var: DYN_DUMP_CONFIG_TO | default: None
+  --discovery-backend {kubernetes,etcd,file,mem}
+                        Discovery backend: kubernetes (K8s API), etcd (distributed KV), file (local filesystem), mem (in-memory). Etcd uses the ETCD_* env vars (e.g. ETCD_ENDPOINTS) for connection details. File uses root dir from env var DYN_FILE_KV or defaults to $TMPDIR/dynamo_store_kv.
+                        env var: DYN_DISCOVERY_BACKEND | default: etcd
+  --request-plane {nats,http,tcp}
+                        Determines how requests are distributed from routers to workers. 'tcp' is fastest [nats|http|tcp]
+                        env var: DYN_REQUEST_PLANE | default: tcp
+  --event-plane {nats,zmq}
+                        Determines how events are published [nats|zmq]
+                        env var: DYN_EVENT_PLANE | default: nats
+  --enable-anthropic-api, --no-enable-anthropic-api
+                        [EXPERIMENTAL] Enable Anthropic Messages API endpoint (/v1/messages). This feature is experimental and may change.
+                        env var: DYN_ENABLE_ANTHROPIC_API | default: False
+  --strip-anthropic-preamble, --no-strip-anthropic-preamble
+                        Strip the Claude Code billing preamble (x-anthropic-billing-header) from the system prompt. Saves tokens and improves prompt caching.
+                        env var: DYN_STRIP_ANTHROPIC_PREAMBLE | default: False
+  --enable-streaming-tool-dispatch, --no-enable-streaming-tool-dispatch
+                        [EXPERIMENTAL] Enable streaming tool call dispatch. Emits 'event: tool_call_dispatch' SSE events on /v1/chat/completions for each complete tool call before finish_reason arrives. Can be combined with --enable-streaming-reasoning-dispatch.
+                        env var: DYN_ENABLE_STREAMING_TOOL_DISPATCH | default: False
+  --enable-streaming-reasoning-dispatch, --no-enable-streaming-reasoning-dispatch
+                        [EXPERIMENTAL] Enable streaming reasoning dispatch. Emits a single 'event: reasoning_dispatch' SSE event on /v1/chat/completions with the complete reasoning block once thinking ends. Can be combined with --enable-streaming-tool-dispatch.
+                        env var: DYN_ENABLE_STREAMING_REASONING_DISPATCH | default: False
+  --exclude-tools-when-tool-choice-none, --no-exclude-tools-when-tool-choice-none
+                        Exclude tool definitions from the chat template when tool_choice='none'. Prevents models from generating raw XML tool calls in the content field.
+                        env var: DYN_EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE | default: True
+  --dyn-chat-processor {dynamo,vllm,sglang}
+                        [EXPERIMENTAL] Chat pre/post processor backend. 'dynamo' uses the Rust preprocessor. 'vllm' uses local vLLM for pre and post processing. 'sglang' uses SGLang APIs for chat template rendering, tool call parsing, and reasoning parsing.
+                        env var: DYN_CHAT_PROCESSOR | default: dynamo
+  --dyn-debug-perf, --no-dyn-debug-perf
+                        [EXPERIMENTAL] Enable performance instrumentation for diagnosing preprocessing bottlenecks. Logs per-function timing, request concurrency, and hot-path section durations. Supported with '--dyn-chat-processor vllm' and '--dyn-chat-processor sglang'.
+                        env var: DYN_DEBUG_PERF | default: False
+  --dyn-preprocess-workers PREPROCESS_WORKERS
+                        [EXPERIMENTAL] Number of worker processes for preprocessing and output processing. When > 0, offloads CPU-bound work (tokenization, template rendering, detokenization) to a ProcessPoolExecutor with N workers, each with its own GIL. 0 (default) keeps all processing on the main event loop. Supported with '--dyn-chat-processor vllm' and '--dyn-chat-processor sglang'.
+                        env var: DYN_PREPROCESS_WORKERS | default: 0
+  --tokenizer {default,fastokens}
+                        Tokenizer backend for BPE models: 'default' (HuggingFace tokenizers library) or 'fastokens' (fastokens crate for high-performance BPE encoding). Decoding always uses HuggingFace. Has no effect on TikToken models.
+                        env var: DYN_TOKENIZER | default: default
+
+KV Router Options:
+  --router-kv-overlap-score-weight OVERLAP_SCORE_WEIGHT, --kv-overlap-score-weight OVERLAP_SCORE_WEIGHT
+                        KV Router: Weight for overlap score in worker selection. Higher values prioritize KV cache reuse.
+                        env var: DYN_ROUTER_KV_OVERLAP_SCORE_WEIGHT | default: 1.0
+                        deprecating flag: --kv-overlap-score-weight
+  --router-temperature ROUTER_TEMPERATURE
+                        KV Router: Temperature for worker sampling via softmax. Higher values promote more randomness, and 0 fallbacks to deterministic.
+                        env var: DYN_ROUTER_TEMPERATURE | default: 0.0
+  --router-kv-events, --no-router-kv-events, --kv-events, --no-kv-events
+                        KV Router: Enable/disable KV events. Use --router-kv-events to enable (default, router receives cache state events from workers) or --no-router-kv-events to disable (router predicts cache state based on routing decisions).
+                        env var: DYN_ROUTER_USE_KV_EVENTS | default: True
+                        deprecating flag: --kv-events
+  --router-durable-kv-events, --no-router-durable-kv-events, --durable-kv-events, --no-durable-kv-events
+                        [Deprecated] KV Router: Enable durable KV events using NATS JetStream. This option will be removed in a future release. The event-plane subscriber (local_indexer mode) is now the recommended path.
+                        env var: DYN_ROUTER_DURABLE_KV_EVENTS | default: False
+                        deprecating flag: --durable-kv-events
+  --router-replica-sync, --no-router-replica-sync
+                        KV Router: Enable replica synchronization across multiple router instances. When true, routers will publish and subscribe to events to maintain consistent state.
+                        env var: DYN_ROUTER_REPLICA_SYNC | default: False
+  --router-track-active-blocks, --no-router-track-active-blocks, --track-active-blocks, --no-track-active-blocks
+                        KV Router: Track active blocks (blocks being used for ongoing generation). By default, active blocks are tracked for load balancing.
+                        env var: DYN_ROUTER_TRACK_ACTIVE_BLOCKS | default: True
+                        deprecating flag: --track-active-blocks
+  --router-track-output-blocks, --no-router-track-output-blocks, --track-output-blocks, --no-track-output-blocks
+                        KV Router: Track output blocks during generation. When enabled, the router adds placeholder blocks as tokens are generated and applies fractional decay based on progress toward expected output sequence length.
+                        env var: DYN_ROUTER_TRACK_OUTPUT_BLOCKS | default: False
+                        deprecating flag: --track-output-blocks
+  --router-assume-kv-reuse, --no-router-assume-kv-reuse, --assume-kv-reuse, --no-assume-kv-reuse
+                        KV Router: When tracking active blocks, assume KV cache reuse. Use --no-router-assume-kv-reuse to generate random hashes instead (when KV cache reuse is not expected).
+                        env var: DYN_ROUTER_ASSUME_KV_REUSE | default: True
+                        deprecating flag: --assume-kv-reuse
+  --router-track-prefill-tokens, --no-router-track-prefill-tokens
+                        KV Router: Include prompt-side prefill tokens in active load accounting. Use --no-router-track-prefill-tokens to ignore prompt tokens in router prefill-token load, queue pressure, and active_prefill_tokens metrics.
+                        env var: DYN_ROUTER_TRACK_PREFILL_TOKENS | default: True
+  --router-prefill-load-model {none,aic}
+                        [EXPERIMENTAL] KV Router: Prompt-side prefill load model. 'none' keeps static prompt load accounting. 'aic' decays the oldest active prefill request using AIC-predicted duration.
+                        env var: DYN_ROUTER_PREFILL_LOAD_MODEL | default: none
+  --router-snapshot-threshold ROUTER_SNAPSHOT_THRESHOLD
+                        KV Router: Number of messages in stream before triggering a snapshot.
+                        env var: DYN_ROUTER_SNAPSHOT_THRESHOLD | default: 1000000
+  --router-reset-states, --no-router-reset-states
+                        KV Router: Reset router state on startup, purging stream and object store. WARNING: This can affect existing router replicas.
+                        env var: DYN_ROUTER_RESET_STATES | default: False
+  --router-ttl-secs ROUTER_TTL_SECS
+                        KV Router: Time-to-live in seconds for blocks when KV events are disabled. Only used when --no-router-kv-events is set.
+                        env var: DYN_ROUTER_TTL_SECS | default: 120.0
+  --router-max-tree-size ROUTER_MAX_TREE_SIZE
+                        KV Router: Maximum tree size before pruning when KV events are disabled. Only used when --no-router-kv-events is set.
+                        env var: DYN_ROUTER_MAX_TREE_SIZE | default: 1048576
+  --router-prune-target-ratio ROUTER_PRUNE_TARGET_RATIO
+                        KV Router: Target size ratio after pruning when KV events are disabled. Only used when --no-router-kv-events is set.
+                        env var: DYN_ROUTER_PRUNE_TARGET_RATIO | default: 0.8
+  --router-queue-threshold ROUTER_QUEUE_THRESHOLD
+                        KV Router: Queue threshold fraction for prefill token capacity. Requests are queued if all workers exceed this fraction of max_num_batched_tokens. Must be >= 0. Use 0.0 for maximum queueing sensitivity (queue as soon as any tokens are active).
+                        env var: DYN_ROUTER_QUEUE_THRESHOLD | default: 4.0
+  --router-event-threads ROUTER_EVENT_THREADS
+                        KV Router: Number of event processing threads. When > 1, uses a concurrent radix tree with a thread pool for higher throughput. Ignored when --no-router-kv-events is set.
+                        env var: DYN_ROUTER_EVENT_THREADS | default: 4
+  --router-queue-policy {fcfs,wspt}
+                        KV Router: Scheduling policy for the router queue. 'fcfs' (default): first-come first-served with priority bumps — optimizes tail TTFT. 'wspt': weighted shortest processing time (Smith's rule) — optimizes average TTFT.
+                        env var: DYN_ROUTER_QUEUE_POLICY | default: fcfs
+  --use-remote-indexer, --no-use-remote-indexer
+                        [EXPERIMENTAL] KV Router: Query a remote KV indexer served from the worker component via the request plane instead of maintaining a local radix tree.
+                        env var: DYN_USE_REMOTE_INDEXER | default: False
+
+AIC Perf Model Options:
+  --aic-backend AIC_BACKEND
+                        [EXPERIMENTAL] AIC backend family to model (for example: vllm or sglang).
+                        env var: DYN_AIC_BACKEND | default: None
+  --aic-system AIC_SYSTEM
+                        [EXPERIMENTAL] AIC hardware/system identifier (for example: h200_sxm).
+                        env var: DYN_AIC_SYSTEM | default: None
+  --aic-backend-version AIC_BACKEND_VERSION
+                        [EXPERIMENTAL] Pinned backend version for AIC database lookup.
+                        env var: DYN_AIC_BACKEND_VERSION | default: None
+  --aic-tp-size AIC_TP_SIZE
+                        [EXPERIMENTAL] Tensor parallel size to model in AIC.
+                        env var: DYN_AIC_TP_SIZE | default: 1
+  --aic-model-path AIC_MODEL_PATH
+                        [EXPERIMENTAL] Model path or model identifier to use for AIC perf lookup.
+                        env var: DYN_AIC_MODEL_PATH | default: None

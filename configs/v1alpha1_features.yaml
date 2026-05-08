@@ -1,0 +1,15 @@
+observability:
+  metric:
+    spec.service.worker.envs:
+        - name: NIXL_TELEMETRY_ENABLE
+          value: y # n by default 
+        - name: NIXL_TELEMETRY_PROMETHEUS_PORT
+          value: 19090 # default port 
+  logging:
+    spec:
+        - name: DYN_LOGGING_JSONL
+          value: true  
+        - name: DYN_LOG
+          value: info # dynamo_runtime::system_status_server:trace also avaiable as log levels per target 
+        - name: DYN_LOG_USE_LOCAL_TZ
+          value: true # Use local timezone for timestampsfeat/eks-gpu-model-servingsleepNAHI Parvee

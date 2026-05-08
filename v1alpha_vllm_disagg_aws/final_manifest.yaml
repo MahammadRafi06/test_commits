@@ -1,0 +1,211 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-disagg
+  namespace: default
+spec:
+  envs:
+  - name: DYN_LOGGING_JSONL
+    value: "true"
+  - name: OTEL_EXPORT_ENABLED
+    value: "true"
+  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    value: http://tempo.observability.svc.cluster.local:4317
+  pvcs:
+  - create: false
+    name: model-cache
+  - create: false
+    name: compilation-cache
+  services:
+    Frontend:
+      componentType: frontend
+      envFromSecret: hf-token-secret
+      extraPodSpec:
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  nvidia.com/dynamo-component-type: worker
+                  nvidia.com/dynamo-graph-deployment-name: vllm-disagg
+              topologyKey: topology.kubernetes.io/zone
+        mainContainer:
+          env:
+          - name: DYN_ROUTER_MODE
+            value: kv
+          - name: OTEL_SERVICE_NAME
+            value: dynamo-frontend
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
+          imagePullPolicy: IfNotPresent
+      replicas: 1
+      resources:
+        limits:
+          cpu: "8"
+        requests:
+          cpu: "8"
+      volumeMounts:
+      - mountPoint: /home/dynamo/.cache/huggingface
+        name: model-cache
+    VllmDecodeWorker:
+      componentType: worker
+      envFromSecret: hf-token-secret
+      extraPodSpec:
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  nvidia.com/dynamo-graph-deployment-name: vllm-disagg
+              topologyKey: topology.kubernetes.io/zone
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-component: VllmPrefillWorker
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+        mainContainer:
+          args:
+          - --model
+          - meta-llama/Meta-Llama-3.1-8B
+          - --tensor-parallel-size
+          - "2"
+          - --pipeline-parallel-size
+          - "1"
+          - --data-parallel-size
+          - "1"
+          - --kv-cache-dtype
+          - auto
+          - --max-num-seqs
+          - "512"
+          - --max-num-batched-tokens
+          - "512"
+          - --is-decode-worker
+          - --kv-transfer-config
+          - '{"kv_connector":"NixlConnector","kv_role":"kv_both"}'
+          command:
+          - python3
+          - -m
+          - dynamo.vllm
+          env:
+          - name: OTEL_SERVICE_NAME
+            value: dynamo-worker-decode
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          workingDir: /workspace/examples/backends/vllm
+        nodeSelector:
+          karpenter.sh/capacity-type: reserved
+          node.kubernetes.io/instance-type: p5.48xlarge
+        tolerations:
+        - effect: NoSchedule
+          key: nvidia.com/gpu
+          operator: Exists
+      replicas: 1
+      resources:
+        limits:
+          custom:
+            vpc.amazonaws.com/efa: "8"
+          gpu: "2"
+        requests:
+          custom:
+            ephemeral-storage: 2Gi
+            vpc.amazonaws.com/efa: "8"
+      subComponentType: decode
+      volumeMounts:
+      - mountPoint: /home/dynamo/.cache/huggingface
+        name: model-cache
+      - mountPoint: /home/dynamo/.cache/vllm
+        name: compilation-cache
+        useAsCompilationCache: true
+    VllmPrefillWorker:
+      componentType: worker
+      envFromSecret: hf-token-secret
+      envs:
+      - name: DYN_KVBM_CPU_CACHE_GB
+        value: "100"
+      extraPodSpec:
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  nvidia.com/dynamo-graph-deployment-name: vllm-disagg
+              topologyKey: topology.kubernetes.io/zone
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-component: VllmPrefillWorker
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+        mainContainer:
+          args:
+          - --model
+          - meta-llama/Meta-Llama-3.1-8B
+          - --tensor-parallel-size
+          - "1"
+          - --pipeline-parallel-size
+          - "1"
+          - --data-parallel-size
+          - "1"
+          - --kv-cache-dtype
+          - auto
+          - --max-num-seqs
+          - "1"
+          - --max-num-batched-tokens
+          - "2012"
+          - --is-prefill-worker
+          - --kv-transfer-config
+          - '{"kv_connector":"NixlConnector","kv_role":"kv_both"}'
+          command:
+          - python3
+          - -m
+          - dynamo.vllm
+          env:
+          - name: OTEL_SERVICE_NAME
+            value: dynamo-worker-prefill
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          workingDir: /workspace/examples/backends/vllm
+        nodeSelector:
+          karpenter.sh/capacity-type: reserved
+          node.kubernetes.io/instance-type: p5.48xlarge
+        tolerations:
+        - effect: NoSchedule
+          key: nvidia.com/gpu
+          operator: Exists
+      replicas: 2
+      resources:
+        limits:
+          custom:
+            vpc.amazonaws.com/efa: "8"
+          gpu: "1"
+          memory: 200Gi
+        requests:
+          custom:
+            ephemeral-storage: 2Gi
+            vpc.amazonaws.com/efa: "8"
+          memory: 200Gi
+      subComponentType: prefill
+      volumeMounts:
+      - mountPoint: /home/dynamo/.cache/huggingface
+        name: model-cache
+      - mountPoint: /home/dynamo/.cache/vllm
+        name: compilation-cache
+        useAsCompilationCache: true
