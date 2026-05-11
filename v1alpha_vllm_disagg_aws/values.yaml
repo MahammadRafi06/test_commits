@@ -46,6 +46,7 @@ prefill_component_name: VllmPrefillWorker
 anti_affinity_weight: 100
 
 # ── Frontend ──────────────────────────────────────────────────────────────────
+frontend_component_type: frontend
 frontend_replicas: 1
 frontend_cpu_req: "8"
 frontend_cpu_lim: "8"
@@ -54,6 +55,9 @@ frontend_router_mode: kv
 frontend_otel_service_name: dynamo-frontend
 
 # ── VllmDecodeWorker ──────────────────────────────────────────────────────────
+decode_component_type: worker
+decode_sub_component_type: decode
+decode_startup_probe_delay: 180
 decode_replicas: 1
 decode_workdir: /workspace/examples/backends/vllm
 decode_otel_service_name: dynamo-worker-decode

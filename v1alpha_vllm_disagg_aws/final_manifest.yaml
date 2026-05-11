@@ -43,8 +43,10 @@ spec:
       resources:
         limits:
           cpu: "8"
+          memory: 10Gi
         requests:
           cpu: "8"
+          memory: 20Gi
       volumeMounts:
       - mountPoint: /home/dynamo/.cache/huggingface
         name: model-cache
@@ -101,6 +103,8 @@ spec:
             capabilities:
               add:
               - IPC_LOCK
+          startupProbe:
+            initialDelaySeconds: 180
           workingDir: /workspace/examples/backends/vllm
         nodeSelector:
           karpenter.sh/capacity-type: reserved
@@ -115,10 +119,12 @@ spec:
           custom:
             vpc.amazonaws.com/efa: "8"
           gpu: "2"
+          memory: 20Gi
         requests:
           custom:
             ephemeral-storage: 2Gi
             vpc.amazonaws.com/efa: "8"
+          memory: 20Gi
       subComponentType: decode
       volumeMounts:
       - mountPoint: /home/dynamo/.cache/huggingface
@@ -131,7 +137,7 @@ spec:
       envFromSecret: hf-token-secret
       envs:
       - name: DYN_KVBM_CPU_CACHE_GB
-        value: "100"
+        value: "10"
       extraPodSpec:
         affinity:
           podAffinity:
@@ -196,12 +202,12 @@ spec:
           custom:
             vpc.amazonaws.com/efa: "8"
           gpu: "1"
-          memory: 200Gi
+          memory: 20Gi
         requests:
           custom:
             ephemeral-storage: 2Gi
             vpc.amazonaws.com/efa: "8"
-          memory: 200Gi
+          memory: 10Gi
       subComponentType: prefill
       volumeMounts:
       - mountPoint: /home/dynamo/.cache/huggingface

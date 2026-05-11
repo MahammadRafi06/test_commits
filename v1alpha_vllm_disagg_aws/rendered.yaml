@@ -1,170 +1,164 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-
 apiVersion: nvidia.com/v1alpha1
 kind: DynamoGraphDeployment
 metadata:
   name: dynamo-disagg
   namespace: default
 spec:
+  envs:
+  - name: DYN_LOGGING_JSONL
+    value: 'true'
+  - name: OTEL_EXPORT_ENABLED
+    value: 'true'
+  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    value: http://tempo.observability.svc.cluster.local:4317
   pvcs:
   - create: false
     name: model-cache
   - create: false
     name: compilation-cache
-  envs:
-    - name: DYN_LOGGING_JSONL
-      value: "true"
-    - name: OTEL_EXPORT_ENABLED
-      value: "true"
-    - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      value: "http://tempo.observability.svc.cluster.local:4317"
-
   services:
     Frontend:
-      # componentType: frontend
-      replicas: 1
-      resources:
-        requests:
-          cpu: "8"
-        limits:
-          cpu: "8"
-      volumeMounts:
-      - name: model-cache
-        mountPoint: /home/dynamo/.cache/huggingface
+      componentType: frontend
       extraPodSpec:
         affinity:
           podAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
-              - topologyKey: "topology.kubernetes.io/zone"
-                labelSelector:
-                  matchLabels:
-                    nvidia.com/dynamo-graph-deployment-name: "vllm-disagg"
-                    nvidia.com/dynamo-component-type: "worker"
+            - labelSelector:
+                matchLabels:
+                  nvidia.com/dynamo-component-type: worker
+                  nvidia.com/dynamo-graph-deployment-name: vllm-disagg
+              topologyKey: topology.kubernetes.io/zone
         mainContainer:
-          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
           env:
           - name: DYN_ROUTER_MODE
             value: kv
           - name: OTEL_SERVICE_NAME
-            value: "dynamo-frontend"
+            value: dynamo-frontend
           - name: HF_HOME
             value: /home/dynamo/.cache/huggingface
-
-    VllmDecodeWorker:
-      envFromSecret: hf-token-secret
-      # componentType: worker
-      # subComponentType: decode
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
       replicas: 1
-      volumeMounts:
-      - name: model-cache
-        mountPoint: /home/dynamo/.cache/huggingface
-      - name: compilation-cache
-        mountPoint: /home/dynamo/.cache/vllm
-        useAsCompilationCache: true
       resources:
         limits:
-          # gpu: "1"
-          custom:
-            vpc.amazonaws.com/efa: "8"
+          cpu: '8'
+          memory: 10Gi
         requests:
-          custom:
-            # Increase this value for larger models
-            ephemeral-storage: "2Gi"
-            vpc.amazonaws.com/efa: "8"
+          cpu: '8'
+          memory: 20Gi
+      volumeMounts:
+      - mountPoint: /home/dynamo/.cache/huggingface
+        name: model-cache
+    VllmDecodeWorker:
+      componentType: worker
+      envFromSecret: hf-token-secret
       extraPodSpec:
-        nodeSelector:
-          node.kubernetes.io/instance-type: p5.48xlarge
-          karpenter.sh/capacity-type: reserved
-        tolerations:
-        - key: "nvidia.com/gpu"
-          operator: "Exists"
-          effect: "NoSchedule"
         affinity:
           podAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
-              - topologyKey: "topology.kubernetes.io/zone"
-                labelSelector:
-                  matchLabels:
-                    nvidia.com/dynamo-graph-deployment-name: "vllm-disagg"
+            - labelSelector:
+                matchLabels:
+                  nvidia.com/dynamo-graph-deployment-name: vllm-disagg
+              topologyKey: topology.kubernetes.io/zone
           podAntiAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
-              - weight: 100
-                podAffinityTerm:
-                  labelSelector:
-                    matchLabels:
-                      nvidia.com/dynamo-component: "VllmPrefillWorker"
-                  topologyKey: "kubernetes.io/hostname"
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-component: VllmPrefillWorker
+                topologyKey: kubernetes.io/hostname
+              weight: 100
         mainContainer:
-          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
-          workingDir: /workspace/examples/backends/vllm
           env:
-            - name: OTEL_SERVICE_NAME
-              value: "dynamo-worker-decode"
-            - name: HF_HOME
-              value: /home/dynamo/.cache/huggingface
+          - name: OTEL_SERVICE_NAME
+            value: dynamo-worker-decode
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
           securityContext:
             capabilities:
               add:
-                - IPC_LOCK
-
+              - IPC_LOCK
+          startupProbe:
+            initialDelaySeconds: 180
+          workingDir: /workspace/examples/backends/vllm
+        nodeSelector:
+          karpenter.sh/capacity-type: reserved
+          node.kubernetes.io/instance-type: p5.48xlarge
+        tolerations:
+        - effect: NoSchedule
+          key: nvidia.com/gpu
+          operator: Exists
+      replicas: 1
+      resources:
+        limits:
+          custom:
+            vpc.amazonaws.com/efa: '8'
+          memory: 20Gi
+        requests:
+          custom:
+            ephemeral-storage: 2Gi
+            vpc.amazonaws.com/efa: '8'
+          memory: 20Gi
+      subComponentType: decode
+      volumeMounts:
+      - mountPoint: /home/dynamo/.cache/huggingface
+        name: model-cache
+      - mountPoint: /home/dynamo/.cache/vllm
+        name: compilation-cache
+        useAsCompilationCache: true
     VllmPrefillWorker:
       envFromSecret: hf-token-secret
-      # componentType: worker
-      # subComponentType: prefill
-      # replicas: 1
-      volumeMounts:
-      - name: model-cache
-        mountPoint: /home/dynamo/.cache/huggingface
-      - name: compilation-cache
-        mountPoint: /home/dynamo/.cache/vllm
-        useAsCompilationCache: true
-      resources:
-        limits:
-          memory: "200Gi"
-          custom:
-            vpc.amazonaws.com/efa: "8"
-        requests:
-          memory: "200Gi"
-          custom:
-            # Increase this value for larger models
-            ephemeral-storage: "2Gi"
-            vpc.amazonaws.com/efa: "8"
       envs:
-        - name: DYN_KVBM_CPU_CACHE_GB
-          value: "100"
+      - name: DYN_KVBM_CPU_CACHE_GB
+        value: '10'
       extraPodSpec:
-        nodeSelector:
-          node.kubernetes.io/instance-type: p5.48xlarge
-          karpenter.sh/capacity-type: reserved
-        tolerations:
-        - key: "nvidia.com/gpu"
-          operator: "Exists"
-          effect: "NoSchedule"
         affinity:
           podAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
-              - topologyKey: "topology.kubernetes.io/zone"
-                labelSelector:
-                  matchLabels:
-                    nvidia.com/dynamo-graph-deployment-name: "vllm-disagg"
+            - labelSelector:
+                matchLabels:
+                  nvidia.com/dynamo-graph-deployment-name: vllm-disagg
+              topologyKey: topology.kubernetes.io/zone
           podAntiAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
-              - weight: 100
-                podAffinityTerm:
-                  labelSelector:
-                    matchLabels:
-                      nvidia.com/dynamo-component: "VllmPrefillWorker"
-                  topologyKey: "kubernetes.io/hostname"
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    nvidia.com/dynamo-component: VllmPrefillWorker
+                topologyKey: kubernetes.io/hostname
+              weight: 100
         mainContainer:
-          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
-          workingDir: /workspace/examples/backends/vllm
           env:
-            - name: OTEL_SERVICE_NAME
-              value: "dynamo-worker-prefill"
-            - name: HF_HOME
-              value: /home/dynamo/.cache/huggingface
+          - name: OTEL_SERVICE_NAME
+            value: dynamo-worker-prefill
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag
           securityContext:
             capabilities:
               add:
-                - IPC_LOCK
+              - IPC_LOCK
+          workingDir: /workspace/examples/backends/vllm
+        nodeSelector:
+          karpenter.sh/capacity-type: reserved
+          node.kubernetes.io/instance-type: p5.48xlarge
+        tolerations:
+        - effect: NoSchedule
+          key: nvidia.com/gpu
+          operator: Exists
+      resources:
+        limits:
+          custom:
+            vpc.amazonaws.com/efa: '8'
+          memory: 20Gi
+        requests:
+          custom:
+            ephemeral-storage: 2Gi
+            vpc.amazonaws.com/efa: '8'
+          memory: 10Gi
+      volumeMounts:
+      - mountPoint: /home/dynamo/.cache/huggingface
+        name: model-cache
+      - mountPoint: /home/dynamo/.cache/vllm
+        name: compilation-cache
+        useAsCompilationCache: true

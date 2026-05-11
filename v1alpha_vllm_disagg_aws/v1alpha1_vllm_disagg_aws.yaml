@@ -19,7 +19,7 @@ spec:
 
   services:
     Frontend:
-      # componentType: frontend
+      componentType: frontend
       replicas: {{1}}
       resources:
         requests:
@@ -49,8 +49,8 @@ spec:
             value: /home/dynamo/.cache/huggingface
     VllmDecodeWorker:
       envFromSecret: hf-token-secret
-      # componentType: worker
-      # subComponentType: decode
+      componentType: worker
+      subComponentType: decode
       replicas: {{1}}
       volumeMounts:
       - name: model-cache
@@ -94,6 +94,8 @@ spec:
                       nvidia.com/dynamo-component: "VllmPrefillWorker"
                   topologyKey: {{"kubernetes.io/hostname"}}
         mainContainer:
+          startupProbe:
+            initialDelaySeconds: 180
           image: {{nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag}}
           workingDir: /workspace/examples/backends/vllm
           env:

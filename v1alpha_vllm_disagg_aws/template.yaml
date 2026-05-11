@@ -22,7 +22,7 @@ spec:
 
   services:
     Frontend:
-      # componentType: frontend
+      componentType: {{ frontend_component_type | default("frontend") }}
       replicas: {{ frontend_replicas | default(1) }}
       resources:
         requests:
@@ -55,8 +55,8 @@ spec:
 
     VllmDecodeWorker:
       envFromSecret: {{ hf_secret | default("hf-token-secret") }}
-      # componentType: worker
-      # subComponentType: decode
+      componentType: {{ decode_component_type | default("worker") }}
+      subComponentType: {{ decode_sub_component_type | default("decode") }}
       replicas: {{ decode_replicas | default(1) }}
       volumeMounts:
       - name: {{ model_cache_pvc_name | default("model-cache") }}
@@ -100,6 +100,8 @@ spec:
                       nvidia.com/dynamo-component: "{{ prefill_component_name | default("VllmPrefillWorker") }}"
                   topologyKey: "{{ hostname_key | default("kubernetes.io/hostname") }}"
         mainContainer:
+          startupProbe:
+            initialDelaySeconds: {{ decode_startup_probe_delay | default(180) }}
           image: {{ image | default("nvcr.io/nvidia/ai-dynamo/vllm-runtime:my-tag") }}
           workingDir: {{ decode_workdir | default("/workspace/examples/backends/vllm") }}
           env:

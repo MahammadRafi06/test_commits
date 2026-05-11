@@ -1,0 +1,2256 @@
+{
+  "engine": "sglang",
+  "version": "0.5.11",
+  "date": "2026-05-11",
+  "source": "introspected from sglang.srt.environ.Envs",
+  "SGLANG_CACHE_DIR": {
+    "category": "cache",
+    "type": "str",
+    "default_value": "/home/mahammad/.cache/sglang",
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_USE_MODELSCOPE": {
+    "category": "model",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_PREFETCH_BLOCK_SIZE_MB": {
+    "category": "model",
+    "type": "int",
+    "default_value": 16,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_SORT_WEIGHT_FILES": {
+    "category": "model",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_TIMEOUT_KEEP_ALIVE": {
+    "category": "networking",
+    "type": "int",
+    "default_value": 5,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_LOG_REQUEST_EXCEEDED_MS": {
+    "category": "logging",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_LOG_GC": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_DETECT_SLOW_RANK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_DISABLE_OUTLINES_DISK_CACHE": {
+    "category": "grammar",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_GRAMMAR_POLL_INTERVAL": {
+    "category": "grammar",
+    "type": "float",
+    "default_value": 0.005,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_TCP_STORE_PORT": {
+    "category": "distributed",
+    "type": "int",
+    "default_value": 29600,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_ONE_VISIBLE_DEVICE_PER_PROCESS": {
+    "category": "distributed",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_DISTRIBUTED_INIT_METHOD_OVERRIDE": {
+    "category": "distributed",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Override the distributed init method used by torch.distributed.init_process_group. Set to \"env://\" to use an externally-created TCPStore via MASTER_ADDR/MASTER_PORT.",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_FORCE_SHUTDOWN": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_OTLP_EXPORTER_SCHEDULE_DELAY_MILLIS": {
+    "category": "debug",
+    "type": "int",
+    "default_value": 500,
+    "value": null,
+    "description": "",
+    "ui": "primary",
+    "aic": false
+  },
+  "SGLANG_LOG_MS": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_LOG_FORWARD_ITERS": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_LOG_REQUEST_HEADERS": {
+    "category": "logging",
+    "type": "List[str]",
+    "default_value": [],
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_LOG_SCHEDULER_STATUS_TARGET": {
+    "category": "logging",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_LOG_SCHEDULER_STATUS_INTERVAL": {
+    "category": "logging",
+    "type": "float",
+    "default_value": 60.0,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_THREAD_POOL_SIZE": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "NOTE: For SGLANG_DISAGGREGATION_THREAD_POOL_SIZE, the effective default is computed dynamically at runtime based on cpu_count; see disaggregation backends.",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_QUEUE_SIZE": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 4,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 300,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_ENCODER_GRPC_TIMEOUT_SECS": {
+    "category": "networking",
+    "type": "int",
+    "default_value": 60,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_ENCODER_MM_RECEIVER_MODE": {
+    "category": "networking",
+    "type": "str",
+    "default_value": "http",
+    "value": null,
+    "description": "Encoder receiver selection: http|grpc (used by EPD paths).",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION": {
+    "category": "networking",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_USE_MESSAGE_QUEUE_BROADCASTER": {
+    "category": "distributed",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_HICACHE_FILE_BACKEND_STORAGE_DIR": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_HICACHE_DECODE_OFFLOAD_STRIDE": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "IS_H200": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_SET_CPU_AFFINITY": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_GRAMMAR_MAX_POLL_ITERATIONS": {
+    "category": "grammar",
+    "type": "int",
+    "default_value": 10000,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_DISABLED_MODEL_ARCHS": {
+    "category": "model",
+    "type": "List[str]",
+    "default_value": [],
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_RECORD_STEP_TIME": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_GRANIAN_PARENT_PID": {
+    "category": "networking",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_IS_IN_CI": {
+    "category": "ci",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_IS_IN_CI_AMD": {
+    "category": "ci",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_CUDA_COREDUMP": {
+    "category": "ci",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_CUDA_COREDUMP_DIR": {
+    "category": "ci",
+    "type": "str",
+    "default_value": "/tmp/sglang_cuda_coredumps",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_MAX_RETRY": {
+    "category": "ci",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_STUCK_DETOKENIZER": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_STUCK_DP_CONTROLLER": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_STUCK_SCHEDULER_INIT": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_STUCK_TOKENIZER": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_CRASH_AFTER_STREAM_OUTPUTS": {
+    "category": "debug",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PROFILE_WITH_STACK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PROFILE_RECORD_SHAPES": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PROFILE_V2": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DEBUG_MEMORY_POOL": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_REQUEST_TIME_STATS": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISABLE_TP_MEMORY_INBALANCE_CHECK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SIMULATE_ACC_LEN": {
+    "category": "debug",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SIMULATE_ACC_METHOD": {
+    "category": "debug",
+    "type": "str",
+    "default_value": "match-expected",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TORCH_PROFILER_DIR": {
+    "category": "debug",
+    "type": "str",
+    "default_value": "/tmp",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_OTLP_EXPORTER_MAX_EXPORT_BATCH_SIZE": {
+    "category": "debug",
+    "type": "int",
+    "default_value": 64,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NATIVE_MOVE_KV_CACHE": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_RETRACT": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_RETRACT_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 3,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_RETRACT_NO_PREFILL_BS": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 2147483648,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_STRICT_MEM_CHECK_DURING_BUSY": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_STRICT_MEM_CHECK_DURING_IDLE": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_INIT_NEW_TOKEN_RATIO": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 0.7,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MIN_NEW_TOKEN_RATIO_FACTOR": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 0.14,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NEW_TOKEN_RATIO_DECAY_STEPS": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 600,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_RETRACT_DECODE_STEPS": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 20,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_CLIP_MAX_NEW_TOKENS_ESTIMATION": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_DEFAULT": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1000,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_DECODE": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_TARGET_VERIFY": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_NONE": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_HEARTBEAT_INTERVAL": {
+    "category": "disaggregation",
+    "type": "float",
+    "default_value": 5.0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_HEARTBEAT_MAX_FAILURE": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 2,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_WAITING_TIMEOUT": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 300,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_NIXL_BACKEND": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": "UCX",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_NIXL_BACKEND_PARAMS": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": "{}",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_ALL_CP_RANKS_TRANSFER": {
+    "category": "disaggregation",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_FORCE_QUERY_PREFILL_DP_RANK": {
+    "category": "disaggregation",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_NUM_PRE_ALLOCATE_REQS": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "Extra slots in req_to_token_pool for decode workers (only effective when max_num_reqs > 32). Increases pool capacity so more KV cache transfers can overlap with decode execution without raising max_running_requests.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EMPTY_CACHE_INTERVAL": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds. Set if you observe high memory accumulation over a long serving period.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISABLE_CONSECUTIVE_PREFILL_OVERLAP": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_MAX_RECV_PER_POLL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXPERIMENTAL_CPP_RADIX_TREE": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DYNAMIC_CHUNKING_SMOOTH_FACTOR": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 0.75,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_SKIP_ALL_GATHER": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PREFILL_DELAYER_MAX_DELAY_PASSES": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PREFILL_DELAYER_TOKEN_USAGE_LOW_WATERMARK": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DATA_PARALLEL_BUDGET_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_REQ_WAITING_TIMEOUT": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NCCL_ALL_GATHER_IN_OVERLAP_SCHEDULER_SYNC_BATCH": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_REQ_RUNNING_TIMEOUT": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGGREGATION_BOOTSTRAP_ENTRY_CLEANUP_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 120,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SWA_EVICTION_INTERVAL_MULTIPLIER": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 1.0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FORCE_STREAM_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 50,
+    "value": null,
+    "description": "For non-streaming requests, the scheduler still flushes intermediate output batches to the tokenizer manager every N decoded tokens so that `first_token_time`/TTFT can be recorded. Lower this (e.g. to 1) to get an accurate TTFT for benchmarking; the upstream default of 50 trades off some TTFT-metric accuracy for less IPC overhead.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_PD_DISAGG_BACKEND": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": "mooncake",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TEST_PD_DISAGG_DEVICES": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FORWARD_UNKNOWN_TOOLS": {
+    "category": "tool_calling",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_HICACHE_HF3FS_CONFIG_PATH": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_HICACHE_NIXL_BACKEND_STORAGE_DIR": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGG_STAGING_BUFFER": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Staging buffer for heterogeneous TP KV transfer",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGG_STAGING_BUFFER_SIZE_MB": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": 64,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DISAGG_STAGING_POOL_SIZE_MB": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_STAGING_USE_TORCH": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "TODO(yangminl): remove SGLANG_STAGING_USE_TORCH and the torch fallback in staging_buffer.py once Triton kernels are fully validated in production.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MOONCAKE_CUSTOM_MEM_POOL": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Mooncake KV Transfer",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "ENABLE_ASCEND_TRANSFER_WITH_MOONCAKE": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "ASCEND_NPU_PHY_ID": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MOONCAKE_SEND_AUX_TCP": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_HICACHE_MOONCAKE_CONFIG_PATH": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_HICACHE_MOONCAKE_REUSE_TE": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_MASTER": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_CLIENT": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_LOCAL_HOSTNAME": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "localhost",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_TE_META_DATA_SERVER": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "P2PHANDSHAKE",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_GLOBAL_SEGMENT_SIZE": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "4gb",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_PROTOCOL": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "tcp",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_DEVICE": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_MASTER_METRICS_PORT": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": 9003,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_CHECK_SERVER": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "MOONCAKE_STANDALONE_STORAGE": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_AITER": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_AITER_UNIFIED_ATTN": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ROCM_FUSED_DECODE_MLA": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ROCM_DISABLE_LINEARQUANT": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MORI_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
+    "category": "rocm",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_MLX": {
+    "category": "mps",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NPU_DISABLE_ACL_FORMAT_WEIGHT": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NPU_USE_MULTI_STREAM": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NPU_USE_MLAPO": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NPU_FORWARD_NATIVE_GELUTANH": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Forward native implementation for activation gelu tanh for model Skywork-Reward-Gemma-2-27B-v0.2",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NPU_FORWARD_NATIVE_GEMMA_RMS_NORM": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Forward native implementation for gemma rms norm for model Skywork-Reward-Gemma-2-27B-v0.2",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_AG_AFTER_QLORA": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Delay all-gather after qlora for better performance for Deepseek v3.2",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "DEEP_NORMAL_MODE_USE_INT8_QUANT": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Quantize x to int8 in the dispatch operator",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NPU_FUSED_MOE_MODE": {
+    "category": "npu",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MUSA_FA3_FORCE_UPDATE_METADATA": {
+    "category": "musa",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_INT4_WEIGHT": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_CPU_QUANTIZATION": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_DYNAMIC_MXFP4_LINEAR": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FORCE_FP8_MARLIN": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MOE_NVFP4_DISPATCH": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NVFP4_CKPT_FP8_GEMM_IN_ATTN": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NVFP4_CKPT_FP8_NEXTN_MOE": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_QUANT_ALLOW_DOWNCASTING": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FP8_IGNORED_LAYERS": {
+    "category": "quantization",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_IS_FLASHINFER_AVAILABLE": {
+    "category": "flashinfer",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FLASHINFER_USE_PAGED": {
+    "category": "flashinfer",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FLASHINFER_WORKSPACE_SIZE": {
+    "category": "flashinfer",
+    "type": "int",
+    "default_value": 402653184,
+    "value": null,
+    "description": "Default to the pick from flashinfer",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SKIP_SOFTMAX_PREFILL_THRESHOLD_SCALE_FACTOR": {
+    "category": "flashinfer",
+    "type": "float",
+    "default_value": null,
+    "value": null,
+    "description": "Skip-softmax threshold scale factor for TRT-LLM attention (prefill and decode separately). None = standard attention. See https://arxiv.org/abs/2512.12087",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SKIP_SOFTMAX_DECODE_THRESHOLD_SCALE_FACTOR": {
+    "category": "flashinfer",
+    "type": "float",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FLASHINFER_FORCE_POSIX_FD_TRANSPORT": {
+    "category": "flashinfer",
+    "type": "bool",
+    "default_value": null,
+    "value": null,
+    "description": "TODO(mmangkad): Remove this once the FlashInfer unified allreduce-fusion transport issue on GB200/GB300 platforms is fixed and verified resolved.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TRITON_DECODE_ATTN_STATIC_KV_SPLITS": {
+    "category": "triton",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_CUSTOM_TRITON_KERNEL_CACHE": {
+    "category": "triton",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_TORCH_COMPILE": {
+    "category": "compilation",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXPERT_LOCATION_UPDATER_LOG_INPUT": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXPERT_LOCATION_UPDATER_CANARY": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXPERT_LOCATION_UPDATER_LOG_METRICS": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_LOG_EXPERT_LOCATION_METADATA": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXPERT_DISTRIBUTION_RECORDER_DIR": {
+    "category": "eplb",
+    "type": "str",
+    "default_value": "/tmp",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EPLB_HEATMAP_COLLECTION_INTERVAL": {
+    "category": "eplb",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_EPLB_BALANCEDNESS_METRIC": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TBO_DEBUG": {
+    "category": "tbo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_JIT_DEEPGEMM": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_JIT_DEEPGEMM_PRECOMPILE": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_JIT_DEEPGEMM_FAST_WARMUP": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_JIT_DEEPGEMM_COMPILE_WORKERS": {
+    "category": "deepgemm",
+    "type": "int",
+    "default_value": 4,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_IN_DEEPGEMM_PRECOMPILE_STAGE": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DG_CACHE_DIR": {
+    "category": "deepgemm",
+    "type": "str",
+    "default_value": "/home/mahammad/.cache/deep_gemm",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DG_USE_NVRTC": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_DEEPGEMM_BMM": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DEEPGEMM_SANITY_CHECK": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_CHUNKED_PREFIX_CACHE_THRESHOLD": {
+    "category": "deepseek",
+    "type": "int",
+    "default_value": 8192,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DEEPEP_BF16_DISPATCH": {
+    "category": "deepep",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
+    "category": "deepep",
+    "type": "int",
+    "default_value": 128,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DEEPEP_LL_COMBINE_SEND_NUM_SMS": {
+    "category": "deepep",
+    "type": "int",
+    "default_value": 32,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_BLACKWELL_OVERLAP_SHARED_EXPERTS_OUTSIDE_SBO": {
+    "category": "deepep",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NIXL_EP_BF16_DISPATCH": {
+    "category": "nixl",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NIXL_EP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
+    "category": "nixl",
+    "type": "int",
+    "default_value": 128,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NSA_FUSE_TOPK": {
+    "category": "nsa",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NSA_ENABLE_MTP_PRECOMPUTE_METADATA": {
+    "category": "nsa",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_FUSED_METADATA_COPY": {
+    "category": "nsa",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NSA_PREFILL_DENSE_ATTN_KV_LEN_THRESHOLD": {
+    "category": "nsa",
+    "type": "int",
+    "default_value": 2048,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SKIP_SGL_KERNEL_VERSION_CHECK": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_SGL_FA3_KERNEL": {
+    "category": "attention",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "USE_TRITON_W8A8_FP8_KERNEL": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_RETURN_ORIGINAL_LOGPROB": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MOE_PADDING": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_CUTLASS_MOE": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "HF_HUB_DISABLE_XET": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "DISABLE_OPENAPI_DOC": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_TORCH_INFERENCE_MODE": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_IS_FIRST_RANK_ON_NODE": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SYNC_TOKEN_IDS_ACROSS_TP": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_COLOCATED_BATCH_GEN": {
+    "category": "kernels",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_DETERMINISTIC_INFERENCE": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_1STAGE_ALLREDUCE": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Use 1-stage all-reduce kernel on AMD (deterministic, fixed accumulation order) If not set: auto (enabled when --enable-deterministic-inference is on) Set to 1: force enable (even without --enable-deterministic-inference) Set to 0: force disable (use default Aiter AR even with --enable-deterministic-inference)",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FLASHINFER_PREFILL_SPLIT_TILE_SIZE": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_FLASHINFER_DECODE_SPLIT_TILE_SIZE": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 2048,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TRITON_PREFILL_TRUNCATION_ALIGN_SIZE": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TRITON_DECODE_SPLIT_TILE_SIZE": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 256,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SPEC_EXPANSION_SAFETY_FACTOR": {
+    "category": "attention",
+    "type": "int",
+    "default_value": 2,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ROPE_CACHE_SAFETY_MARGIN": {
+    "category": "attention",
+    "type": "int",
+    "default_value": 256,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ROPE_CACHE_ALIGN": {
+    "category": "attention",
+    "type": "int",
+    "default_value": 128,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_SPEC_V2": {
+    "category": "speculative",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": {
+    "category": "speculative",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SPEC_ENABLE_STRICT_FILTER_CHECK": {
+    "category": "speculative",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SPEC_NAN_DETECTION": {
+    "category": "speculative",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SPEC_OOB_DETECTION": {
+    "category": "speculative",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_VLM_CACHE_SIZE_MB": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 100,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_IMAGE_MAX_PIXELS": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 12845056,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_RESIZE_RESAMPLE": {
+    "category": "multimodal",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MM_BUFFER_SIZE_MB": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MM_PRECOMPUTE_HASH": {
+    "category": "multimodal",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_VIT_ENABLE_CUDA_GRAPH": {
+    "category": "multimodal",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MM_SKIP_COMPUTE_HASH": {
+    "category": "multimodal",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_CUDA_IPC_TRANSPORT": {
+    "category": "multimodal",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_IPC_POOL_HANDLE_CACHE": {
+    "category": "multimodal",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MM_FEATURE_CACHE_MB": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 1024,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MM_ITEM_MEM_POOL_RECYCLE_INTERVAL_SEC": {
+    "category": "multimodal",
+    "type": "float",
+    "default_value": 0.05,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MAMBA_CONV_DTYPE": {
+    "category": "mamba",
+    "type": "str",
+    "default_value": "bfloat16",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MAMBA_SSM_DTYPE": {
+    "category": "mamba",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_UNIFIED_RADIX_TREE": {
+    "category": "cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_BREAKABLE_CUDA_GRAPH": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_MEMORY_SAVER_CUDA_GRAPH": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EMBEDDINGS_SPARSE_HEAD": {
+    "category": "engine",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_LOGITS_PROCESSER_CHUNK": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_LOGITS_PROCESSER_CHUNK_SIZE": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 2048,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_TOOL_STRICT_LEVEL": {
+    "category": "tool_calling",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NGRAM_FORCE_GREEDY_VERIFY": {
+    "category": "speculative",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_WARMUP_TIMEOUT": {
+    "category": "engine",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds. If a warmup forward batch takes longer than this, the server will crash to prevent hanging. Recommend to increase warmup timeout to 1800 to accommodate some kernel JIT precache e.g. deep gemm",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_GRPC_PORT": {
+    "category": "networking",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_GRPC": {
+    "category": "networking",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXTERNAL_MODEL_PACKAGE": {
+    "category": "external",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXTERNAL_MM_MODEL_ARCH": {
+    "category": "external",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_EXTERNAL_MM_PROCESSOR_PACKAGE": {
+    "category": "external",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_NUMA_BIND_V2": {
+    "category": "system",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_AUTO_NUMA_BIND": {
+    "category": "system",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_METRICS_DEVICE_TIMER": {
+    "category": "observability",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENABLE_METRICS_DP_ATTENTION": {
+    "category": "observability",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PATCH_TOKENIZER": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_REQUEST_STATE_WAIT_TIMEOUT": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 4,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_SYMM_MEM_PREALLOC_GB_SIZE": {
+    "category": "engine",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_DEBUG_SYMM_MEM": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_USE_AITER_FP8_PER_TOKEN": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENCODER_RECV_TIMEOUT": {
+    "category": "disaggregation",
+    "type": "float",
+    "default_value": 180.0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENCODER_SEND_TIMEOUT": {
+    "category": "disaggregation",
+    "type": "float",
+    "default_value": 180.0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_ENCODER_DISPATCH_MIN_ITEMS": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 2,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_BACKUP_PORT_BASE": {
+    "category": "networking",
+    "type": "int",
+    "default_value": 10000,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PLATFORM": {
+    "category": "plugins",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "SGLANG_PLUGINS": {
+    "category": "plugins",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  }
+}
