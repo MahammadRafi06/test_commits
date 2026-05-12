@@ -84,17 +84,27 @@ alias for `tensorrt_llm`.
 Run from the repo root on a machine with Docker and NVIDIA Container Toolkit:
 
 ```bash
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --pull
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1
 ```
 
 Generate one component:
 
 ```bash
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine sglang
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm_omni
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine tensorrt_llm
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine frontend
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine sglang
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm_omni
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine tensorrt_llm
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine frontend
+```
+
+The capture wrapper pulls the unique selected images first, then runs
+`generate_dynamo_runtime_configs.sh` to start the respective containers, execute
+the per-engine scripts, validate the results, and copy the JSON/help artifacts
+back into the local output folder. If images are already present locally, skip
+pulling:
+
+```bash
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --skip-pull
 ```
 
 Useful overrides:
@@ -102,15 +112,15 @@ Useful overrides:
 ```bash
 # Change Docker flags passed before the image name.
 DYNAMO_DOCKER_FLAGS="--gpus all --network host --rm" \
-  config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1
+  config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1
 
 # Use a different image for frontend capture.
 DYNAMO_FRONTEND_IMAGE=nvcr.io/nvidia/ai-dynamo/sglang-runtime:1.1.1 \
-  config_fetch/generate_dynamo_runtime_configs.sh --engine frontend
+  config_fetch/capture_dynamo_runtime_configs.sh --engine frontend
 
 # Use a custom Omni image if NVIDIA publishes one later.
 DYNAMO_VLLM_OMNI_IMAGE=nvcr.io/nvidia/ai-dynamo/vllm-omni-runtime:1.1.1 \
-  config_fetch/generate_dynamo_runtime_configs.sh --engine vllm_omni
+  config_fetch/capture_dynamo_runtime_configs.sh --engine vllm_omni
 ```
 
 The runner validates every generated file before copying it into

@@ -13,21 +13,25 @@ Read the full guide:
 config_fetch/ENGINE_CONFIG_GUIDE.md
 ```
 
-Generate all supported Dynamo runtime catalogs from Docker images:
+Pull the Dynamo runtime images and generate all supported catalogs locally:
 
 ```bash
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --pull
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1
 ```
 
 Generate one component:
 
 ```bash
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm_omni
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine sglang
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine tensorrt_llm
-config_fetch/generate_dynamo_runtime_configs.sh --tag 1.1.1 --engine frontend
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine vllm_omni
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine sglang
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine tensorrt_llm
+config_fetch/capture_dynamo_runtime_configs.sh --tag 1.1.1 --engine frontend
 ```
+
+Use `--skip-pull` when the images are already local. The lower-level
+`config_fetch/generate_dynamo_runtime_configs.sh` script is still available for
+running the container capture step directly.
 
 The runner captures:
 
