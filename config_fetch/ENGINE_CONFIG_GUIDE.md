@@ -37,6 +37,25 @@ For each runtime image, "everything" means all configuration discovered from:
 | Dynamo frontend `--help` | frontend args/envs JSON | Captures frontend/router/AIC help output from `python -m dynamo.frontend --help`. |
 | vLLM-Omni overlay | vllm_omni args/envs JSON | Adds multimodal knobs not discoverable as a separate backend parser. |
 
+For backend engines, the conceptual source of truth is the Dynamo backend CLI:
+`python -m dynamo.<backend> --help` (`dynamo.vllm`, `dynamo.sglang`, or
+`dynamo.trtllm`). That help surface is expected to be the union of:
+
+1. `Dynamo Runtime Options`: common Dynamo settings such as namespace,
+   discovery, request/event plane, endpoint, parser, and chat-template knobs.
+2. `Dynamo <Backend> Options`: backend-specific Dynamo settings such as
+   disaggregation mode, tokenizer behavior, KV transfer, worker mode, headless
+   mode, multimodal mode, or ModelExpress knobs.
+3. Native engine options: the upstream engine parser/options accepted by the
+   backend (`vLLM Engine Options`, SGLang server args, or TRT-LLM serve/API
+   args).
+
+The generator keeps those pieces separate while parsing because the native
+engines expose richer structured metadata through their own parser/registry
+APIs. The final JSON is still the merged Dynamo backend surface. The runner also
+stores the raw backend `--help` output next to generated backend catalogs so a
+new Dynamo release can be checked against the authoritative CLI text.
+
 Platform-level configuration that is not read by the engine/Dynamo image source
 is outside these engine catalogs. Examples include K8s resource placement,
 secrets, model artifact mounts, and site-wide transport defaults such as NCCL,
@@ -111,6 +130,7 @@ config_fetch/dynamo_runtime/tensorrt_llm/trtllm_args_<version>.json
 config_fetch/dynamo_runtime/tensorrt_llm/trtllm_envs_<version>.json
 config_fetch/dynamo_runtime/vllm_omni/vllm_omni_args_<version>.json
 config_fetch/dynamo_runtime/vllm_omni/vllm_omni_envs_<version>.json
+config_fetch/dynamo_runtime/<backend>/<prefix>_dynamo_help_<version>.txt
 ```
 
 Frontend outputs include the flat catalogs plus raw help and metadata:
@@ -124,7 +144,9 @@ config_fetch/dynamo_runtime/frontend/frontend_meta_<version>.json
 
 Temporary intermediate files such as `*_dynamo_wrapper.json` and
 `*_dynamo_envs.json` are kept only inside the runner's temporary output
-directory; the merged final files are the artifacts to commit.
+directory. Commit the merged final JSON files and the raw `*_dynamo_help_*.txt`
+files, because the help text is the audit trail for the authoritative Dynamo
+backend CLI.
 
 After the merged files are copied, `rebucket_runtime_configs.py` rewrites only
 the `ui` tier metadata and creates role-specific backend views:
@@ -235,6 +257,7 @@ Optional env fields include `choices`, `arg`, `true_arg`, `false_arg`, `arg_key`
 Inside the Dynamo vLLM image, the runner executes:
 
 ```bash
+python -m dynamo.vllm --help > /out/vllm_dynamo_help.txt
 python vllm/gen_vllm_args.py --out /out/vllm_args.json
 python vllm/gen_vllm_envs.py --out /out/vllm_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine vllm --out /out/vllm_dynamo_wrapper.json
@@ -328,22 +351,26 @@ For a new Dynamo release:
 1. Run the Docker capture for the new tag.
 2. Review the printed arg/env counts. A large unexpected drop usually means the
    image command failed, a parser import changed, or a scan path needs updating.
-3. Inspect generated `source` fields to confirm native, Dynamo wrapper, and
-   Dynamo env-only sources were merged.
-4. Check that no unsupported frontend fields leaked in:
+3. Inspect generated `source` fields to confirm native, Dynamo backend
+   ArgGroups, and Dynamo env-only sources were merged.
+4. Inspect the raw `*_dynamo_help_*.txt` files. They should still show the
+   expected group model: `Dynamo Runtime Options`, backend-specific Dynamo
+   options, and native engine options.
+5. Check that no unsupported frontend fields leaked in:
 
    ```bash
    rg '"emit"|"managed_by"|"reason"' config_fetch/dynamo_runtime
    ```
 
-5. Compare old/new JSONs for added, removed, and changed records. UI bucket
+6. Compare old/new JSONs for added, removed, and changed records. UI bucket
    changes can be reviewed separately because `ui`, `aic`, and `value` are not
    engine behavior.
-6. If new Dynamo wrapper args appear, they should be captured automatically by
+7. If new Dynamo backend args appear, they should be captured automatically by
    `gen_dynamo_wrapper_args.py`.
-7. If new direct `DYN_*` env reads appear, they should be captured automatically
+8. If new direct `DYN_*` env reads appear, they should be captured automatically
    by `gen_dynamo_envs.py` unless the source moved outside the scanned roots.
-8. Commit the updated JSON artifacts and any parser/overlay changes together.
+9. Commit the updated JSON/help artifacts and any parser/overlay changes
+   together.
 
 ## Adding a New Backend
 

@@ -2,9 +2,11 @@
 Generate Dynamo wrapper args JSON for a backend runtime image.
 
 Run this inside an NVIDIA Dynamo runtime image. It introspects the Dynamo
-ArgGroups used by ``python -m dynamo.<backend>``. This captures wrapper-level
-DYN_* / DYN_VLLM_* / DYN_TRTLLM_* / DYN_SGL_* settings that are not part of the
-native engine's own parser.
+ArgGroups used by ``python -m dynamo.<backend>``. The full backend CLI help is
+the authoritative surface; this script captures the Dynamo Runtime Options and
+Dynamo backend-specific options so they can be merged with the native engine
+parser output. These include DYN_* / DYN_VLLM_* / DYN_TRTLLM_* / DYN_SGL_*
+settings that are not part of the native engine's own parser.
 
 Usage:
     python dynamo/gen_dynamo_wrapper_args.py --engine vllm --out wrapper.json

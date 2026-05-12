@@ -121,6 +121,7 @@ container_cmd_for_engine() {
   case "$1" in
     vllm)
       cat <<'EOF'
+python -m dynamo.vllm --help > /out/vllm_dynamo_help.txt
 python vllm/gen_vllm_args.py --out /out/vllm_args.json
 python vllm/gen_vllm_envs.py --out /out/vllm_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine vllm --out /out/vllm_dynamo_wrapper.json
@@ -134,6 +135,7 @@ EOF
       ;;
     vllm_omni)
       cat <<'EOF'
+python -m dynamo.vllm --help > /out/vllm_omni_dynamo_help.txt
 python vllm/gen_vllm_args.py --out /out/vllm_omni_args.json
 python vllm/gen_vllm_envs.py --out /out/vllm_omni_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine vllm --out /out/vllm_omni_dynamo_wrapper.json
@@ -150,6 +152,7 @@ EOF
       ;;
     sglang)
       cat <<'EOF'
+python -m dynamo.sglang --help > /out/sglang_dynamo_help.txt
 python sglang/gen_sglang_args.py --out /out/sglang_args.json
 python sglang/gen_sglang_envs.py --out /out/sglang_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine sglang --out /out/sglang_dynamo_wrapper.json
@@ -163,6 +166,7 @@ EOF
       ;;
     tensorrt_llm)
       cat <<'EOF'
+python -m dynamo.trtllm --help > /out/trtllm_dynamo_help.txt
 python tensorrt_llm/gen_trtllm_args.py --out /out/trtllm_args.json
 python tensorrt_llm/gen_trtllm_envs.py --out /out/trtllm_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine tensorrt_llm --out /out/trtllm_dynamo_wrapper.json
@@ -355,13 +359,19 @@ for engine in engines:
 
     args_dst = target_dir / f"{prefix}_args_{version}.json"
     envs_dst = target_dir / f"{prefix}_envs_{version}.json"
+    help_src = tmp_dir / f"{prefix}_dynamo_help.txt"
+    help_dst = target_dir / f"{prefix}_dynamo_help_{version}.txt"
     shutil.copyfile(args_src, args_dst)
     shutil.copyfile(envs_src, envs_dst)
+    if help_src.exists():
+        shutil.copyfile(help_src, help_dst)
 
     args_count = len([k for k in args_data if k not in meta_keys])
     envs_count = len([k for k in envs_data if k not in meta_keys])
     print(f"{engine}: {args_data['version']} -> {args_dst} ({args_count} args)")
     print(f"{engine}: {envs_data['version']} -> {envs_dst} ({envs_count} envs)")
+    if help_src.exists():
+        print(f"{engine}: raw Dynamo backend help -> {help_dst}")
 PY
 
 rebucket_args=(--root "$out_dir")

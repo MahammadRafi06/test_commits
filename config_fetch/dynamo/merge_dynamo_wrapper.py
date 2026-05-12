@@ -1,10 +1,10 @@
 """
-Merge Dynamo wrapper args into native engine args/envs JSONs.
+Merge Dynamo backend args into native engine args/envs JSONs.
 
 The wrapper JSON should be produced by ``gen_dynamo_wrapper_args.py`` inside the
-same Dynamo runtime image. Wrapper records intentionally take precedence when a
-destination name overlaps with native engine records, because Kubernetes runs
-``python -m dynamo.<backend>``, not the engine's standalone serve command.
+same Dynamo runtime image. Dynamo backend records intentionally take precedence
+when a destination name overlaps with native engine records, because Kubernetes
+runs ``python -m dynamo.<backend>``, not the engine's standalone serve command.
 
 Usage:
     python dynamo/merge_dynamo_wrapper.py \
@@ -24,6 +24,8 @@ from typing import Any
 
 
 META_KEYS = {"engine", "version", "date", "source"}
+DYNAMO_SOURCE_LABEL = "Dynamo backend ArgGroups"
+LEGACY_DYNAMO_SOURCE_LABEL = "Dynamo wrapper ArgGroups"
 
 
 def _load(path: Path) -> OrderedDict[str, Any]:
@@ -46,8 +48,11 @@ def _merge_args(
     out = OrderedDict((k, args_data[k]) for k in args_data if k in META_KEYS)
 
     source = out.get("source") or ""
-    if "Dynamo wrapper ArgGroups" not in source:
-        out["source"] = (source + " + Dynamo wrapper ArgGroups").strip(" +")
+    if (
+        DYNAMO_SOURCE_LABEL not in source
+        and LEGACY_DYNAMO_SOURCE_LABEL not in source
+    ):
+        out["source"] = (source + f" + {DYNAMO_SOURCE_LABEL}").strip(" +")
 
     for key, rec in wrapper.items():
         out[key] = rec
@@ -109,8 +114,11 @@ def _merge_envs(
 
     out = OrderedDict((k, envs_data[k]) for k in envs_data if k in META_KEYS)
     source = out.get("source") or ""
-    if "Dynamo wrapper ArgGroups" not in source:
-        out["source"] = (source + " + Dynamo wrapper ArgGroups").strip(" +")
+    if (
+        DYNAMO_SOURCE_LABEL not in source
+        and LEGACY_DYNAMO_SOURCE_LABEL not in source
+    ):
+        out["source"] = (source + f" + {DYNAMO_SOURCE_LABEL}").strip(" +")
 
     for key, rec in wrapper_envs.items():
         out[key] = rec
@@ -150,7 +158,7 @@ def main() -> None:
         else 0
     )
     print(
-        f"Merged {wrapper_count} Dynamo wrapper args, {env_count} wrapper env vars, "
+        f"Merged {wrapper_count} Dynamo backend args, {env_count} backend env vars, "
         f"and {scanned_count} scanned env vars "
         f"into {ns.args_json} / {ns.envs_json}"
     )
