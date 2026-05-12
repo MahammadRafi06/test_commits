@@ -1,90 +1,94 @@
 """
-Generate vllm_args.json by introspecting the vLLM argparse parser.
+Generate sglang_args.json by introspecting SGLang's ServerArgs argparse parser.
 
 Usage:
-    python gen_vllm_args.py [--out vllm_args.json]
+    python gen_sglang_args.py [--out sglang_args.json]
 
 Requirements:
-    Run inside a Python environment that has the target vLLM version installed.
-    No GPU required — DeviceConfig is patched to bypass hardware detection.
+    Run inside a Python environment that has the target SGLang version installed.
+    No GPU required.
 """
 
 import argparse
 import json
+import re
 import sys
-from datetime import date, timezone
+from datetime import date
 from pathlib import Path
+from typing import Any
 
 
 # ---------------------------------------------------------------------------
-# Patch DeviceConfig before vllm.config is imported so GPU detection is
-# bypassed.  This lets the script run on CPU-only machines.
+# Import sglang
 # ---------------------------------------------------------------------------
-def _patch_device_config() -> None:
+try:
+    import sglang
     try:
-        import vllm.config.device as _dev
-        _dev.DeviceConfig.__post_init__ = lambda self: setattr(
-            self, "device_type", "cpu"
+        SGLANG_VERSION: str = sglang.__version__
+    except AttributeError:
+        from importlib.metadata import version
+        SGLANG_VERSION = version("sglang")
+except ImportError:
+    sys.exit("sglang is not installed in this environment.")
+
+from sglang.srt.server_args import ServerArgs
+
+
+_DEPRECATED_USE_RE = re.compile(r"\b[Uu]se\s+`?(--[A-Za-z0-9][\w-]*)`?")
+
+
+def _canonical_option(
+    opts: list[str],
+    dest: str,
+    help_text: str | None = None,
+    *,
+    prefer_negative: bool = False,
+) -> str:
+    """Pick the canonical long option from argparse aliases."""
+    long_opts = [o for o in opts if o.startswith("--")]
+    if not long_opts:
+        return opts[0] if opts else f"--{dest.replace('_', '-')}"
+
+    if help_text:
+        m = _DEPRECATED_USE_RE.search(help_text)
+        if m and m.group(1) in long_opts:
+            return m.group(1)
+
+    canonical = f"--{dest.replace('_', '-')}"
+    if canonical in long_opts:
+        return canonical
+
+    candidates = [
+        o for o in long_opts
+        if o.startswith("--no-") == prefer_negative
+    ]
+    return (candidates or long_opts)[0]
+
+
+def _list_like(action: argparse.Action) -> bool:
+    nargs = getattr(action, "nargs", None)
+    if nargs in ("+", "*") or (isinstance(nargs, int) and nargs != 1):
+        return True
+    multi_action_types = tuple(
+        cls for cls in (
+            getattr(argparse, "_AppendAction", None),
+            getattr(argparse, "_ExtendAction", None),
         )
-    except Exception:
-        pass  # older vllm layout — not needed
+        if cls is not None
+    )
+    return bool(multi_action_types and isinstance(action, multi_action_types))
 
 
-_patch_device_config()
-
-# Force vllm's arg_utils to populate help/description strings.
-# Its NEEDS_HELP flag is True only when --help or mkdocs is in argv.
-_real_argv = sys.argv[:]
-sys.argv = ["mkdocs"]  # triggers NEEDS_HELP = True inside arg_utils
-
-# ---------------------------------------------------------------------------
-# Now safe to import vllm
-# ---------------------------------------------------------------------------
-try:
-    import vllm
-    VLLM_VERSION: str = vllm.__version__
-except ImportError:
-    sys.argv = _real_argv
-    sys.exit("vllm is not installed in this environment.")
-
-from vllm.entrypoints.openai.cli_args import make_arg_parser  # noqa: E402
-
-sys.argv = _real_argv  # restore immediately after import
-
-try:
-    from vllm.utils.argparse_utils import FlexibleArgumentParser as _ParserCls
-except ImportError:
-    _ParserCls = argparse.ArgumentParser  # type: ignore[misc]
-
-import re as _re
-
-
-_MODULE_KEY_OVERRIDES: dict[str, str] = {
-    # Compound words or abbreviations that snake_case mis-splits
-    "MultiModalConfig": "multimodal",
-    "LoRAConfig": "lora",
-    "VllmConfig": "vllm",
-}
-
-
-def _config_class_to_module_key(title: str) -> str:
-    """Convert 'StructuredOutputsConfig' → 'structured_outputs', etc."""
-    if title in _MODULE_KEY_OVERRIDES:
-        return _MODULE_KEY_OVERRIDES[title]
-    if title in ("options", "optional arguments"):
-        return "engine"
-    name = title[: -len("Config")] if title.endswith("Config") else title
-    # CamelCase → snake_case
-    s = _re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", name)
-    s = _re.sub(r"([a-z\d])([A-Z])", r"\1_\2", s)
-    return s.lower()
+def _with_list_metadata(record: dict, action: argparse.Action) -> dict:
+    if _list_like(action):
+        record["multiple"] = True
+    return record
 
 
 # ---------------------------------------------------------------------------
 # Helper: normalise a default value so it is JSON-serialisable
 # ---------------------------------------------------------------------------
-def _serialise_default(val, _depth: int = 0) -> object:
-    """Recursively convert any default value to a JSON-safe type."""
+def _serialise_default(val: Any, _depth: int = 0) -> Any:
     if val is None or isinstance(val, (bool, int, float, str)):
         return val
     if isinstance(val, (list, tuple)):
@@ -93,10 +97,8 @@ def _serialise_default(val, _depth: int = 0) -> object:
         return sorted(str(_serialise_default(v, _depth + 1)) for v in val)
     if isinstance(val, dict):
         return {str(k): _serialise_default(v, _depth + 1) for k, v in val.items()}
-    # Guard against infinite recursion on deeply nested configs
     if _depth > 6:
         return str(val)
-    # dataclass instance (including pydantic dataclasses)
     try:
         import dataclasses as _dc
         if _dc.is_dataclass(val) and not isinstance(val, type):
@@ -106,21 +108,18 @@ def _serialise_default(val, _depth: int = 0) -> object:
             }
     except Exception:
         pass
-    # Enum
     try:
         return _serialise_default(val.value, _depth + 1)
     except AttributeError:
         pass
-    # Fallback: string repr (always JSON-safe)
     return str(val)
 
 
 # ---------------------------------------------------------------------------
-# Infer exact Python type string from an argparse action
+# Build JSON record for a single argparse action
 # ---------------------------------------------------------------------------
 def _infer_arg_type(action: argparse.Action) -> str:
-    nargs = getattr(action, 'nargs', None)
-    is_list = nargs in ('+', '*') or (isinstance(nargs, int) and nargs > 1)
+    is_list = _list_like(action)
     atype = action.type
     if atype is int:
         base = "int"
@@ -149,19 +148,21 @@ def _infer_arg_type(action: argparse.Action) -> str:
     return f"List[{base}]" if is_list else base
 
 
-# ---------------------------------------------------------------------------
-# Build the JSON record for a single argparse action
-# ---------------------------------------------------------------------------
 def _action_to_record(action: argparse.Action) -> dict:
     dest: str = action.dest
     default = _serialise_default(action.default)
     choices = list(action.choices) if action.choices is not None else None
     opts: list[str] = action.option_strings
+    help_text = (action.help or "").replace("%%", "%").strip()
 
-    # --- boolean flag (BooleanOptionalAction → --foo / --no-foo) ---
+    # bool: BooleanOptionalAction (--foo / --no-foo)
     if isinstance(action, argparse.BooleanOptionalAction):
-        true_arg = next((o for o in opts if not o.startswith("--no-")), opts[0])
-        false_arg = next((o for o in opts if o.startswith("--no-")), f"--no-{opts[0][2:]}")
+        true_opts = [o for o in opts if not o.startswith("--no-")]
+        true_arg = _canonical_option(true_opts, dest, help_text)
+        false_arg = next(
+            (o for o in opts if o.startswith("--no-")),
+            f"--no-{true_arg[2:]}" if true_arg.startswith("--") else None,
+        )
         return {
             "type": "bool",
             "flag": True,
@@ -169,12 +170,12 @@ def _action_to_record(action: argparse.Action) -> dict:
             "value": None,
             "true_arg": true_arg,
             "false_arg": false_arg,
-            "description": (action.help or "").replace("%%", "%").strip(),
+            "description": help_text,
         }
 
-    # --- store_true (old-style boolean, no --no- counterpart) ---
+    # bool: store_true
     if isinstance(action, argparse._StoreTrueAction):  # noqa: SLF001
-        flag = opts[0] if opts else f"--{dest.replace('_', '-')}"
+        flag = _canonical_option(opts, dest, help_text)
         return {
             "type": "bool",
             "flag": True,
@@ -182,69 +183,98 @@ def _action_to_record(action: argparse.Action) -> dict:
             "value": None,
             "true_arg": flag,
             "false_arg": None,
-            "description": (action.help or "").replace("%%", "%").strip(),
+            "description": help_text,
+        }
+
+    # bool: store_false
+    if isinstance(action, argparse._StoreFalseAction):  # noqa: SLF001
+        flag = _canonical_option(opts, dest, help_text, prefer_negative=True)
+        return {
+            "type": "bool",
+            "flag": True,
+            "default_value": default if isinstance(default, bool) else True,
+            "value": None,
+            "true_arg": None,
+            "false_arg": flag,
+            "description": help_text,
         }
 
     type_str = _infer_arg_type(action)
 
-    # --- choice ---
+    # choice (constrained string/int)
     if choices:
         if all(str(c).lstrip('-').isdigit() for c in choices):
-            type_str = "int"
-        return {
+            type_str = "List[int]" if type_str.startswith("List[") else "int"
+        return _with_list_metadata({
             "type": type_str,
             "flag": False,
-            "arg": opts[0] if opts else f"--{dest.replace('_', '-')}",
+            "arg": _canonical_option(opts, dest, help_text),
             "default_value": default,
             "value": None,
             "choices": choices,
-            "description": (action.help or "").replace("%%", "%").strip(),
-        }
+            "description": help_text,
+        }, action)
 
-    # --- plain value ---
-    return {
+    # plain value
+    return _with_list_metadata({
         "type": type_str,
         "flag": False,
-        "arg": opts[0] if opts else f"--{dest.replace('_', '-')}",
+        "arg": _canonical_option(opts, dest, help_text),
         "default_value": default,
         "value": None,
-        "description": (action.help or "").replace("%%", "%").strip(),
-    }
+        "description": help_text,
+    }, action)
 
 
 # ---------------------------------------------------------------------------
-# Most-frequently-used ordering for vLLM deployment
+# Map argparse group title to a module key
+# ---------------------------------------------------------------------------
+_GROUP_TITLE_MAP: dict[str, str] = {
+    "options": "server",
+    "optional arguments": "server",
+    "positional arguments": "server",
+}
+
+
+def _title_to_module_key(title: str) -> str:
+    lower = title.lower()
+    if lower in _GROUP_TITLE_MAP:
+        return _GROUP_TITLE_MAP[lower]
+    return lower.replace(" ", "_").replace("-", "_")
+
+
+# ---------------------------------------------------------------------------
+# Most-frequently-used ordering for SGLang deployment
 # ---------------------------------------------------------------------------
 # Move args between buckets to tune the UI experience.
 # primary   → always visible in main form (max 15)
 # advanced  → collapsible "Advanced" section (max 20)
 # everything else → "less_frequent" (search / show-all only)
 _UI_PRIMARY = [
-    "model", "dtype", "tensor_parallel_size", "pipeline_parallel_size",
-    "gpu_memory_utilization", "max_model_len",
-    "host", "port", "served_model_name", "api_key",
-    "trust_remote_code", "quantization", "kv_cache_dtype",
-    "max_num_seqs", "enable_prefix_caching",
+    "enable_lora",
+    "lora_paths",
+    "enable_multimodal",
 ]
 
 _UI_ADVANCED = [
-    "max_num_batched_tokens", "enable_chunked_prefill", "scheduling_policy",
-    "load_format", "tokenizer", "chat_template", "chat_template_content_format",
-    "speculative_config", "num_speculative_tokens",
-    "enable_lora", "max_loras", "lora_modules",
-    "limit_mm_per_prompt", "distributed_executor_backend",
-    "enforce_eager", "max_seq_len_to_capture",
-    "rope_scaling", "rope_theta",
-    "disable_log_requests", "uvicorn_log_level",
+    "kv_events_config",
+    "max_loras_per_batch", "lora_backend",
+    "chat_template", "chat_template_path", "reasoning_parser",
+    "tool_call_parser", "tool_server",
+    "enable_cache_report",
+    "prefill_attention_backend", "decode_attention_backend",
+    "nsa_prefill_backend", "nsa_decode_backend",
+    "max_prefill_tokens", "decode_log_interval",
+    "speculative_algorithm", "speculative_draft_model_path",
 ]
 
 
 # ---------------------------------------------------------------------------
-# Build the parser and walk its groups
+# Build the full JSON structure
 # ---------------------------------------------------------------------------
 def build_json() -> dict:
-    parser = _ParserCls(add_help=False)
-    make_arg_parser(parser)
+    parser = argparse.ArgumentParser(add_help=False)
+    ServerArgs.add_cli_args(parser)
 
     args: dict[str, dict] = {}
 
@@ -253,9 +283,9 @@ def build_json() -> dict:
         if not actions:
             continue
 
-        title: str = group.title or "engine"
-        module_key = _config_class_to_module_key(title)
-        config_class = title if module_key != "engine" else "EngineArgs"
+        title: str = group.title or "server"
+        module_key = _title_to_module_key(title)
+        config_class = title if module_key != "server" else "ServerArgs"
 
         for action in actions:
             record = _action_to_record(action)
@@ -263,7 +293,6 @@ def build_json() -> dict:
             record["config_class"] = config_class
             record["ui"] = False
             record["aic"] = False
-            # Last group wins for duplicate dest names
             args[action.dest] = record
 
     ordered = {}
@@ -280,10 +309,10 @@ def build_json() -> dict:
             v["ui"] = "less_frequent"
             ordered[k] = v
     return {
-        "engine": "vllm",
-        "version": VLLM_VERSION,
+        "engine": "sglang",
+        "version": SGLANG_VERSION,
         "date": date.today().isoformat(),
-        "source": "introspected from vllm.entrypoints.openai.cli_args.make_arg_parser (vllm serve)",
+        "source": "introspected from sglang.srt.server_args.ServerArgs.add_cli_args",
         **ordered,
     }
 
@@ -329,15 +358,11 @@ if __name__ == "__main__":
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument(
         "--out",
-        default="vllm_args.json",
-        help="Output file path (default: vllm_args.json)",
+        default="sglang_args.json",
+        help="Output file path (default: sglang_args.json)",
     )
-    cli.add_argument(
-        "--prev",
-        default=None,
-        metavar="OLD_JSON",
-        help="Previous version JSON to diff against (produces a delta file)",
-    )
+    cli.add_argument("--prev", default=None, metavar="OLD_JSON",
+                     help="Previous version JSON to diff against (produces a delta file)")
     ns = cli.parse_args()
 
     data = build_json()
@@ -350,10 +375,12 @@ if __name__ == "__main__":
     modules: dict[str, int] = {}
     for rec in args.values():
         modules[rec["module"]] = modules.get(rec["module"], 0) + 1
-    print(f"Written {ns.out!r}  —  vllm {data['version']}  "
-          f"—  {len(modules)} modules  {len(args)} total args")
+    print(
+        f"Written {ns.out!r}  —  sglang {data['version']}  "
+        f"—  {len(modules)} modules  {len(args)} total args"
+    )
     for mod, count in sorted(modules.items()):
-        print(f"  {mod:22s}  {count} args")
+        print(f"  {mod:25s}  {count} args")
 
     if ns.prev:
         with open(ns.prev) as fh:

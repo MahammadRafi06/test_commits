@@ -1200,7 +1200,7 @@
   "incremental_streaming_output": {
     "type": "bool",
     "flag": false,
-    "arg": "--stream-output",
+    "arg": "--incremental-streaming-output",
     "default_value": false,
     "value": null,
     "description": "[Deprecated] Use --incremental-streaming-output instead.",

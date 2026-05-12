@@ -1,16 +1,166 @@
 {
   "engine": "sglang",
-  "version": "0.5.11",
+  "version": "0.5.10.post1",
   "date": "2026-05-11",
-  "source": "introspected from sglang.srt.environ.Envs",
-  "SGLANG_CACHE_DIR": {
-    "category": "cache",
-    "type": "str",
-    "default_value": "/home/mahammad/.cache/sglang",
+  "source": "introspected from sglang.srt.environ.Envs + Dynamo wrapper overlay",
+  "DYN_SGL_EMBEDDING_WORKER": {
+    "category": "dynamo",
+    "type": "bool",
+    "default_value": false,
     "value": null,
-    "description": "",
+    "description": "Run as embedding worker (also sets SGLang's --is-embedding).",
+    "arg": "--embedding-worker",
+    "ui": "primary",
+    "aic": false,
+    "native_effects": [
+      "--is-embedding"
+    ]
+  },
+  "DYN_SGL_MULTIMODAL_ENCODE_WORKER": {
+    "category": "dynamo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Run as multimodal encode worker (frontend-facing).",
+    "arg": "--multimodal-encode-worker",
     "ui": "primary",
     "aic": false
+  },
+  "DYN_SGL_MULTIMODAL_WORKER": {
+    "category": "dynamo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Run as multimodal LLM worker.",
+    "arg": "--multimodal-worker",
+    "ui": "primary",
+    "aic": false
+  },
+  "DYN_SGL_IMAGE_DIFFUSION_WORKER": {
+    "category": "dynamo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Run as image diffusion worker.",
+    "arg": "--image-diffusion-worker",
+    "ui": "advanced",
+    "aic": false
+  },
+  "DYN_SGL_VIDEO_GENERATION_WORKER": {
+    "category": "dynamo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Run as video generation worker.",
+    "arg": "--video-generation-worker",
+    "ui": "advanced",
+    "aic": false
+  },
+  "DYN_SGL_DISAGG_CONFIG": {
+    "category": "dynamo",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Path to YAML disaggregation config file.",
+    "arg": "--disagg-config",
+    "ui": "advanced",
+    "aic": false,
+    "requires": [
+      "disagg_config_key"
+    ]
+  },
+  "DYN_SGL_DISAGG_CONFIG_KEY": {
+    "category": "dynamo",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Key to select from disaggregation config, for example prefill or decode.",
+    "arg": "--disagg-config-key",
+    "ui": "advanced",
+    "aic": false,
+    "requires": [
+      "disagg_config"
+    ]
+  },
+  "DYN_TOOL_CALL_PARSER": {
+    "category": "dynamo",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Tool call parser (overrides SGLang's --tool-call-parser).",
+    "arg": "--dyn-tool-call-parser",
+    "ui": "advanced",
+    "aic": false
+  },
+  "DYN_REASONING_PARSER": {
+    "category": "dynamo",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Reasoning parser for chain-of-thought models.",
+    "arg": "--dyn-reasoning-parser",
+    "ui": "advanced",
+    "aic": false
+  },
+  "DYN_CUSTOM_JINJA_TEMPLATE": {
+    "category": "dynamo",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Custom chat template path.",
+    "arg": "--custom-jinja-template",
+    "ui": "advanced",
+    "aic": false,
+    "conflicts_with": [
+      "use_sglang_tokenizer"
+    ]
+  },
+  "SGLANG_FORWARD_UNKNOWN_TOOLS": {
+    "category": "tool_calling",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_TOOL_STRICT_LEVEL": {
+    "category": "tool_calling",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_VLM_CACHE_SIZE_MB": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 100,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "SGLANG_MM_FEATURE_CACHE_MB": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "advanced",
+    "aic": false
+  },
+  "DYN_SGL_USE_TOKENIZER": {
+    "category": "dynamo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "[Deprecated] Use --dyn-chat-processor sglang on the frontend instead.",
+    "arg": "--use-sglang-tokenizer",
+    "ui": "less_frequent",
+    "aic": false,
+    "status": "deprecated"
   },
   "SGLANG_USE_MODELSCOPE": {
     "category": "model",
@@ -18,16 +168,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
-    "aic": false
-  },
-  "SGLANG_PREFETCH_BLOCK_SIZE_MB": {
-    "category": "model",
-    "type": "int",
-    "default_value": 16,
-    "value": null,
-    "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_SORT_WEIGHT_FILES": {
@@ -36,7 +177,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_TIMEOUT_KEEP_ALIVE": {
@@ -45,7 +186,7 @@
     "default_value": 5,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_REQUEST_EXCEEDED_MS": {
@@ -54,7 +195,7 @@
     "default_value": -1,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_GC": {
@@ -63,7 +204,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DETECT_SLOW_RANK": {
@@ -72,7 +213,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DISABLE_OUTLINES_DISK_CACHE": {
@@ -81,7 +222,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_GRAMMAR_POLL_INTERVAL": {
@@ -90,7 +231,7 @@
     "default_value": 0.005,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_TCP_STORE_PORT": {
@@ -99,7 +240,7 @@
     "default_value": 29600,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_ONE_VISIBLE_DEVICE_PER_PROCESS": {
@@ -108,7 +249,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DISTRIBUTED_INIT_METHOD_OVERRIDE": {
@@ -117,7 +258,7 @@
     "default_value": null,
     "value": null,
     "description": "Override the distributed init method used by torch.distributed.init_process_group. Set to \"env://\" to use an externally-created TCPStore via MASTER_ADDR/MASTER_PORT.",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_FORCE_SHUTDOWN": {
@@ -126,7 +267,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_OTLP_EXPORTER_SCHEDULE_DELAY_MILLIS": {
@@ -135,7 +276,7 @@
     "default_value": 500,
     "value": null,
     "description": "",
-    "ui": "primary",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_MS": {
@@ -144,7 +285,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_FORWARD_ITERS": {
@@ -153,7 +294,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_REQUEST_HEADERS": {
@@ -162,7 +303,7 @@
     "default_value": [],
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_SCHEDULER_STATUS_TARGET": {
@@ -171,7 +312,7 @@
     "default_value": "",
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_LOG_SCHEDULER_STATUS_INTERVAL": {
@@ -180,7 +321,7 @@
     "default_value": 60.0,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DISAGGREGATION_THREAD_POOL_SIZE": {
@@ -189,7 +330,7 @@
     "default_value": null,
     "value": null,
     "description": "NOTE: For SGLANG_DISAGGREGATION_THREAD_POOL_SIZE, the effective default is computed dynamically at runtime based on cpu_count; see disaggregation backends.",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DISAGGREGATION_QUEUE_SIZE": {
@@ -198,7 +339,7 @@
     "default_value": 4,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": {
@@ -207,7 +348,7 @@
     "default_value": 300,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_ENCODER_GRPC_TIMEOUT_SECS": {
@@ -216,7 +357,7 @@
     "default_value": 60,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_ENCODER_MM_RECEIVER_MODE": {
@@ -225,7 +366,7 @@
     "default_value": "http",
     "value": null,
     "description": "Encoder receiver selection: http|grpc (used by EPD paths).",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION": {
@@ -234,7 +375,7 @@
     "default_value": true,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_USE_MESSAGE_QUEUE_BROADCASTER": {
@@ -243,7 +384,7 @@
     "default_value": true,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_HICACHE_FILE_BACKEND_STORAGE_DIR": {
@@ -252,7 +393,7 @@
     "default_value": null,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_HICACHE_DECODE_OFFLOAD_STRIDE": {
@@ -261,7 +402,7 @@
     "default_value": null,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "IS_H200": {
@@ -270,7 +411,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_SET_CPU_AFFINITY": {
@@ -279,7 +420,7 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_GRAMMAR_MAX_POLL_ITERATIONS": {
@@ -288,7 +429,7 @@
     "default_value": 10000,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_DISABLED_MODEL_ARCHS": {
@@ -297,7 +438,7 @@
     "default_value": [],
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_RECORD_STEP_TIME": {
@@ -306,16 +447,16 @@
     "default_value": false,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_GRANIAN_PARENT_PID": {
-    "category": "networking",
-    "type": "int",
-    "default_value": null,
+  "SGLANG_DISABLE_REQUEST_LOGGING": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
     "value": null,
     "description": "",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "SGLANG_IS_IN_CI": {
@@ -474,7 +615,7 @@
   "SGLANG_SIMULATE_ACC_METHOD": {
     "category": "debug",
     "type": "str",
-    "default_value": "match-expected",
+    "default_value": "multinomial",
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -678,25 +819,7 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_DISAGGREGATION_NIXL_BACKEND_PARAMS": {
-    "category": "disaggregation",
-    "type": "str",
-    "default_value": "{}",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "SGLANG_DISAGGREGATION_ALL_CP_RANKS_TRANSFER": {
-    "category": "disaggregation",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_FORCE_QUERY_PREFILL_DP_RANK": {
     "category": "disaggregation",
     "type": "bool",
     "default_value": false,
@@ -840,24 +963,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_SWA_EVICTION_INTERVAL_MULTIPLIER": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": 1.0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_FORCE_STREAM_INTERVAL": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 50,
-    "value": null,
-    "description": "For non-streaming requests, the scheduler still flushes intermediate output batches to the tokenizer manager every N decoded tokens so that `first_token_time`/TTFT can be recorded. Lower this (e.g. to 1) to get an accurate TTFT for benchmarking; the upstream default of 50 trades off some TTFT-metric accuracy for less IPC overhead.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "SGLANG_TEST_PD_DISAGG_BACKEND": {
     "category": "disaggregation",
     "type": "str",
@@ -871,15 +976,6 @@
     "category": "disaggregation",
     "type": "str",
     "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_FORWARD_UNKNOWN_TOOLS": {
-    "category": "tool_calling",
-    "type": "bool",
-    "default_value": false,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1092,15 +1188,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_USE_AITER_UNIFIED_ATTN": {
-    "category": "rocm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "SGLANG_ROCM_FUSED_DECODE_MLA": {
     "category": "rocm",
     "type": "bool",
@@ -1114,15 +1201,6 @@
     "category": "rocm",
     "type": "bool",
     "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MORI_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
-    "category": "rocm",
-    "type": "int",
-    "default_value": 4096,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1191,28 +1269,10 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "DEEP_NORMAL_MODE_USE_INT8_QUANT": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Quantize x to int8 in the dispatch operator",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "SGLANG_NPU_FUSED_MOE_MODE": {
     "category": "npu",
     "type": "int",
     "default_value": 1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MUSA_FA3_FORCE_UPDATE_METADATA": {
-    "category": "musa",
-    "type": "bool",
-    "default_value": false,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1272,6 +1332,15 @@
     "ui": "less_frequent",
     "aic": false
   },
+  "SGLANG_PER_TOKEN_GROUP_QUANT_8BIT_V2": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
   "SGLANG_NVFP4_CKPT_FP8_NEXTN_MOE": {
     "category": "quantization",
     "type": "bool",
@@ -1303,15 +1372,6 @@
     "category": "flashinfer",
     "type": "bool",
     "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_FLASHINFER_USE_PAGED": {
-    "category": "flashinfer",
-    "type": "bool",
-    "default_value": false,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1500,7 +1560,7 @@
   "SGLANG_DG_CACHE_DIR": {
     "category": "deepgemm",
     "type": "str",
-    "default_value": "/home/mahammad/.cache/deep_gemm",
+    "default_value": "~/.cache/deep_gemm",
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1516,15 +1576,6 @@
     "aic": false
   },
   "SGLANG_USE_DEEPGEMM_BMM": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DEEPGEMM_SANITY_CHECK": {
     "category": "deepgemm",
     "type": "bool",
     "default_value": false,
@@ -1641,17 +1692,17 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_USE_SGL_FA3_KERNEL": {
-    "category": "attention",
+  "USE_VLLM_CUTLASS_W8A8_FP8_KERNEL": {
+    "category": "kernel",
     "type": "bool",
-    "default_value": true,
+    "default_value": false,
     "value": null,
-    "description": "",
+    "description": "vLLM dependencies (TODO: they have been deprecated, we can remove them safely)",
     "ui": "less_frequent",
     "aic": false
   },
   "USE_TRITON_W8A8_FP8_KERNEL": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1660,7 +1711,7 @@
     "aic": false
   },
   "SGLANG_RETURN_ORIGINAL_LOGPROB": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1669,7 +1720,7 @@
     "aic": false
   },
   "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1678,7 +1729,7 @@
     "aic": false
   },
   "SGLANG_MOE_PADDING": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1687,7 +1738,7 @@
     "aic": false
   },
   "SGLANG_CUTLASS_MOE": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1696,7 +1747,7 @@
     "aic": false
   },
   "HF_HUB_DISABLE_XET": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1705,7 +1756,7 @@
     "aic": false
   },
   "DISABLE_OPENAPI_DOC": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1714,7 +1765,7 @@
     "aic": false
   },
   "SGLANG_ENABLE_TORCH_INFERENCE_MODE": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1723,7 +1774,7 @@
     "aic": false
   },
   "SGLANG_IS_FIRST_RANK_ON_NODE": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": true,
     "value": null,
@@ -1732,7 +1783,7 @@
     "aic": false
   },
   "SGLANG_SYNC_TOKEN_IDS_ACROSS_TP": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1741,7 +1792,7 @@
     "aic": false
   },
   "SGLANG_ENABLE_COLOCATED_BATCH_GEN": {
-    "category": "kernels",
+    "category": "kernel",
     "type": "bool",
     "default_value": false,
     "value": null,
@@ -1833,7 +1884,7 @@
   "SGLANG_ENABLE_SPEC_V2": {
     "category": "speculative",
     "type": "bool",
-    "default_value": true,
+    "default_value": false,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1870,15 +1921,6 @@
     "category": "speculative",
     "type": "bool",
     "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_VLM_CACHE_SIZE_MB": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 100,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -1956,15 +1998,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_MM_FEATURE_CACHE_MB": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 1024,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "SGLANG_MM_ITEM_MEM_POOL_RECYCLE_INTERVAL_SEC": {
     "category": "multimodal",
     "type": "float",
@@ -1987,24 +2020,6 @@
     "category": "mamba",
     "type": "str",
     "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_UNIFIED_RADIX_TREE": {
-    "category": "cache",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_BREAKABLE_CUDA_GRAPH": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": false,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -2046,15 +2061,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_TOOL_STRICT_LEVEL": {
-    "category": "tool_calling",
-    "type": "int",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "SGLANG_NGRAM_FORCE_GREEDY_VERIFY": {
     "category": "speculative",
     "type": "bool",
@@ -2070,24 +2076,6 @@
     "default_value": -1,
     "value": null,
     "description": "in seconds. If a warmup forward batch takes longer than this, the server will crash to prevent hanging. Recommend to increase warmup timeout to 1800 to accommodate some kernel JIT precache e.g. deep gemm",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_GRPC_PORT": {
-    "category": "networking",
-    "type": "int",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_GRPC": {
-    "category": "networking",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
     "ui": "less_frequent",
     "aic": false
   },
@@ -2157,9 +2145,9 @@
   "SGLANG_PATCH_TOKENIZER": {
     "category": "engine",
     "type": "bool",
-    "default_value": true,
+    "default_value": false,
     "value": null,
-    "description": "",
+    "description": "TODO enable by default",
     "ui": "less_frequent",
     "aic": false
   },
@@ -2176,15 +2164,6 @@
     "category": "engine",
     "type": "int",
     "default_value": -1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DEBUG_SYMM_MEM": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": false,
     "value": null,
     "description": "",
     "ui": "less_frequent",
@@ -2235,22 +2214,15 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "SGLANG_PLATFORM": {
-    "category": "plugins",
+  "DYN_ENDPOINT": {
+    "category": "dynamo",
     "type": "str",
-    "default_value": "",
+    "default_value": null,
     "value": null,
-    "description": "",
+    "description": "Dynamo endpoint in dyn://namespace.component.endpoint format.",
+    "arg": "--endpoint",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PLUGINS": {
-    "category": "plugins",
-    "type": "str",
-    "default_value": "",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": true,
+    "default_note": "Auto-generated"
   }
 }

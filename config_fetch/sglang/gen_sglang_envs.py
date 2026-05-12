@@ -13,6 +13,7 @@ Requirements:
 import argparse
 import inspect
 import json
+import os
 import re
 import sys
 from datetime import date
@@ -25,7 +26,11 @@ from typing import Any
 # ---------------------------------------------------------------------------
 try:
     import sglang
-    SGLANG_VERSION: str = sglang.__version__
+    try:
+        SGLANG_VERSION: str = sglang.__version__
+    except AttributeError:
+        from importlib.metadata import version
+        SGLANG_VERSION = version("sglang")
 except ImportError:
     sys.exit("sglang is not installed in this environment.")
 
@@ -114,6 +119,14 @@ _SECTION_PREFIXES: list[tuple[str, str]] = [
 
 
 def _section_to_key(comment_text: str) -> str:
+    known = _known_section_key(comment_text)
+    if known is not None:
+        return known
+    text = comment_text.rstrip(":")
+    return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+
+
+def _known_section_key(comment_text: str) -> str | None:
     text = comment_text.rstrip(":")
     if text in _SECTION_OVERRIDES:
         return _SECTION_OVERRIDES[text]
@@ -123,7 +136,15 @@ def _section_to_key(comment_text: str) -> str:
     for prefix, key in _SECTION_PREFIXES:
         if text.startswith(prefix):
             return key
-    return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+    return None
+
+
+def _next_significant_line(lines: list[str], start_idx: int) -> str:
+    for line in lines[start_idx + 1:]:
+        stripped = line.strip()
+        if stripped:
+            return stripped
+    return ""
 
 
 # ---------------------------------------------------------------------------
@@ -147,7 +168,7 @@ def _parse_envs_source(source: str) -> dict[str, dict]:
     pending_comments: list[str] = []
     prev_was_blank = True  # treat start of class body like after a blank line
 
-    for line in lines:
+    for idx, line in enumerate(lines):
         stripped = line.strip()
 
         if not stripped:
@@ -165,8 +186,16 @@ def _parse_envs_source(source: str) -> dict[str, dict]:
 
             if prev_was_blank:
                 # Section header: updates current category, not a description
-                current_section = _section_to_key(comment_text)
-                pending_comments = []
+                section_key = _known_section_key(comment_text)
+                next_line = _next_significant_line(lines, idx)
+                if section_key is not None:
+                    current_section = section_key
+                    pending_comments = []
+                elif re.match(r"[A-Z][A-Z0-9_]+\s*=", next_line):
+                    pending_comments.append(comment_text)
+                else:
+                    current_section = _section_to_key(comment_text)
+                    pending_comments = []
             else:
                 # Description comment for the next variable
                 pending_comments.append(comment_text)
@@ -229,6 +258,13 @@ def _type_label(field: EnvField) -> str:
 # Serialise default value to JSON-safe type
 # ---------------------------------------------------------------------------
 def _serialise(val: Any) -> Any:
+    if isinstance(val, str):
+        try:
+            home = str(Path.home())
+        except Exception:
+            home = ""
+        if home and (val == home or val.startswith(home + os.sep)):
+            return "~" + val[len(home):]
     if val is None or isinstance(val, (bool, int, float, str)):
         return val
     if isinstance(val, (list, tuple)):
@@ -244,30 +280,24 @@ def _serialise(val: Any) -> Any:
 # advanced  → collapsible "Advanced" section (max 20)
 # everything else → "less_frequent" (search / show-all only)
 _UI_PRIMARY = [
-    "SGLANG_CACHE_DIR", "SGLANG_USE_MODELSCOPE",
-    "SGLANG_PREFETCH_BLOCK_SIZE_MB", "SGLANG_SORT_WEIGHT_FILES",
-    "SGLANG_TIMEOUT_KEEP_ALIVE", "SGLANG_LOG_REQUEST_EXCEEDED_MS",
-    "SGLANG_LOG_GC", "SGLANG_DETECT_SLOW_RANK",
-    "SGLANG_DISABLE_OUTLINES_DISK_CACHE", "SGLANG_GRAMMAR_POLL_INTERVAL",
-    "SGLANG_TCP_STORE_PORT", "SGLANG_ONE_VISIBLE_DEVICE_PER_PROCESS",
-    "SGLANG_DISTRIBUTED_INIT_METHOD_OVERRIDE",
-    "SGLANG_FORCE_SHUTDOWN", "SGLANG_OTLP_EXPORTER_SCHEDULE_DELAY_MILLIS",
 ]
 
 _UI_ADVANCED = [
-    "SGLANG_LOG_MS", "SGLANG_LOG_FORWARD_ITERS",
-    "SGLANG_LOG_REQUEST_HEADERS", "SGLANG_LOG_SCHEDULER_STATUS_TARGET",
-    "SGLANG_LOG_SCHEDULER_STATUS_INTERVAL",
-    "SGLANG_DISAGGREGATION_THREAD_POOL_SIZE", "SGLANG_DISAGGREGATION_QUEUE_SIZE",
+    "SGLANG_DISAGGREGATION_THREAD_POOL_SIZE",
+    "SGLANG_DISAGGREGATION_QUEUE_SIZE",
     "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT",
-    "SGLANG_ENCODER_GRPC_TIMEOUT_SECS", "SGLANG_ENCODER_MM_RECEIVER_MODE",
-    "SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION",
-    "SGLANG_USE_MESSAGE_QUEUE_BROADCASTER",
-    "SGLANG_HICACHE_FILE_BACKEND_STORAGE_DIR",
+    "SGLANG_DISAGG_STAGING_BUFFER",
+    "SGLANG_DISAGG_STAGING_BUFFER_SIZE_MB",
+    "SGLANG_PREFILL_DELAYER_MAX_DELAY_PASSES",
+    "SGLANG_PREFILL_DELAYER_TOKEN_USAGE_LOW_WATERMARK",
     "SGLANG_HICACHE_DECODE_OFFLOAD_STRIDE",
-    "IS_H200", "SGLANG_SET_CPU_AFFINITY",
-    "SGLANG_GRAMMAR_MAX_POLL_ITERATIONS", "SGLANG_DISABLED_MODEL_ARCHS",
-    "SGLANG_RECORD_STEP_TIME", "SGLANG_GRANIAN_PARENT_PID",
+    "SGLANG_FLASHINFER_PREFILL_SPLIT_TILE_SIZE",
+    "SGLANG_FLASHINFER_DECODE_SPLIT_TILE_SIZE",
+    "SGLANG_VLM_CACHE_SIZE_MB",
+    "SGLANG_MM_FEATURE_CACHE_MB",
+    "SGLANG_FORWARD_UNKNOWN_TOOLS",
+    "SGLANG_TOOL_STRICT_LEVEL",
+    "SGLANG_LOG_MS", "SGLANG_LOG_REQUEST_HEADERS",
 ]
 
 

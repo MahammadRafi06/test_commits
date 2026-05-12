@@ -1,118 +1,60 @@
 {
   "engine": "vllm",
-  "version": "0.20.1",
+  "version": "0.19.0",
   "date": "2026-05-11",
-  "source": "introspected from vllm.envs.environment_variables",
-  "CUDA_VISIBLE_DEVICES": {
-    "category": "gpu",
+  "source": "introspected from vllm.envs.environment_variables + role UI buckets: decode",
+  "VLLM_NIXL_SIDE_CHANNEL_HOST": {
+    "category": "kv_transfer",
     "type": "str",
-    "default_value": null,
+    "default_value": "localhost",
     "value": null,
-    "description": "used to control the visible devices in the distributed setting",
-    "ui": "primary",
+    "description": "IP address used for NIXL handshake between remote agents.",
+    "ui": "advanced",
     "aic": false
   },
-  "LOCAL_RANK": {
-    "category": "gpu",
+  "VLLM_NIXL_SIDE_CHANNEL_PORT": {
+    "category": "kv_transfer",
     "type": "int",
-    "default_value": 0,
+    "default_value": 5600,
     "value": null,
-    "description": "local rank of the process in the distributed setting, used to determine the GPU device id",
-    "ui": "primary",
+    "description": "Port used for NIXL handshake between remote agents.",
+    "ui": "advanced",
     "aic": false
   },
-  "VLLM_HOST_IP": {
-    "category": "networking",
-    "type": "str",
-    "default_value": "",
+  "VLLM_MOONCAKE_BOOTSTRAP_PORT": {
+    "category": "kv_transfer",
+    "type": "int",
+    "default_value": 8998,
     "value": null,
-    "description": "used in distributed environment to determine the ip address of the current node, when the node has multiple network interfaces. If you are using multi-node inference, you should set this differently on each node.",
-    "ui": "primary",
+    "description": "Port used for Mooncake handshake between remote agents.",
+    "ui": "advanced",
     "aic": false
   },
-  "VLLM_WORKER_MULTIPROC_METHOD": {
-    "category": "engine",
-    "type": "str",
-    "default_value": "fork",
+  "VLLM_NIXL_ABORT_REQUEST_TIMEOUT": {
+    "category": "kv_transfer",
+    "type": "int",
+    "default_value": 480,
     "value": null,
-    "description": "Use dedicated multiprocess context for workers. Both spawn and fork work",
-    "ui": "primary",
-    "aic": false,
-    "choices": [
-      "spawn",
-      "fork"
-    ]
-  },
-  "VLLM_LOGGING_LEVEL": {
-    "category": "logging",
-    "type": "str",
-    "default_value": "INFO",
-    "value": null,
-    "description": "this is used for configuring the default logging level",
-    "ui": "primary",
+    "description": "Time (in seconds) after which the KV cache on the producer side is automatically cleared if no READ notification is received from the consumer. This is only applicable when using NixlConnector in a disaggregated decode-prefill setup.",
+    "ui": "advanced",
     "aic": false
   },
-  "VLLM_CONFIGURE_LOGGING": {
-    "category": "logging",
+  "VLLM_MOONCAKE_ABORT_REQUEST_TIMEOUT": {
+    "category": "kv_transfer",
+    "type": "int",
+    "default_value": 480,
+    "value": null,
+    "description": "Timeout (in seconds) for MooncakeConnector in PD disaggregated setup.",
+    "ui": "advanced",
+    "aic": false
+  },
+  "VLLM_KV_EVENTS_USE_INT_BLOCK_HASHES": {
+    "category": "kv_transfer",
     "type": "bool",
     "default_value": true,
     "value": null,
-    "description": "Logging configuration If set to 0, vllm will not configure logging If set to 1, vllm will configure logging using the default configuration or the configuration file specified by VLLM_LOGGING_CONFIG_PATH",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_CACHE_ROOT": {
-    "category": "cache",
-    "type": "str",
-    "default_value": "/home/mahammad/.cache/vllm",
-    "value": null,
-    "description": "Root directory for vLLM cache files Defaults to `~/.cache/vllm` unless `XDG_CACHE_HOME` is set",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_CONFIG_ROOT": {
-    "category": "cache",
-    "type": "str",
-    "default_value": "/home/mahammad/.config/vllm",
-    "value": null,
-    "description": "Root directory for vLLM configuration files Defaults to `~/.config/vllm` unless `XDG_CONFIG_HOME` is set Note that this not only affects how vllm finds its configuration files during runtime, but also affects how vllm installs its configuration files during **installation**.",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_API_KEY": {
-    "category": "networking",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "API key for vLLM API server",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_ALLOW_LONG_MAX_MODEL_LEN": {
-    "category": "networking",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "If the env var VLLM_ALLOW_LONG_MAX_MODEL_LEN is set, it allows the user to specify a max sequence length greater than the max length derived from the model's config.json. To enable this, set VLLM_ALLOW_LONG_MAX_MODEL_LEN=1.",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_NO_USAGE_STATS": {
-    "category": "telemetry",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_DO_NOT_TRACK": {
-    "category": "telemetry",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "primary",
+    "description": "Represent block hashes in KV cache events as 64-bit integers instead of raw bytes. Defaults to True for backward compatibility.",
+    "ui": "advanced",
     "aic": false
   },
   "VLLM_ENGINE_ITERATION_TIMEOUT_S": {
@@ -121,96 +63,6 @@
     "default_value": 60,
     "value": null,
     "description": "timeout for each iteration in the engine",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_USE_MODELSCOPE": {
-    "category": "gpu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "If true, will load models from ModelScope instead of Hugging Face Hub. note that the value is true or false, not numbers",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_TARGET_DEVICE": {
-    "category": "build",
-    "type": "str",
-    "default_value": "cuda",
-    "value": null,
-    "description": "Target device of vLLM, supporting [cuda (by default), rocm, cpu]",
-    "ui": "primary",
-    "aic": false
-  },
-  "VLLM_NCCL_SO_PATH": {
-    "category": "gpu",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Path to the NCCL library file. It is needed because nccl>=2.19 brought by PyTorch contains a bug: https://github.com/NVIDIA/nccl/issues/1234",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_SKIP_P2P_CHECK": {
-    "category": "gpu",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "We assume drivers can report p2p status correctly. If the program hangs when using custom allreduce, potantially caused by a bug in the driver (535 series), if might be helpful to set VLLM_SKIP_P2P_CHECK=0 so that vLLM can verify if p2p is actually working. See https://github.com/vllm-project/vllm/blob/a9b15c606fea67a072416ea0ea115261a2756058/vllm/distributed/device_communicators/custom_all_reduce_utils.py#L101-L108 for details. # noqa",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_USE_FLASHINFER_SAMPLER": {
-    "category": "engine",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "If set, vllm will use flashinfer sampler",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_DISABLE_LOG_LOGO": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Disable logging of vLLM logo at server startup time.",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_ALLOW_RUNTIME_LORA_UPDATING": {
-    "category": "networking",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "If set, allow loading or unloading lora adapters in runtime,",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_PP_LAYER_PARTITION": {
-    "category": "engine",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Pipeline stage partition strategy",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_ASSETS_CACHE": {
-    "category": "cache",
-    "type": "str",
-    "default_value": "/home/mahammad/.cache/vllm/assets",
-    "value": null,
-    "description": "Path to the cache for storing downloaded assets",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_ENABLE_V1_MULTIPROCESSING": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "If set, enable multiprocessing in LLM for the V1 code path.",
     "ui": "advanced",
     "aic": false
   },
@@ -223,13 +75,251 @@
     "ui": "advanced",
     "aic": false
   },
+  "VLLM_ALLOW_RUNTIME_LORA_UPDATING": {
+    "category": "networking",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "If set, allow loading or unloading lora adapters in runtime,",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_IMAGE_FETCH_TIMEOUT": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 5,
+    "value": null,
+    "description": "Timeout for fetching images when serving multimodal models Default is 5 seconds",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_VIDEO_FETCH_TIMEOUT": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 30,
+    "value": null,
+    "description": "Timeout for fetching videos when serving multimodal models Default is 30 seconds",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_AUDIO_FETCH_TIMEOUT": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 10,
+    "value": null,
+    "description": "Timeout for fetching audio when serving multimodal models Default is 10 seconds",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_MEDIA_FETCH_MAX_RETRIES": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 3,
+    "value": null,
+    "description": "Maximum number of retries for fetching media (images, audio, video) from URLs. Each retry quadruples the timeout. Default is 3.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_MEDIA_LOADING_THREAD_COUNT": {
+    "category": "multimodal",
+    "type": "int",
+    "default_value": 8,
+    "value": null,
+    "description": "Max number of workers for the thread pool handling media bytes loading. Set to 1 to disable parallel processing. Default is 8",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_LOGGING_LEVEL": {
+    "category": "logging",
+    "type": "str",
+    "default_value": "INFO",
+    "value": null,
+    "description": "this is used for configuring the default logging level",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_ENGINE_READY_TIMEOUT_S": {
+    "category": "engine",
+    "type": "int",
+    "default_value": 600,
+    "value": null,
+    "description": "Timeout in seconds for waiting for engine cores to become ready during startup. Default is 600 seconds (10 minutes).",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_HOST_IP": {
+    "category": "networking",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "used in distributed environment to determine the ip address of the current node, when the node has multiple network interfaces. If you are using multi-node inference, you should set this differently on each node.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_WORKER_MULTIPROC_METHOD": {
+    "category": "engine",
+    "type": "str",
+    "default_value": "fork",
+    "value": null,
+    "description": "Use dedicated multiprocess context for workers. Both spawn and fork work",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "spawn",
+      "fork"
+    ]
+  },
+  "VLLM_CONFIGURE_LOGGING": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "Logging configuration If set to 0, vllm will not configure logging If set to 1, vllm will configure logging using the default configuration or the configuration file specified by VLLM_LOGGING_CONFIG_PATH",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_CACHE_ROOT": {
+    "category": "cache",
+    "type": "str",
+    "default_value": "~/.cache/vllm",
+    "value": null,
+    "description": "Root directory for vLLM cache files Defaults to `~/.cache/vllm` unless `XDG_CACHE_HOME` is set",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_CONFIG_ROOT": {
+    "category": "cache",
+    "type": "str",
+    "default_value": "~/.config/vllm",
+    "value": null,
+    "description": "Root directory for vLLM configuration files Defaults to `~/.config/vllm` unless `XDG_CONFIG_HOME` is set Note that this not only affects how vllm finds its configuration files during runtime, but also affects how vllm installs its configuration files during **installation**.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_API_KEY": {
+    "category": "networking",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "API key for vLLM API server",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_ALLOW_LONG_MAX_MODEL_LEN": {
+    "category": "networking",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "If the env var VLLM_ALLOW_LONG_MAX_MODEL_LEN is set, it allows the user to specify a max sequence length greater than the max length derived from the model's config.json. To enable this, set VLLM_ALLOW_LONG_MAX_MODEL_LEN=1.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_NO_USAGE_STATS": {
+    "category": "telemetry",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_DO_NOT_TRACK": {
+    "category": "telemetry",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_USE_MODELSCOPE": {
+    "category": "gpu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "If true, will load models from ModelScope instead of Hugging Face Hub. note that the value is true or false, not numbers",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_TARGET_DEVICE": {
+    "category": "build",
+    "type": "str",
+    "default_value": "cuda",
+    "value": null,
+    "description": "Target device of vLLM, supporting [cuda (by default), rocm, cpu]",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_NCCL_SO_PATH": {
+    "category": "gpu",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Path to the NCCL library file. It is needed because nccl>=2.19 brought by PyTorch contains a bug: https://github.com/NVIDIA/nccl/issues/1234",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_SKIP_P2P_CHECK": {
+    "category": "gpu",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "We assume drivers can report p2p status correctly. If the program hangs when using custom allreduce, potantially caused by a bug in the driver (535 series), if might be helpful to set VLLM_SKIP_P2P_CHECK=0 so that vLLM can verify if p2p is actually working. See https://github.com/vllm-project/vllm/blob/a9b15c606fea67a072416ea0ea115261a2756058/vllm/distributed/device_communicators/custom_all_reduce_utils.py#L101-L108 for details. # noqa",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_USE_FLASHINFER_SAMPLER": {
+    "category": "engine",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "If set, vllm will use flashinfer sampler",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_DISABLE_LOG_LOGO": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Disable logging of vLLM logo at server startup time.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_PP_LAYER_PARTITION": {
+    "category": "engine",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Pipeline stage partition strategy",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_ASSETS_CACHE": {
+    "category": "cache",
+    "type": "str",
+    "default_value": "~/.cache/vllm/assets",
+    "value": null,
+    "description": "Path to the cache for storing downloaded assets",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_ENABLE_V1_MULTIPROCESSING": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "If set, enable multiprocessing in LLM for the V1 code path.",
+    "ui": "less_frequent",
+    "aic": false
+  },
   "VLLM_DISABLE_PYNCCL": {
     "category": "gpu",
     "type": "bool",
     "default_value": false,
     "value": null,
     "description": "Disable pynccl (using torch.distributed instead)",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_KEEP_ALIVE_ON_ENGINE_DEATH": {
@@ -238,7 +328,7 @@
     "default_value": false,
     "value": null,
     "description": "If set, the OpenAI API server will stay alive even after the underlying AsyncLLMEngine errors and stops serving requests",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_PORT": {
@@ -247,7 +337,7 @@
     "default_value": null,
     "value": null,
     "description": "used in distributed environment to manually set the communication port Note: if VLLM_PORT is set, and some code asks for multiple ports, the VLLM_PORT will be used as the first port, and the rest will be generated by incrementing the VLLM_PORT value.",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_USE_V2_MODEL_RUNNER": {
@@ -256,7 +346,7 @@
     "default_value": false,
     "value": null,
     "description": "Flag to enable v2 model runner.",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_RPC_TIMEOUT": {
@@ -265,7 +355,7 @@
     "default_value": 10000,
     "value": null,
     "description": "Time in ms for the zmq client to wait for a response from the backend server for simple data operations",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_MODEL_REDIRECT_PATH": {
@@ -274,16 +364,16 @@
     "default_value": null,
     "value": null,
     "description": "Use model_redirect to redirect the model name to a local folder. `model_redirect` can be a json file mapping the model between repo_id and local folder: {\"meta-llama/Llama-3.2-1B\": \"/tmp/Llama-3.2-1B\"} or a space separated values table file: meta-llama/Llama-3.2-1B   /tmp/Llama-3.2-1B",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_MAIN_CUDA_VERSION": {
     "category": "build",
     "type": "str",
-    "default_value": "13.0",
+    "default_value": "12.9",
     "value": null,
     "description": "Main CUDA version of vLLM. This follows PyTorch but can be overridden.",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_FLOAT32_MATMUL_PRECISION": {
@@ -292,7 +382,7 @@
     "default_value": "highest",
     "value": null,
     "description": "Controls PyTorch float32 matmul precision mode within vLLM workers. Valid options mirror torch.set_float32_matmul_precision",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false,
     "choices": [
       "highest",
@@ -306,16 +396,7 @@
     "default_value": null,
     "value": null,
     "description": "NCCL header path",
-    "ui": "advanced",
-    "aic": false
-  },
-  "VLLM_ENGINE_READY_TIMEOUT_S": {
-    "category": "engine",
-    "type": "int",
-    "default_value": 600,
-    "value": null,
-    "description": "Timeout in seconds for waiting for engine cores to become ready during startup. Default is 600 seconds (10 minutes).",
-    "ui": "advanced",
+    "ui": "less_frequent",
     "aic": false
   },
   "VLLM_BATCH_INVARIANT": {
@@ -410,24 +491,6 @@
     "default_value": 60,
     "value": null,
     "description": "Interval in seconds to log a warning message when the ring buffer is full",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "CUDA_HOME": {
-    "category": "gpu",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "path to cudatoolkit home directory, under which should be bin, include, and lib directories.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "LD_LIBRARY_PATH": {
-    "category": "gpu",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "when `VLLM_NCCL_SO_PATH` is not set, vllm will try to find the nccl library file in the locations specified by `LD_LIBRARY_PATH`",
     "ui": "less_frequent",
     "aic": false
   },
@@ -665,30 +728,12 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_CPU_ATTN_SPLIT_KV": {
-    "category": "cpu",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "(CPU backend only) whether to enable attention spilt KV.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_ZENTORCH_WEIGHT_PREPACK": {
     "category": "cpu",
     "type": "bool",
     "default_value": true,
     "value": null,
     "description": "(Zen CPU backend) eagerly prepack weights into ZenDNN blocked layout at model load time. Eliminates per-inference layout conversion overhead.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_CPU_INT4_W4A8": {
-    "category": "cpu",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "(CPU backend only) whether to use SGLang INT4 W4A8 kernels for AWQ.",
     "ui": "less_frequent",
     "aic": false
   },
@@ -724,15 +769,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_USE_RAY_V2_EXECUTOR_BACKEND": {
-    "category": "ray",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "When True and distributed_executor_backend=\"ray\", use RayExecutorV2 (MQ-based) instead of RayDistributedExecutor (compiled-graph backend). TODO (jeffreywang): Enabled by default in vLLM 0.20.0.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_ASSETS_CACHE_MODEL_CLEAN": {
     "category": "cache",
     "type": "bool",
@@ -742,84 +778,12 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_IMAGE_FETCH_TIMEOUT": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 5,
-    "value": null,
-    "description": "Timeout for fetching images when serving multimodal models Default is 5 seconds",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_VIDEO_FETCH_TIMEOUT": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 30,
-    "value": null,
-    "description": "Timeout for fetching videos when serving multimodal models Default is 30 seconds",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_AUDIO_FETCH_TIMEOUT": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 10,
-    "value": null,
-    "description": "Timeout for fetching audio when serving multimodal models Default is 10 seconds",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_MEDIA_CACHE": {
-    "category": "multimodal",
-    "type": "str",
-    "default_value": "",
-    "value": null,
-    "description": "Directory for caching media downloads (images, video, audio fetched from URLs during inference). Empty string disables caching.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_MEDIA_CACHE_MAX_SIZE_MB": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 5120,
-    "value": null,
-    "description": "Maximum cache size in MB. When exceeded, least-recently-used entries are evicted. Default is 5120 (5 GB).",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_MEDIA_CACHE_TTL_HOURS": {
-    "category": "multimodal",
-    "type": "float",
-    "default_value": 24.0,
-    "value": null,
-    "description": "Time-to-live in hours for cached media files. Entries older than this are evicted regardless of cache size. Default is 24 hours.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_MEDIA_FETCH_MAX_RETRIES": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 3,
-    "value": null,
-    "description": "Maximum number of retries for fetching media (images, audio, video) from URLs. Each retry quadruples the timeout. Default is 3.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_MEDIA_URL_ALLOW_REDIRECTS": {
     "category": "multimodal",
     "type": "bool",
     "default_value": true,
     "value": null,
     "description": "Whether to allow HTTP redirects when fetching from media URLs. Default to True",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_MEDIA_LOADING_THREAD_COUNT": {
-    "category": "multimodal",
-    "type": "int",
-    "default_value": 8,
-    "value": null,
-    "description": "Max number of workers for the thread pool handling media bytes loading. Set to 1 to disable parallel processing. Default is 8",
     "ui": "less_frequent",
     "aic": false
   },
@@ -837,7 +801,7 @@
     "type": "str",
     "default_value": "opencv",
     "value": null,
-    "description": "Backend for Video IO \u2014 selects the frame-sampling algorithm. - \"opencv\": uniform sampling. - \"opencv_dynamic\": duration-aware dynamic sampling. - \"identity\": returns raw video bytes for model processor to handle.  Custom backend implementations can be registered via `@VIDEO_LOADER_REGISTRY.register(\"my_custom_video_loader\")` and imported at runtime. If a non-existing backend is used, an AssertionError will be thrown.",
+    "description": "Backend for Video IO - \"opencv\": Default backend that uses OpenCV stream buffered backend. - \"identity\": Returns raw video bytes for model processor to handle.  Custom backend implementations can be registered via `@VIDEO_LOADER_REGISTRY.register(\"my_custom_video_loader\")` and imported at runtime. If a non-existing backend is used, an AssertionError will be thrown.",
     "ui": "less_frequent",
     "aic": false
   },
@@ -867,7 +831,7 @@
   "VLLM_XLA_CACHE_PATH": {
     "category": "cache",
     "type": "str",
-    "default_value": "/home/mahammad/.cache/vllm/xla_cache",
+    "default_value": "~/.cache/vllm/xla_cache",
     "value": null,
     "description": "Path to the XLA persistent cache directory. Only used for XLA devices such as TPUs.",
     "ui": "less_frequent",
@@ -1240,15 +1204,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_USE_LAYERNAME": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "If set to \"0\", disable LayerName opaque type for layer_name parameters in custom ops.  Defaults to enabled on torch >= 2.11.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_SERVER_DEV_MODE": {
     "category": "networking",
     "type": "bool",
@@ -1348,6 +1303,24 @@
     "ui": "less_frequent",
     "aic": false
   },
+  "VLLM_MOE_DP_CHUNK_SIZE": {
+    "category": "moe",
+    "type": "int",
+    "default_value": 256,
+    "value": null,
+    "description": "In the context of executing MoE models with Data-Parallel, Expert-Parallel and Batched All-to-All dispatch/combine kernels, VLLM_MOE_DP_CHUNK_SIZE dictates the quantum of tokens that can be dispatched from a DP rank. All DP ranks process the activations in VLLM_MOE_DP_CHUNK_SIZE units.",
+    "ui": "less_frequent",
+    "aic": false
+  },
+  "VLLM_ENABLE_MOE_DP_CHUNK": {
+    "category": "moe",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false
+  },
   "VLLM_RANDOMIZE_DP_DUMMY_INPUTS": {
     "category": "data_parallel",
     "type": "bool",
@@ -1423,42 +1396,6 @@
       "int8",
       "fp8"
     ]
-  },
-  "VLLM_HUMMING_ONLINE_QUANT_CONFIG": {
-    "category": "quantization",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "The online quantization dtype for humming kernel",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_HUMMING_INPUT_QUANT_CONFIG": {
-    "category": "quantization",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "The activation dtype config for humming kernel",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_HUMMING_USE_F16_ACCUM": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Whether to use fp16 accumulator mma",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_HUMMING_MOE_GEMM_TYPE": {
-    "category": "moe",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Whether to use indexed gemm for humming moe if 1, force use indexed gemm if 0, force use grouped gemm if None, choose better gemm type automatically",
-    "ui": "less_frequent",
-    "aic": false
   },
   "VLLM_DEEPEPLL_NVFP4_DISPATCH": {
     "category": "moe",
@@ -1672,33 +1609,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_NIXL_SIDE_CHANNEL_HOST": {
-    "category": "kv_transfer",
-    "type": "str",
-    "default_value": "localhost",
-    "value": null,
-    "description": "IP address used for NIXL handshake between remote agents.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_NIXL_SIDE_CHANNEL_PORT": {
-    "category": "kv_transfer",
-    "type": "int",
-    "default_value": 5600,
-    "value": null,
-    "description": "Port used for NIXL handshake between remote agents.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_MOONCAKE_BOOTSTRAP_PORT": {
-    "category": "kv_transfer",
-    "type": "int",
-    "default_value": 8998,
-    "value": null,
-    "description": "Port used for Mooncake handshake between remote agents.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_FLASHINFER_MOE_BACKEND": {
     "category": "flashinfer",
     "type": "str",
@@ -1794,19 +1704,6 @@
       "HND"
     ]
   },
-  "VLLM_SSM_CONV_STATE_LAYOUT": {
-    "category": "engine",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "SSM conv state layout used for Mamba models. - SD: (state_len, dim) \u2014 dim contiguous (default) - DS: (dim, state_len) \u2014 TP-sharded dim on dim1, consistent with SSM temporal state and HND KV cache layout.",
-    "ui": "less_frequent",
-    "aic": false,
-    "choices": [
-      "SD",
-      "DS"
-    ]
-  },
   "VLLM_COMPUTE_NANS_IN_LOGITS": {
     "category": "quantization",
     "type": "bool",
@@ -1822,15 +1719,6 @@
     "default_value": false,
     "value": null,
     "description": "Controls whether or not emulations are used for NVFP4 generations on machines < 100 for compressed-tensors models",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "VLLM_NIXL_ABORT_REQUEST_TIMEOUT": {
-    "category": "kv_transfer",
-    "type": "int",
-    "default_value": 480,
-    "value": null,
-    "description": "Time (in seconds) after which the KV cache on the producer side is automatically cleared if no READ notification is received from the consumer. This is only applicable when using NixlConnector in a disaggregated decode-prefill setup.",
     "ui": "less_frequent",
     "aic": false
   },
@@ -1870,15 +1758,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_MOONCAKE_ABORT_REQUEST_TIMEOUT": {
-    "category": "kv_transfer",
-    "type": "int",
-    "default_value": 480,
-    "value": null,
-    "description": "Timeout (in seconds) for MooncakeConnector in PD disaggregated setup.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_HAS_FLASHINFER_CUBIN": {
     "category": "flashinfer",
     "type": "bool",
@@ -1893,7 +1772,7 @@
     "type": "str",
     "default_value": null,
     "value": null,
-    "description": "Supported options: - \"flashinfer-cudnn\": use flashinfer cudnn GEMM backend - \"flashinfer-trtllm\": use flashinfer trtllm GEMM backend - \"flashinfer-cutlass\": use flashinfer cutlass GEMM backend - \"marlin\": use marlin GEMM backend (for GPUs without native FP4 support) - \"emulation\": use BF16/FP16 GEMM, dequantizing weights and running QDQ on activations. This is only meant for research purposes to run on devices where NVFP4 GEMM kernels are not available. - <none>: automatically pick an available backend",
+    "description": "Supported options: - \"flashinfer-cudnn\": use flashinfer cudnn GEMM backend - \"flashinfer-trtllm\": use flashinfer trtllm GEMM backend - \"flashinfer-cutlass\": use flashinfer cutlass GEMM backend - \"marlin\": use marlin GEMM backend (for GPUs without native FP4 support) - <none>: automatically pick an available backend",
     "ui": "less_frequent",
     "aic": false,
     "choices": [
@@ -1901,8 +1780,7 @@
       "flashinfer-trtllm",
       "flashinfer-cutlass",
       "cutlass",
-      "marlin",
-      "emulation"
+      "marlin"
     ]
   },
   "VLLM_ENABLE_CUDAGRAPH_GC": {
@@ -2049,19 +1927,10 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_KV_EVENTS_USE_INT_BLOCK_HASHES": {
-    "category": "kv_transfer",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "Represent block hashes in KV cache events as 64-bit integers instead of raw bytes. Defaults to True for backward compatibility.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_OBJECT_STORAGE_SHM_BUFFER_NAME": {
     "category": "engine",
     "type": "str",
-    "default_value": "VLLM_OBJECT_STORAGE_SHM_BUFFER_a0e76a040d5d47ac9367ff0d43e3d14f",
+    "default_value": "VLLM_OBJECT_STORAGE_SHM_BUFFER_f164478fe92a455582606ce017c8b32c",
     "value": null,
     "description": "Name of the shared memory buffer used for object storage. Only effective when mm_config.mm_processor_cache_type == \"shm\". Automatically generates a unique UUID-based name per process tree if not explicitly set.",
     "ui": "less_frequent",
@@ -2175,15 +2044,6 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_MULTI_STREAM_GEMM_TOKEN_THRESHOLD": {
-    "category": "engine",
-    "type": "int",
-    "default_value": 1024,
-    "value": null,
-    "description": "Token-count cutoff for multi-stream overlap of the attention input GEMM with auxiliary GEMMs (e.g. fused_wqa_wkv overlapped with indexer weights / kv-score projections in DeepSeek-V4). At or below this many tokens the FP8 main GEMM has idle SMs to share with the bf16 aux GEMMs and overlap is a 5-45% win; above it the FP8 GEMM saturates the device and the cross-stream sync becomes pure overhead. Set to 0 to disable the multi-stream path entirely. See #PR 41526 for the empirical result for the default value of 1024 tokens.",
-    "ui": "less_frequent",
-    "aic": false
-  },
   "VLLM_COMPILE_CACHE_SAVE_FORMAT": {
     "category": "cache",
     "type": "str",
@@ -2281,9 +2141,9 @@
   "VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS": {
     "category": "profiling",
     "type": "bool",
-    "default_value": true,
+    "default_value": false,
     "value": null,
-    "description": "If set to 1, enable CUDA graph memory estimation during memory profiling. This profiles CUDA graph memory usage to provide more accurate KV cache memory allocation. Enabled by default as of v0.21.0",
+    "description": "If set to 1, enable CUDA graph memory estimation during memory profiling. This profiles CUDA graph memory usage to provide more accurate KV cache memory allocation. Disabled by default to preserve existing behavior.",
     "ui": "less_frequent",
     "aic": false
   },
@@ -2314,13 +2174,40 @@
     "ui": "less_frequent",
     "aic": false
   },
-  "VLLM_LORA_ENABLE_DUAL_STREAM": {
-    "category": "lora",
-    "type": "bool",
-    "default_value": false,
+  "CUDA_VISIBLE_DEVICES": {
+    "category": "gpu",
+    "type": "str",
+    "default_value": null,
     "value": null,
-    "description": "Whether to enable dual cuda streams for LoRA computation",
+    "description": "used to control the visible devices in the distributed setting",
     "ui": "less_frequent",
-    "aic": false
+    "aic": true
+  },
+  "LOCAL_RANK": {
+    "category": "gpu",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "local rank of the process in the distributed setting, used to determine the GPU device id",
+    "ui": "less_frequent",
+    "aic": true
+  },
+  "CUDA_HOME": {
+    "category": "gpu",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "path to cudatoolkit home directory, under which should be bin, include, and lib directories.",
+    "ui": "less_frequent",
+    "aic": true
+  },
+  "LD_LIBRARY_PATH": {
+    "category": "gpu",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "when `VLLM_NCCL_SO_PATH` is not set, vllm will try to find the nccl library file in the locations specified by `LD_LIBRARY_PATH`",
+    "ui": "less_frequent",
+    "aic": true
   }
 }

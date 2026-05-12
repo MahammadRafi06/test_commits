@@ -13,6 +13,7 @@ Requirements:
 import argparse
 import inspect
 import json
+import os
 import re
 import sys
 from datetime import date
@@ -157,6 +158,22 @@ def _categorise(name: str) -> str:
     return "general"
 
 
+def _normalise_user_path(val: Any) -> Any:
+    """Avoid baking the generator machine's home directory into JSON."""
+    if isinstance(val, str):
+        try:
+            home = str(Path.home())
+        except Exception:
+            home = ""
+        if home and (val == home or val.startswith(home + os.sep)):
+            return "~" + val[len(home):]
+    if isinstance(val, list):
+        return [_normalise_user_path(v) for v in val]
+    if isinstance(val, tuple):
+        return [_normalise_user_path(v) for v in val]
+    return val
+
+
 # ---------------------------------------------------------------------------
 # Parse source to extract per-variable comments and choices
 # ---------------------------------------------------------------------------
@@ -257,7 +274,6 @@ def _get_default(name: str) -> Any:
         return None, "value"
 
     # Temporarily clear the var so we get the hardcoded default, not a live value
-    import os
     old = os.environ.pop(name, None)
     try:
         val = fn()
@@ -279,7 +295,7 @@ def _get_default(name: str) -> Any:
     else:
         type_label = "str"
 
-    return val, type_label
+    return _normalise_user_path(val), type_label
 
 
 # ---------------------------------------------------------------------------
@@ -290,27 +306,17 @@ def _get_default(name: str) -> Any:
 # advanced  → collapsible "Advanced" section (max 20)
 # everything else → "less_frequent" (search / show-all only)
 _UI_PRIMARY = [
-    "CUDA_VISIBLE_DEVICES", "LOCAL_RANK",
-    "VLLM_HOST_IP", "VLLM_WORKER_MULTIPROC_METHOD",
-    "VLLM_LOGGING_LEVEL", "VLLM_CONFIGURE_LOGGING",
-    "VLLM_CACHE_ROOT", "VLLM_CONFIG_ROOT",
-    "VLLM_API_KEY", "VLLM_ALLOW_LONG_MAX_MODEL_LEN",
-    "VLLM_NO_USAGE_STATS", "VLLM_DO_NOT_TRACK",
-    "VLLM_ENGINE_ITERATION_TIMEOUT_S", "VLLM_USE_MODELSCOPE",
-    "VLLM_TARGET_DEVICE",
 ]
 
 _UI_ADVANCED = [
-    "VLLM_NCCL_SO_PATH", "VLLM_SKIP_P2P_CHECK",
-    "VLLM_USE_FLASHINFER_SAMPLER", "VLLM_DISABLE_LOG_LOGO",
-    "VLLM_ALLOW_RUNTIME_LORA_UPDATING", "VLLM_PP_LAYER_PARTITION",
-    "VLLM_ASSETS_CACHE", "VLLM_ENABLE_V1_MULTIPROCESSING",
-    "VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS", "VLLM_DISABLE_PYNCCL",
-    "VLLM_KEEP_ALIVE_ON_ENGINE_DEATH", "VLLM_PORT",
-    "VLLM_USE_V2_MODEL_RUNNER", "VLLM_RPC_TIMEOUT",
-    "VLLM_MODEL_REDIRECT_PATH", "VLLM_MAIN_CUDA_VERSION",
-    "VLLM_FLOAT32_MATMUL_PRECISION", "VLLM_USE_RAY_COMPILED_DAG",
-    "VLLM_NCCL_INCLUDE_PATH", "VLLM_ENGINE_READY_TIMEOUT_S",
+    "VLLM_ALLOW_RUNTIME_LORA_UPDATING",
+    "VLLM_IMAGE_FETCH_TIMEOUT", "VLLM_VIDEO_FETCH_TIMEOUT",
+    "VLLM_AUDIO_FETCH_TIMEOUT", "VLLM_MEDIA_FETCH_MAX_RETRIES",
+    "VLLM_MEDIA_LOADING_THREAD_COUNT",
+    "VLLM_NIXL_SIDE_CHANNEL_HOST", "VLLM_NIXL_SIDE_CHANNEL_PORT",
+    "VLLM_MOONCAKE_BOOTSTRAP_PORT", "VLLM_KV_EVENTS_USE_INT_BLOCK_HASHES",
+    "VLLM_LOGGING_LEVEL", "VLLM_ENGINE_READY_TIMEOUT_S",
+    "VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS",
 ]
 
 

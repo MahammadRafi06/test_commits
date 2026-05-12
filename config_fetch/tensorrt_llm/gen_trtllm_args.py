@@ -17,6 +17,7 @@ import argparse
 import json
 import re
 import sys
+import types
 from datetime import date
 from pathlib import Path
 from typing import Annotated, Any, Literal, Union, get_args, get_origin
@@ -120,7 +121,7 @@ def _click_param_to_record(param: click.Parameter) -> dict:
         }
 
     # click.Option
-    opts: list[str] = list(param.opts)
+    opts: list[str] = list(param.opts) + list(getattr(param, "secondary_opts", ()))
     raw_help = param.help or ""
     description = _strip_tag(raw_help)
     status = _extract_status(raw_help)
@@ -193,7 +194,7 @@ def _core_type(annotation: Any) -> Any:
     """Unwrap Annotated[...] and Optional[X] to reach the core type."""
     if get_origin(annotation) is Annotated:
         annotation = get_args(annotation)[0]
-    if get_origin(annotation) is Union:
+    if get_origin(annotation) in (Union, types.UnionType):
         non_none = [a for a in get_args(annotation) if a is not type(None)]
         if len(non_none) == 1:
             annotation = non_none[0]
@@ -238,7 +239,7 @@ def _annotation_to_type(annotation: Any) -> str:
     return "str"
 
 
-def _pydantic_field_to_record(field_info: Any) -> dict:
+def _pydantic_field_to_record(name: str, field_info: Any) -> dict:
     core = _core_type(field_info.annotation)
 
     # Choices from Literal
@@ -268,6 +269,11 @@ def _pydantic_field_to_record(field_info: Any) -> dict:
 
     rec: dict[str, Any] = {
         "type": type_label,
+        # Pydantic-only fields are not direct Click flags; they are config
+        # keys accepted through the LLM API/config path.
+        "flag": False,
+        "arg": name,
+        "config_key": name,
         "default_value": _serialise(default),
         "value": None,
         "description": field_info.description or "",
@@ -287,25 +293,18 @@ def _pydantic_field_to_record(field_info: Any) -> dict:
 # advanced  → collapsible "Advanced" section (max 20)
 # everything else → "less_frequent" (search / show-all only)
 _UI_PRIMARY = [
-    "model", "dtype", "tp_size", "pp_size",
-    "max_beam_width", "host", "port",
-    "served_model_name", "api_key",
-    "max_batch_size", "max_num_tokens",
-    "kv_cache_free_gpu_memory_fraction",
-    "trust_remote_code", "quantization", "backend",
+    "backend",
+    "enable_lora",
+    "lora_config",
 ]
 
 _UI_ADVANCED = [
-    "kv_cache_type", "enable_chunked_context",
-    "multi_block_mode", "tokenizer",
-    "speculative_decoding_mode", "num_draft_tokens",
-    "lora_dir", "max_lora_rank",
-    "max_seq_len", "enable_prefix_caching",
-    "request_timeout", "max_queue_size",
-    "executor_type", "scheduling_policy",
-    "num_postprocess_workers", "batching_type",
-    "enable_kv_cache_reuse", "max_tokens_in_paged_kv_cache",
-    "enable_streaming", "pipeline_parallel_size",
+    "server_role", "disagg_cluster_uri",
+    "kv_connector_config", "cache_transceiver_config", "kv_cache_config",
+    "guided_decoding_backend", "reasoning_parser", "tool_parser",
+    "custom_tokenizer", "media_io_kwargs", "video_pruning_rate",
+    "speculative_config", "batching_type",
+    "scheduler_config", "decoding_config",
 ]
 
 
@@ -314,6 +313,29 @@ _UI_ADVANCED = [
 # ---------------------------------------------------------------------------
 def build_json() -> dict:
     args: dict[str, dict] = {}
+
+    def add_pydantic_field(name: str, fi: Any, module: str, config_class: str) -> None:
+        record = _pydantic_field_to_record(name, fi)
+        record["module"] = module
+        record["config_class"] = config_class
+        record["ui"] = False
+        record["aic"] = False
+
+        if name not in args:
+            args[name] = record
+            return
+
+        # The Click command is the executable CLI surface. Preserve its
+        # flag/arg shape when a Pydantic config field has the same name, while
+        # retaining useful Pydantic metadata for downstream consumers.
+        existing = args[name]
+        existing["pydantic_module"] = module
+        existing["pydantic_config_class"] = config_class
+        existing["config_key"] = name
+        if not existing.get("description") and record.get("description"):
+            existing["description"] = record["description"]
+        if "choices" not in existing and "choices" in record:
+            existing["choices"] = record["choices"]
 
     # 1. trtllm-serve Click CLI params
     for param in _serve_cmd.params:
@@ -327,32 +349,17 @@ def build_json() -> dict:
     # 2. BaseLlmArgs — fields common to all backends
     base_names: set[str] = set(BaseLlmArgs.model_fields)
     for name, fi in BaseLlmArgs.model_fields.items():
-        record = _pydantic_field_to_record(fi)
-        record["module"] = "base"
-        record["config_class"] = "BaseLlmArgs"
-        record["ui"] = False
-        record["aic"] = False
-        args[name] = record
+        add_pydantic_field(name, fi, "base", "BaseLlmArgs")
 
     # 3. TrtLlmArgs — TensorRT-backend-only fields
     for name, fi in TrtLlmArgs.model_fields.items():
         if name not in base_names:
-            record = _pydantic_field_to_record(fi)
-            record["module"] = "tensorrt"
-            record["config_class"] = "TrtLlmArgs"
-            record["ui"] = False
-            record["aic"] = False
-            args[name] = record
+            add_pydantic_field(name, fi, "tensorrt", "TrtLlmArgs")
 
     # 4. TorchLlmArgs — PyTorch-backend-only fields
     for name, fi in TorchLlmArgs.model_fields.items():
         if name not in base_names:
-            record = _pydantic_field_to_record(fi)
-            record["module"] = "pytorch"
-            record["config_class"] = "TorchLlmArgs"
-            record["ui"] = False
-            record["aic"] = False
-            args[name] = record
+            add_pydantic_field(name, fi, "pytorch", "TorchLlmArgs")
 
     ordered = {}
     for k in _UI_PRIMARY:
