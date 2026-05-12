@@ -24,40 +24,6 @@ from typing import Any
 _ENV_RE = re.compile(r"\benv var:\s*([A-Z][A-Z0-9_]*)\b", re.IGNORECASE)
 _DEPRECATED_RE = re.compile(r"\bdeprecating flag:\s*(--[A-Za-z0-9][\w-]*)")
 
-_WRAPPER_UI: dict[str, dict[str, set[str]]] = {
-    "vllm": {
-        "primary": set(),
-        "advanced": {
-            "dyn_tool_call_parser",
-            "dyn_reasoning_parser",
-        },
-    },
-    "sglang": {
-        "primary": {
-            "embedding_worker",
-            "multimodal_encode_worker",
-            "multimodal_worker",
-        },
-        "advanced": {
-            "dyn_tool_call_parser",
-            "dyn_reasoning_parser",
-            "custom_jinja_template",
-            "image_diffusion_worker",
-            "video_generation_worker",
-            "disagg_config",
-            "disagg_config_key",
-        },
-    },
-    "tensorrt_llm": {
-        "primary": set(),
-        "advanced": {
-            "server_role",
-            "disagg_cluster_uri",
-            "kv_connector_config",
-        },
-    },
-}
-
 
 def _serialise(value: Any, _depth: int = 0) -> Any:
     if value is None or isinstance(value, (bool, int, float, str)):
@@ -158,17 +124,25 @@ def _canonical_option(action: argparse.Action) -> str:
 
 
 def _group_to_module(title: str) -> str:
-    lower = title.lower()
-    if "runtime" in lower:
+    key = re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
+    if key.startswith("dynamo_"):
+        key = key[len("dynamo_"):]
+    for suffix in ("_options", "_args", "_arguments"):
+        if key.endswith(suffix):
+            key = key[: -len(suffix)]
+
+    key = {
+        "trt_llm": "trtllm",
+        "tensorrt_llm": "trtllm",
+        "tensorrtllm": "trtllm",
+    }.get(key, key)
+
+    if key in {"options", "args", "arguments"}:
+        return "dynamo"
+    if key == "runtime":
         return "dynamo_runtime"
-    if "vllm" in lower:
-        return "dynamo_vllm"
-    if "sglang" in lower:
-        return "dynamo_sglang"
-    if "trt" in lower:
-        return "dynamo_trtllm"
-    if "diffusion" in lower:
-        return "dynamo_trtllm_diffusion"
+    if key:
+        return f"dynamo_{key}"
     return "dynamo"
 
 
@@ -244,15 +218,6 @@ def _action_to_record(action: argparse.Action, module: str, title: str) -> dict[
     return record
 
 
-def _ui_for(engine: str, key: str) -> str:
-    rules = _WRAPPER_UI.get(engine, {})
-    if key in rules.get("primary", set()):
-        return "primary"
-    if key in rules.get("advanced", set()):
-        return "advanced"
-    return "less_frequent"
-
-
 def _build_parser(engine: str) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         add_help=False,
@@ -297,9 +262,7 @@ def build_json(engine: str) -> dict[str, Any]:
                 continue
             if not action.option_strings:
                 continue
-            record = _action_to_record(action, module, title)
-            record["ui"] = _ui_for(engine, action.dest)
-            records[action.dest] = record
+            records[action.dest] = _action_to_record(action, module, title)
 
     return {
         "engine": engine,
