@@ -1,8 +1,8 @@
 {
   "engine": "tensorrt_llm",
   "version": "1.3.0rc13",
-  "date": "2026-05-11",
-  "source": "source-scanned from tensorrt_llm package (os.getenv + StrEnum patterns)",
+  "date": "2026-05-12",
+  "source": "source-scanned from tensorrt_llm package (os.getenv + StrEnum patterns) + Dynamo backend ArgGroups",
   "TRTLLM_DISAGG_ROLE": {
     "category": "serve",
     "type": "str",
@@ -10,7 +10,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disagg Role"
   },
   "TRTLLM_DISAGG_DEPLOYMENT_ID": {
     "category": "serve",
@@ -19,7 +20,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disagg Deployment Id"
   },
   "TLLM_DISAGG_INSTANCE_IDX": {
     "category": "serve",
@@ -28,7 +30,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Disagg Instance Idx"
   },
   "TLLM_DISAGG_RUN_REMOTE_MPI_SESSION_CLIENT": {
     "category": "serve",
@@ -37,7 +40,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Disagg Run Remote Mpi Session Client"
   },
   "TRTLLM_DISABLE_KV_CACHE_TRANSFER_OVERLAP": {
     "category": "pytorch_backend",
@@ -46,7 +50,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disable KV Cache Transfer Overlap"
   },
   "TRTLLM_KV_TRANSFER_NUM_THREADS": {
     "category": "pytorch_backend",
@@ -55,7 +60,8 @@
     "value": null,
     "description": "Number of worker threads for KV transfer queues (default: 1)",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm KV Transfer Num Threads"
   },
   "TRTLLM_NIXL_NUM_THREADS": {
     "category": "pytorch_backend",
@@ -64,7 +70,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm NIXL Num Threads"
   },
   "TRTLLM_USE_PY_NIXL_KVCACHE": {
     "category": "pytorch_backend",
@@ -73,7 +80,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Use Py NIXL Kvcache"
   },
   "TLLM_MULTIMODAL_DISAGGREGATED": {
     "category": "pytorch_backend",
@@ -82,7 +90,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Multimodal Disaggregated"
   },
   "TRTLLM_ENABLE_PYAV": {
     "category": "general",
@@ -91,7 +100,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Enable Pyav"
   },
   "TRTLLM_MEDIA_STORAGE_PATH": {
     "category": "server",
@@ -100,7 +110,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Media Storage Path"
   },
   "TRTLLM_NO_USAGE_STATS": {
     "category": "general",
@@ -109,16 +120,1138 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm No Usage Stats"
   },
-  "TRTLLM_ENABLE_PDL": {
-    "category": "pytorch_backend",
+  "DYN_NAMESPACE": {
+    "category": "dynamo_runtime",
     "type": "str",
-    "default_value": "1",
+    "default_value": "dynamo",
+    "value": null,
+    "description": "Dynamo namespace. If DYN_NAMESPACE_WORKER_SUFFIX is set, '-{suffix}' is appended to support multiple worker pools",
+    "arg": "--namespace",
+    "arg_key": "namespace",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Namespace"
+  },
+  "DYN_ENDPOINT": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Dynamo endpoint string in 'dyn://namespace.component.endpoint' format. Example: dyn://dynamo.backend.generate.",
+    "arg": "--endpoint",
+    "arg_key": "endpoint",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Endpoint"
+  },
+  "DYN_DISCOVERY_BACKEND": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "etcd",
+    "value": null,
+    "description": "Discovery backend: kubernetes (K8s API), etcd (distributed KV), file (local filesystem), mem (in-memory). Etcd uses the ETCD_* env vars (e.g. ETCD_ENDPOINTS) for connection details. File uses root dir from env var DYN_FILE_KV or defaults to $TMPDIR/dynamo_store_kv.",
+    "arg": "--discovery-backend",
+    "arg_key": "discovery_backend",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "kubernetes",
+      "etcd",
+      "file",
+      "mem"
+    ],
+    "display_name": "Dyn Discovery Backend"
+  },
+  "DYN_REQUEST_PLANE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "tcp",
+    "value": null,
+    "description": "Determines how requests are distributed from routers to workers. 'tcp' is fastest.",
+    "arg": "--request-plane",
+    "arg_key": "request_plane",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "tcp",
+      "nats",
+      "http"
+    ],
+    "display_name": "Dyn Request Plane"
+  },
+  "DYN_EVENT_PLANE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "nats",
+    "value": null,
+    "description": "Determines how events are published.",
+    "arg": "--event-plane",
+    "arg_key": "event_plane",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "nats",
+      "zmq"
+    ],
+    "display_name": "Dyn Event Plane"
+  },
+  "DYN_CONNECTOR": {
+    "category": "dynamo_runtime",
+    "type": "List[str]",
+    "default_value": [],
+    "value": null,
+    "description": "[Deprecated for vLLM] Use --kv-transfer-config instead. For TRT-LLM, options: nixl, lmcache, kvbm, null, none.",
+    "arg": "--connector",
+    "arg_key": "connector",
+    "ui": "less_frequent",
+    "aic": false,
+    "multiple": true,
+    "display_name": "Dyn Connector"
+  },
+  "DYN_DURABLE_KV_EVENTS": {
+    "category": "dynamo_runtime",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "[Deprecated] Enable durable KV events using NATS JetStream instead of the local indexer. This option will be removed in a future release. The event-plane subscriber (local_indexer mode) is now the recommended path.",
+    "true_arg": "--durable-kv-events",
+    "false_arg": "--no-durable-kv-events",
+    "arg_key": "durable_kv_events",
+    "ui": "less_frequent",
+    "aic": false,
+    "status": "deprecated",
+    "display_name": "Dyn Durable KV Events"
+  },
+  "DYN_TOOL_CALL_PARSER": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Tool call parser name for the model.",
+    "arg": "--dyn-tool-call-parser",
+    "arg_key": "dyn_tool_call_parser",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "kimi_k2",
+      "jamba",
+      "minimax_m2",
+      "nemotron_nano",
+      "mistral",
+      "hermes",
+      "llama3_json",
+      "default",
+      "glm47",
+      "qwen3_coder",
+      "pythonic",
+      "harmony",
+      "deepseek_v3",
+      "deepseek_v3_2",
+      "deepseek_v3_1",
+      "nemotron_deci",
+      "phi4"
+    ],
+    "display_name": "Dyn Tool Call Parser"
+  },
+  "DYN_REASONING_PARSER": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Reasoning parser name for the model. If not specified, no reasoning parsing is performed.",
+    "arg": "--dyn-reasoning-parser",
+    "arg_key": "dyn_reasoning_parser",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "nemotron3",
+      "nemotron_nano",
+      "gpt_oss",
+      "minimax_append_think",
+      "mistral",
+      "kimi",
+      "granite",
+      "basic",
+      "nemotron_deci",
+      "kimi_k25",
+      "deepseek_r1",
+      "step3",
+      "qwen3",
+      "glm45"
+    ],
+    "display_name": "Dyn Reasoning Parser"
+  },
+  "DYN_EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE": {
+    "category": "dynamo_runtime",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "Exclude tool definitions from the chat template when tool_choice='none'. Prevents models from generating raw XML tool calls in the content field.",
+    "true_arg": "--exclude-tools-when-tool-choice-none",
+    "false_arg": "--no-exclude-tools-when-tool-choice-none",
+    "arg_key": "exclude_tools_when_tool_choice_none",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Exclude Tools When Tool Choice None"
+  },
+  "DYN_CUSTOM_JINJA_TEMPLATE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Path to a custom Jinja template file to override the model's default chat template. This template will take precedence over any template found in the model repository.",
+    "arg": "--custom-jinja-template",
+    "arg_key": "custom_jinja_template",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Custom Jinja Template"
+  },
+  "DYN_ENDPOINT_TYPES": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "chat,completions",
+    "value": null,
+    "description": "Comma-separated list of endpoint types to enable. Options: 'chat', 'completions'. Use 'completions' for models without chat templates.",
+    "arg": "--endpoint-types",
+    "arg_key": "endpoint_types",
+    "ui": "less_frequent",
+    "aic": false,
+    "deprecated_alias": "--dyn-endpoint-types",
+    "display_name": "Dyn Endpoint Types"
+  },
+  "DYN_DUMP_CONFIG_TO": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Dump resolved configuration to the specified file path.",
+    "arg": "--dump-config-to",
+    "arg_key": "dump_config_to",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Dump Config To"
+  },
+  "DYN_MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB": {
+    "category": "dynamo_runtime",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "Capacity of the multimodal embedding cache in GB. 0 = disabled.",
+    "arg": "--multimodal-embedding-cache-capacity-gb",
+    "arg_key": "multimodal_embedding_cache_capacity_gb",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Multimodal Embedding Cache Capacity Gb"
+  },
+  "DYN_OUTPUT_MODALITIES": {
+    "category": "dynamo_runtime",
+    "type": "List[str]",
+    "default_value": [
+      "text"
+    ],
+    "value": null,
+    "description": "Output modalities for omni/diffusion mode (e.g., --output-modalities text image audio video).",
+    "arg": "--output-modalities",
+    "arg_key": "output_modalities",
+    "ui": "less_frequent",
+    "aic": false,
+    "multiple": true,
+    "display_name": "Dyn Output Modalities"
+  },
+  "DYN_MEDIA_OUTPUT_FS_URL": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "file:///tmp/dynamo_media",
+    "value": null,
+    "description": "Filesystem URL for storing generated images and videos (e.g. file:///tmp/dynamo_media, s3://bucket/path).",
+    "arg": "--media-output-fs-url",
+    "arg_key": "media_output_fs_url",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Media Output Fs Url"
+  },
+  "DYN_MEDIA_OUTPUT_HTTP_URL": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Base URL for rewriting media file paths in responses (e.g. http://localhost:8000/media). If unset, returns raw filesystem paths.",
+    "arg": "--media-output-http-url",
+    "arg_key": "media_output_http_url",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Media Output Http Url"
+  },
+  "DYN_TRTLLM_MODEL": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "value": null,
+    "description": "Path to disk model or HuggingFace model identifier to load.",
+    "arg": "--model",
+    "arg_key": "model",
+    "ui": "less_frequent",
+    "aic": false,
+    "deprecated_alias": "--model-path",
+    "display_name": "Dyn Trtllm Model"
+  },
+  "DYN_TRTLLM_SERVED_MODEL_NAME": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Name to serve the model under. Defaults to deriving it from model path.",
+    "arg": "--served-model-name",
+    "arg_key": "served_model_name",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Served Model Name"
+  },
+  "DYN_TRTLLM_TENSOR_PARALLEL_SIZE": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Tensor parallelism size.",
+    "arg": "--tensor-parallel-size",
+    "arg_key": "tensor_parallel_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Tensor Parallel Size"
+  },
+  "DYN_TRTLLM_PIPELINE_PARALLEL_SIZE": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Pipeline parallelism size.",
+    "arg": "--pipeline-parallel-size",
+    "arg_key": "pipeline_parallel_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Pipeline Parallel Size"
+  },
+  "DYN_TRTLLM_EXPERT_PARALLEL_SIZE": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "Expert parallelism size.",
+    "arg": "--expert-parallel-size",
+    "arg_key": "expert_parallel_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Expert Parallel Size"
+  },
+  "DYN_TRTLLM_ENABLE_ATTENTION_DP": {
+    "category": "dynamo_trtllm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable attention data parallelism. When enabled, attention_dp_size equals tensor_parallel_size.",
+    "true_arg": "--enable-attention-dp",
+    "false_arg": "--no-enable-attention-dp",
+    "arg_key": "enable_attention_dp",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Enable Attention Dp"
+  },
+  "DYN_TRTLLM_KV_BLOCK_SIZE": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 32,
+    "value": null,
+    "description": "Size of a KV cache block.",
+    "arg": "--kv-block-size",
+    "arg_key": "kv_block_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm KV Block Size"
+  },
+  "DYN_TRTLLM_GPUS_PER_NODE": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "Number of GPUs per node. If not provided, inferred from the environment.",
+    "arg": "--gpus-per-node",
+    "arg_key": "gpus_per_node",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Gpus Per Node"
+  },
+  "DYN_TRTLLM_MAX_BATCH_SIZE": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 2048,
+    "value": null,
+    "description": "Maximum number of requests that the engine can schedule.",
+    "arg": "--max-batch-size",
+    "arg_key": "max_batch_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Max Batch Size"
+  },
+  "DYN_TRTLLM_MAX_NUM_TOKENS": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 8192,
+    "value": null,
+    "description": "Maximum number of batched input tokens after padding is removed in each batch.",
+    "arg": "--max-num-tokens",
+    "arg_key": "max_num_tokens",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Max Num Tokens"
+  },
+  "DYN_TRTLLM_MAX_SEQ_LEN": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "Maximum total length of one request, including prompt and outputs. If unspecified, the value is deduced from the model config.",
+    "arg": "--max-seq-len",
+    "arg_key": "max_seq_len",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Max Seq Len"
+  },
+  "DYN_TRTLLM_MAX_BEAM_WIDTH": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Maximum number of beams for beam search decoding.",
+    "arg": "--max-beam-width",
+    "arg_key": "max_beam_width",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Max Beam Width"
+  },
+  "DYN_TRTLLM_FREE_GPU_MEMORY_FRACTION": {
+    "category": "dynamo_trtllm",
+    "type": "float",
+    "default_value": 0.9,
+    "value": null,
+    "description": "Free GPU memory fraction reserved for KV Cache,  after model weights and buffers are allocated.",
+    "arg": "--free-gpu-memory-fraction",
+    "arg_key": "free_gpu_memory_fraction",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Free GPU Memory Fraction"
+  },
+  "DYN_TRTLLM_EXTRA_ENGINE_ARGS": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "Path to a YAML file containing additional keyword arguments to pass to the TRTLLM engine.",
+    "arg": "--extra-engine-args",
+    "arg_key": "extra_engine_args",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Extra Engine Args"
+  },
+  "DYN_TRTLLM_OVERRIDE_ENGINE_ARGS": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "Python dictionary string to override specific engine arguments from the YAML file. Example: '{\"tensor_parallel_size\": 2, \"kv_cache_config\": {\"enable_block_reuse\": false}}'",
+    "arg": "--override-engine-args",
+    "arg_key": "override_engine_args",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Override Engine Args"
+  },
+  "DYN_TRTLLM_PUBLISH_EVENTS_AND_METRICS": {
+    "category": "dynamo_trtllm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "If set, publish events and metrics to Dynamo components.",
+    "true_arg": "--publish-events-and-metrics",
+    "false_arg": "--no-publish-events-and-metrics",
+    "arg_key": "publish_events_and_metrics",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Publish Events And Metrics"
+  },
+  "DYN_TRTLLM_LOAD_FORMAT": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "auto",
+    "value": null,
+    "description": "Model weight loading format passed to TensorRT-LLM (e.g. 'auto', 'gms').",
+    "arg": "--load-format",
+    "arg_key": "load_format",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Load Format"
+  },
+  "DYN_TRTLLM_MODEL_LOADER_EXTRA_CONFIG": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "JSON object passed as extra config to the model loader (e.g. '{\"gms_read_only\": true}').",
+    "arg": "--model-loader-extra-config",
+    "arg_key": "model_loader_extra_config",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Model Loader Extra Config"
+  },
+  "DYN_TRTLLM_DISAGGREGATION_MODE": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "prefill_and_decode",
+    "value": null,
+    "description": "Mode to use for disaggregation.",
+    "arg": "--disaggregation-mode",
+    "arg_key": "disaggregation_mode",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "prefill_and_decode",
+      "prefill",
+      "decode",
+      "encode"
+    ],
+    "display_name": "Dyn Trtllm Disaggregation Mode"
+  },
+  "DYN_TRTLLM_MODALITY": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "text",
+    "value": null,
+    "description": "Modality to use for the model.",
+    "arg": "--modality",
+    "arg_key": "modality",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "text",
+      "multimodal",
+      "video_diffusion"
+    ],
+    "display_name": "Dyn Trtllm Modality"
+  },
+  "DYN_TRTLLM_ENCODE_ENDPOINT": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "Endpoint (in 'dyn://namespace.component.endpoint' format) for the encode worker.",
+    "arg": "--encode-endpoint",
+    "arg_key": "encode_endpoint",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Encode Endpoint"
+  },
+  "DYN_TRTLLM_ALLOWED_LOCAL_MEDIA_PATH": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "Path to a directory that is allowed to be accessed by the model.",
+    "arg": "--allowed-local-media-path",
+    "arg_key": "allowed_local_media_path",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Allowed Local Media Path"
+  },
+  "DYN_TRTLLM_MAX_FILE_SIZE_MB": {
+    "category": "dynamo_trtllm",
+    "type": "int",
+    "default_value": 50,
+    "value": null,
+    "description": "Maximum size of downloadable embedding files/Image URLs.",
+    "arg": "--max-file-size-mb",
+    "arg_key": "max_file_size_mb",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Max File Size Mb"
+  },
+  "DYN_TRTLLM_FRONTEND_DECODING": {
+    "category": "dynamo_trtllm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable frontend decoding of multimodal images. When enabled, images are decoded in the Rust frontend and transferred to the backend via NIXL RDMA. Without this flag, images are decoded in the Python backend (default behavior).",
+    "true_arg": "--frontend-decoding",
+    "false_arg": "--no-frontend-decoding",
+    "arg_key": "frontend_decoding",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Frontend Decoding"
+  },
+  "DYN_TRTLLM_GUIDED_DECODING_BACKEND": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Backend to use for guided decoding (structured output). Options: xgrammar, llguidance.",
+    "arg": "--guided-decoding-backend",
+    "arg_key": "guided_decoding_backend",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "xgrammar",
+      "llguidance"
+    ],
+    "display_name": "Dyn Trtllm Guided Decoding Backend"
+  },
+  "DYN_TRTLLM_DEFAULT_HEIGHT": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 480,
+    "value": null,
+    "description": "Default video/image height in pixels.",
+    "arg": "--default-height",
+    "arg_key": "default_height",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Default Height"
+  },
+  "DYN_TRTLLM_DEFAULT_WIDTH": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 832,
+    "value": null,
+    "description": "Default video/image width in pixels.",
+    "arg": "--default-width",
+    "arg_key": "default_width",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Default Width"
+  },
+  "DYN_TRTLLM_DEFAULT_NUM_FRAMES": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 81,
+    "value": null,
+    "description": "Default number of frames for video generation.",
+    "arg": "--default-num-frames",
+    "arg_key": "default_num_frames",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Default Num Frames"
+  },
+  "DYN_TRTLLM_DEFAULT_NUM_INFERENCE_STEPS": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 50,
+    "value": null,
+    "description": "Default number of inference steps.",
+    "arg": "--default-num-inference-steps",
+    "arg_key": "default_num_inference_steps",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Default Num Inference Steps"
+  },
+  "DYN_TRTLLM_DEFAULT_GUIDANCE_SCALE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "float",
+    "default_value": 5.0,
+    "value": null,
+    "description": "Default CFG guidance scale.",
+    "arg": "--default-guidance-scale",
+    "arg_key": "default_guidance_scale",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Default Guidance Scale"
+  },
+  "DYN_TRTLLM_TORCH_DTYPE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "str",
+    "default_value": "bfloat16",
+    "value": null,
+    "description": "Torch dtype for model loading. bfloat16 recommended for Ampere+ GPUs.",
+    "arg": "--torch-dtype",
+    "arg_key": "torch_dtype",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "bfloat16",
+      "float16",
+      "float32"
+    ],
+    "display_name": "Dyn Trtllm Torch Dtype"
+  },
+  "DYN_TRTLLM_REVISION": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "HuggingFace Hub revision (branch, tag, or commit SHA) for model download.",
+    "arg": "--revision",
+    "arg_key": "revision",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Revision"
+  },
+  "DYN_TRTLLM_ENABLE_TEACACHE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable TeaCache optimization for faster generation.",
+    "true_arg": "--enable-teacache",
+    "false_arg": "--no-enable-teacache",
+    "arg_key": "enable_teacache",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Enable Teacache"
+  },
+  "DYN_TRTLLM_TEACACHE_USE_RET_STEPS": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "Use retention steps for TeaCache.",
+    "true_arg": "--teacache-use-ret-steps",
+    "false_arg": "--no-teacache-use-ret-steps",
+    "arg_key": "teacache_use_ret_steps",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Teacache Use Ret Steps"
+  },
+  "DYN_TRTLLM_TEACACHE_THRESH": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "float",
+    "default_value": 0.2,
+    "value": null,
+    "description": "TeaCache threshold.",
+    "arg": "--teacache-thresh",
+    "arg_key": "teacache_thresh",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Teacache Thresh"
+  },
+  "DYN_TRTLLM_ATTN_BACKEND": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "str",
+    "default_value": "VANILLA",
+    "value": null,
+    "description": "Attention backend for diffusion models. VANILLA = PyTorch SDPA, TRTLLM = TensorRT-LLM kernels.",
+    "arg": "--attn-backend",
+    "arg_key": "attn_backend",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "VANILLA",
+      "TRTLLM"
+    ],
+    "display_name": "Dyn Trtllm Attn Backend"
+  },
+  "DYN_TRTLLM_QUANT_ALGO": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Quantization algorithm for diffusion models. BF16 weights are quantized on-the-fly during loading.",
+    "arg": "--quant-algo",
+    "arg_key": "quant_algo",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "FP8",
+      "FP8_BLOCK_SCALES",
+      "NVFP4",
+      "W4A16_AWQ",
+      "W4A8_AWQ",
+      "W8A8_SQ_PER_CHANNEL"
+    ],
+    "display_name": "Dyn Trtllm Quant Algo"
+  },
+  "DYN_TRTLLM_QUANT_DYNAMIC": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "Enable dynamic weight quantization (quantize BF16 weights on-the-fly during loading).",
+    "true_arg": "--quant-dynamic",
+    "false_arg": "--no-quant-dynamic",
+    "arg_key": "quant_dynamic",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Quant Dynamic"
+  },
+  "DYN_TRTLLM_DISABLE_TORCH_COMPILE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Disable torch.compile optimization.",
+    "true_arg": "--disable-torch-compile",
+    "false_arg": "--no-disable-torch-compile",
+    "arg_key": "disable_torch_compile",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Disable Torch Compile"
+  },
+  "DYN_TRTLLM_ENABLE_FULLGRAPH": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable torch.compile fullgraph mode (stricter but potentially faster).",
+    "true_arg": "--enable-fullgraph",
+    "false_arg": "--no-enable-fullgraph",
+    "arg_key": "enable_fullgraph",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Enable Fullgraph"
+  },
+  "DYN_TRTLLM_FUSE_QKV": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "Enable QKV fusion for transformer attention layers.",
+    "true_arg": "--fuse-qkv",
+    "false_arg": "--no-fuse-qkv",
+    "arg_key": "fuse_qkv",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Fuse Qkv"
+  },
+  "DYN_TRTLLM_ENABLE_CUDA_GRAPH": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable CUDA graph capture for transformer forward passes. Mutually exclusive with torch.compile.",
+    "true_arg": "--enable-cuda-graph",
+    "false_arg": "--no-enable-cuda-graph",
+    "arg_key": "enable_cuda_graph",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Enable CUDA Graph"
+  },
+  "DYN_TRTLLM_ENABLE_LAYERWISE_NVTX_MARKER": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable per-layer NVTX markers for profiling with Nsight Systems.",
+    "true_arg": "--enable-layerwise-nvtx-marker",
+    "false_arg": "--no-enable-layerwise-nvtx-marker",
+    "arg_key": "enable_layerwise_nvtx_marker",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Enable Layerwise Nvtx Marker"
+  },
+  "DYN_TRTLLM_SKIP_WARMUP": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Skip warmup inference during initialization.",
+    "true_arg": "--skip-warmup",
+    "false_arg": "--no-skip-warmup",
+    "arg_key": "skip_warmup",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Skip Warmup"
+  },
+  "DYN_TRTLLM_DIT_DP_SIZE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Data parallel size for DiT.",
+    "arg": "--dit-dp-size",
+    "arg_key": "dit_dp_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Dit Dp Size"
+  },
+  "DYN_TRTLLM_DIT_TP_SIZE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Tensor parallel size for DiT.",
+    "arg": "--dit-tp-size",
+    "arg_key": "dit_tp_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Dit TP Size"
+  },
+  "DYN_TRTLLM_DIT_ULYSSES_SIZE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Ulysses parallel size for DiT.",
+    "arg": "--dit-ulysses-size",
+    "arg_key": "dit_ulysses_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Dit Ulysses Size"
+  },
+  "DYN_TRTLLM_DIT_RING_SIZE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "Ring parallel size for DiT.",
+    "arg": "--dit-ring-size",
+    "arg_key": "dit_ring_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Dit Ring Size"
+  },
+  "DYN_TRTLLM_DIT_CFG_SIZE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "CFG parallel size for DiT.",
+    "arg": "--dit-cfg-size",
+    "arg_key": "dit_cfg_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Dit Cfg Size"
+  },
+  "DYN_TRTLLM_DIT_FSDP_SIZE": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "FSDP size for DiT.",
+    "arg": "--dit-fsdp-size",
+    "arg_key": "dit_fsdp_size",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Dit Fsdp Size"
+  },
+  "DYN_TRTLLM_ENABLE_ASYNC_CPU_OFFLOAD": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable async CPU offload for memory efficiency.",
+    "true_arg": "--enable-async-cpu-offload",
+    "false_arg": "--no-enable-async-cpu-offload",
+    "arg_key": "enable_async_cpu_offload",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Enable Async CPU Offload"
+  },
+  "DYN_TRTLLM_SKIP_COMPONENTS": {
+    "category": "dynamo_diffusion_options_experimental",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "Comma-separated list of pipeline components to skip loading. Valid values: transformer, vae, text_encoder, tokenizer, scheduler, image_encoder, image_processor.",
+    "arg": "--skip-components",
+    "arg_key": "skip_components",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Trtllm Skip Components"
+  },
+  "DYNAMO_ENABLE_TEST_LOGITS_PROCESSOR": {
+    "category": "dynamo_trtllm",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Optional test-only logits processing (enable with DYNAMO_ENABLE_TEST_LOGITS_PROCESSOR=1)",
+    "source_file": "request_handlers/handler_base.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dynamo Enable Test Logits Processor"
+  },
+  "DYN_COMPONENT": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
     "value": null,
     "description": "",
+    "source_file": "utils/snapshot.py",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Component"
+  },
+  "DYN_GRACEFUL_SHUTDOWN_GRACE_PERIOD_SECS": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/graceful_shutdown.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Graceful Shutdown Grace Period Secs"
+  },
+  "DYN_MM_ALLOW_INTERNAL": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "0",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/url_validator.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Allow Internal"
+  },
+  "DYN_MM_HTTP_CONCURRENCY": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Concurrency"
+  },
+  "DYN_MM_HTTP_CONNECT_TIMEOUT": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Connect Timeout"
+  },
+  "DYN_MM_HTTP_MAX_CONNECTIONS": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Max Connections"
+  },
+  "DYN_MM_HTTP_MAX_KEEPALIVE": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Max Keepalive"
+  },
+  "DYN_MM_HTTP_POOL_TIMEOUT": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Pool Timeout"
+  },
+  "DYN_MM_HTTP_READ_TIMEOUT": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Read Timeout"
+  },
+  "DYN_MM_IMAGE_CACHE_SIZE": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "8",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/image_loader.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Image Cache Size"
+  },
+  "DYN_MM_LOCAL_PATH": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/url_validator.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Local Path"
+  },
+  "DYN_MM_VIDEO_NUM_FRAMES": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "32",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/video_loader.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Video Num Frames"
+  },
+  "DYN_NAMESPACE_WORKER_SUFFIX": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/namespace.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Namespace Worker Suffix"
+  },
+  "DYN_NVTX": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": "0",
+    "value": null,
+    "description": "",
+    "source_file": "utils/nvtx_utils.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Nvtx"
+  },
+  "DYN_PARENT_DGD_K8S_NAME": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Parent Dgd K8s Name"
+  },
+  "DYN_PARENT_DGD_K8S_NAMESPACE": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Parent Dgd K8s Namespace"
+  },
+  "DYN_SNAPSHOT_CONTROL_DIR": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Snapshot Control Dir"
   },
   "TLLM_ALLOW_LONG_MAX_MODEL_LEN": {
     "category": "pytorch_backend",
@@ -127,7 +1260,8 @@
     "value": null,
     "description": "Allow user to override the inferred max_seq_len with a warning.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Allow Long Max Model Len"
   },
   "TLLM_ALLOW_N_GREEDY_DECODING": {
     "category": "general",
@@ -136,7 +1270,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Allow N Greedy Decoding"
   },
   "TLLM_AUTOTUNER_CACHE_PATH": {
     "category": "pytorch_backend",
@@ -145,7 +1280,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Autotuner Cache Path"
   },
   "TLLM_AUTOTUNER_DISABLE_SHORT_PROFILE": {
     "category": "pytorch_backend",
@@ -154,7 +1290,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Autotuner Disable Short Profile"
   },
   "TLLM_AUTOTUNER_LOG_LEVEL_DEBUG_TO_INFO": {
     "category": "pytorch_backend",
@@ -163,7 +1300,8 @@
     "value": null,
     "description": "Increase log level for AutoTuner associated logger`",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Autotuner Log Level Debug To Info"
   },
   "TLLM_BENCHMARK_REQ_QUEUES_SIZE": {
     "category": "pytorch_backend",
@@ -172,7 +1310,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Benchmark Req Queues Size"
   },
   "TLLM_DISABLE_ALLREDUCE_AUTOTUNE": {
     "category": "pytorch_backend",
@@ -181,7 +1320,8 @@
     "value": null,
     "description": "In case that AutoTuner brings potential perf regression TODO: Remove this if no perf regression is observed.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Disable Allreduce Autotune"
   },
   "TLLM_DISABLE_MPI": {
     "category": "pytorch_backend",
@@ -190,7 +1330,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Disable Mpi"
   },
   "TLLM_ENABLE_CACHE_TRANSFER_PERF_INFO": {
     "category": "pytorch_backend",
@@ -199,7 +1340,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Enable Cache Transfer Perf Info"
   },
   "TLLM_INCREMENTAL_DETOKENIZATION_BACKEND": {
     "category": "general",
@@ -208,7 +1350,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Incremental Detokenization Backend"
   },
   "TLLM_KV_CACHE_MANAGER_V2_DEBUG": {
     "category": "runtime",
@@ -217,7 +1360,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm KV Cache Manager V2 Debug"
   },
   "TLLM_KV_TRANSFER_PERF_LOG_FILE": {
     "category": "pytorch_backend",
@@ -226,7 +1370,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm KV Transfer Perf Log File"
   },
   "TLLM_LINE_PROFILER_PATH": {
     "category": "pytorch_backend",
@@ -235,7 +1380,8 @@
     "value": null,
     "description": "Skip line profiler during warmup/memory estimation phase to avoid saving incomplete results that would be overwritten anyway",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Line Profiler Path"
   },
   "TLLM_LLMAPI_BUILD_CACHE": {
     "category": "llmapi",
@@ -244,7 +1390,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llmapi Build Cache"
   },
   "TLLM_LLMAPI_BUILD_CACHE_ROOT": {
     "category": "llmapi",
@@ -253,7 +1400,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llmapi Build Cache Root"
   },
   "TLLM_LLMAPI_ENABLE_DEBUG": {
     "category": "llmapi",
@@ -262,7 +1410,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llmapi Enable Debug"
   },
   "TLLM_LLMAPI_ENABLE_NVTX": {
     "category": "general",
@@ -271,7 +1420,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llmapi Enable Nvtx"
   },
   "TLLM_LLMAPI_ZMQ_DEBUG": {
     "category": "executor",
@@ -280,7 +1430,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llmapi Zmq Debug"
   },
   "TLLM_LLMAPI_ZMQ_PAIR": {
     "category": "executor",
@@ -289,7 +1440,8 @@
     "value": null,
     "description": "Check if PAIR mode is enabled via environment variable",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llmapi Zmq Pair"
   },
   "TLLM_LLM_ENABLE_DEBUG": {
     "category": "llmapi",
@@ -298,7 +1450,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llm Enable Debug"
   },
   "TLLM_LLM_ENABLE_TRACER": {
     "category": "llmapi",
@@ -307,7 +1460,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Llm Enable Tracer"
   },
   "TLLM_LOG_LEVEL_BY_MODULE": {
     "category": "general",
@@ -316,7 +1470,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Log Level By Module"
   },
   "TLLM_MULTIMODAL_ENCODER_TORCH_COMPILE": {
     "category": "pytorch_backend",
@@ -325,7 +1480,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Multimodal Encoder Torch Compile"
   },
   "TLLM_NUMA_AWARE_WORKER_AFFINITY": {
     "category": "executor",
@@ -334,7 +1490,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Numa Aware Worker Affinity"
   },
   "TLLM_NVTX_DEBUG": {
     "category": "general",
@@ -343,7 +1500,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Nvtx Debug"
   },
   "TLLM_OVERRIDE_LAYER_NUM": {
     "category": "pytorch_backend",
@@ -352,7 +1510,8 @@
     "value": null,
     "description": "If the layer number is overridden, it indicates that only a subset of layers are loaded. Prefetching all layers is unnecessary.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Override Layer Num"
   },
   "TLLM_PP_ASYNC_BROADCAST_SAMPLE_STATE": {
     "category": "pytorch_backend",
@@ -361,7 +1520,8 @@
     "value": null,
     "description": "`TLLM_PP_ASYNC_BROADCAST_SAMPLE_STATE` controls whether to broadcast the sample state asynchronously. If true, the executor loop can broadcast and handle sample states asynchronously to achieve best perf. If false, the executor loop can only broadcast and handle each sample state in a pre-defined iteration. It is only for debugging purposes. Some tests can disable it to get a deterministic behavior.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Pp Async Broadcast Sample State"
   },
   "TLLM_PP_SCHEDULER_MAX_RETRY_COUNT": {
     "category": "pytorch_backend",
@@ -370,7 +1530,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Pp Scheduler Max Retry Count"
   },
   "TLLM_PROFILING_TIMER": {
     "category": "pytorch_backend",
@@ -379,7 +1540,8 @@
     "value": null,
     "description": "Timing backend: globaltimer kernel vs cuda events. TLLM_PROFILING_TIMER env var overrides auto-detection: \"globaltimer\" -> force globaltimer \"cuda_event\"  -> force cuda events unset/default -> auto-detect via confidential_compute_enabled()",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Profiling Timer"
   },
   "TLLM_RAY_FORCE_LOCAL_CLUSTER": {
     "category": "executor",
@@ -388,7 +1550,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Ray Force Local Cluster"
   },
   "TLLM_SPAWN_PROXY_PROCESS": {
     "category": "executor",
@@ -397,7 +1560,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Spawn Proxy Process"
   },
   "TLLM_SPAWN_PROXY_PROCESS_IPC_ADDR": {
     "category": "executor",
@@ -406,7 +1570,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Spawn Proxy Process Ipc Addr"
   },
   "TLLM_SPAWN_PROXY_PROCESS_IPC_HMAC_KEY": {
     "category": "executor",
@@ -415,7 +1580,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Spawn Proxy Process Ipc Hmac Key"
   },
   "TLLM_STREAM_INTERVAL_THRESHOLD": {
     "category": "general",
@@ -424,7 +1590,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Stream Interval Threshold"
   },
   "TLLM_TEST_MNNVL": {
     "category": "pytorch_backend",
@@ -433,7 +1600,8 @@
     "value": null,
     "description": "Add a bypass so that we can run the unittest on single-node",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Test Mnnvl"
   },
   "TLLM_WORKER_USE_SINGLE_PROCESS": {
     "category": "llmapi",
@@ -442,7 +1610,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tllm Worker Use Single Process"
   },
   "TRTLLM_ALLREDUCE_FUSION_WORKSPACE_SIZE": {
     "category": "general",
@@ -451,7 +1620,8 @@
     "value": null,
     "description": "Allow override via environment variable for edge cases",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Allreduce Fusion Workspace Size"
   },
   "TRTLLM_CAN_USE_DEEP_EP": {
     "category": "pytorch_backend",
@@ -460,7 +1630,8 @@
     "value": null,
     "description": "Try DeepEP (if enabled and weight dtype is bfloat16)",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Can Use Deep Ep"
   },
   "TRTLLM_DEEPSEEK_EAGER_FUSION_DISABLED": {
     "category": "pytorch_backend",
@@ -469,7 +1640,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Deepseek Eager Fusion Disabled"
   },
   "TRTLLM_DEEP_EP_DISABLE_P2P_FOR_LOW_LATENCY_MODE": {
     "category": "pytorch_backend",
@@ -478,7 +1650,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Deep Ep Disable P2p For Low Latency Mode"
   },
   "TRTLLM_DEEP_EP_TOKEN_LIMIT": {
     "category": "pytorch_backend",
@@ -487,7 +1660,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Deep Ep Token Limit"
   },
   "TRTLLM_DISABLE_NVFP4_LAYERNORM_FUSION": {
     "category": "pytorch_backend",
@@ -496,7 +1670,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disable Nvfp4 Layernorm Fusion"
   },
   "TRTLLM_DISABLE_UNIFIED_CONVERTER": {
     "category": "models",
@@ -505,7 +1680,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disable Unified Converter"
   },
   "TRTLLM_DISAGG_BENCHMARK_GEN_ONLY": {
     "category": "pytorch_backend",
@@ -514,7 +1690,8 @@
     "value": null,
     "description": "For gen-only benchmarking, mark new gen request as transmission complete right away",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disagg Benchmark Gen Only"
   },
   "TRTLLM_DISAGG_SERVER_DISABLE_GC": {
     "category": "serve",
@@ -523,7 +1700,8 @@
     "value": null,
     "description": "Disable GC by default When concurrency is high, the number of Python objects increases, so GC runs frequently and takes a long time to process. In this case, requests are not immediately forwarded to CTX workers and GEN workers, causing them to run with small batch sizes. Disabling GC can mitigate this problem. By testing this feature, we didn't observe significant RSS or VMS increment, and observed that `count0` (obtained by `gc.get_count()`) increases by fewer than 1,000 after every 200,000 requests, while the maximum value of `count0` exceeded 3,000,000 during the test.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Disagg Server Disable Gc"
   },
   "TRTLLM_ENABLE_ATTENTION_NVFP4_OUTPUT": {
     "category": "pytorch_backend",
@@ -532,7 +1710,8 @@
     "value": null,
     "description": "Default enabled, but allow manual disabling through `TRTLLM_ENABLE_ATTENTION_NVFP4_OUTPUT=0`",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Enable Attention Nvfp4 Output"
   },
   "TRTLLM_ENABLE_DUMMY_ALLREDUCE": {
     "category": "pytorch_backend",
@@ -541,7 +1720,18 @@
     "value": null,
     "description": "Debug function for eliminating imbalance during performance analysis.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Enable Dummy Allreduce"
+  },
+  "TRTLLM_ENABLE_PDL": {
+    "category": "pytorch_backend",
+    "type": "str",
+    "default_value": "1",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Trtllm Enable Pdl"
   },
   "TRTLLM_ENABLE_TRTLLM_GEN_ATTENTION": {
     "category": "pytorch_backend",
@@ -550,7 +1740,8 @@
     "value": null,
     "description": "Enable TRTLLM-Gen attention backend via environment variable (default: off).",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Enable Trtllm Gen Attention"
   },
   "TRTLLM_EPLB_SHM_NAME": {
     "category": "pytorch_backend",
@@ -559,7 +1750,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Eplb Shm Name"
   },
   "TRTLLM_EXAONE_EAGER_FUSION_ENABLED": {
     "category": "pytorch_backend",
@@ -568,7 +1760,8 @@
     "value": null,
     "description": "MoE fusions are disabled by default in K-EXAONE since it may cause a slight accuracy drop due to numerical gap.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Exaone Eager Fusion Enabled"
   },
   "TRTLLM_FORCE_ALLTOALL_METHOD": {
     "category": "pytorch_backend",
@@ -577,7 +1770,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Force Alltoall Method"
   },
   "TRTLLM_FORCE_COMM_METHOD": {
     "category": "pytorch_backend",
@@ -586,7 +1780,8 @@
     "value": null,
     "description": "Check if forced method is specified via environment variable",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Force Comm Method"
   },
   "TRTLLM_FORCE_MNNVL_AR": {
     "category": "pytorch_backend",
@@ -595,7 +1790,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Force Mnnvl Ar"
   },
   "TRTLLM_GEMM_ALLREDUCE_FUSION_ENABLED": {
     "category": "pytorch_backend",
@@ -604,7 +1800,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Gemm Allreduce Fusion Enabled"
   },
   "TRTLLM_GEN_FUSED_MOE_USE_FLASHINFER": {
     "category": "pytorch_backend",
@@ -613,7 +1810,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Gen Fused Moe Use Flashinfer"
   },
   "TRTLLM_GLM_EAGER_FUSION_DISABLED": {
     "category": "pytorch_backend",
@@ -622,7 +1820,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Glm Eager Fusion Disabled"
   },
   "TRTLLM_KVCACHE_AWARE_ROUTER_HASH_TOKENS_PER_BLOCK": {
     "category": "server",
@@ -631,7 +1830,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Kvcache Aware Router Hash Tokens Per Block"
   },
   "TRTLLM_KVCACHE_TIME_OUTPUT_PATH": {
     "category": "server",
@@ -640,7 +1840,8 @@
     "value": null,
     "description": "TODO: better way to enable metrics",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Kvcache Time Output Path"
   },
   "TRTLLM_LAYERWISE_BENCHMARK_BALANCED_IMPL": {
     "category": "tools",
@@ -649,7 +1850,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Layerwise Benchmark Balanced Impl"
   },
   "TRTLLM_LLAMA_EAGER_FUSION_DISABLED": {
     "category": "pytorch_backend",
@@ -658,7 +1860,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Llama Eager Fusion Disabled"
   },
   "TRTLLM_LOAD_KV_SCALES": {
     "category": "pytorch_backend",
@@ -667,7 +1870,8 @@
     "value": null,
     "description": "Handle kv_scales for NVFP4 KV cache",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Load KV Scales"
   },
   "TRTLLM_MAMBA2_MTP_USE_CUSTOM_OP": {
     "category": "pytorch_backend",
@@ -676,7 +1880,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Mamba2 Mtp Use Custom Op"
   },
   "TRTLLM_MLA_SHORT_SEQ_MHA_THRESHOLD": {
     "category": "pytorch_backend",
@@ -685,7 +1890,8 @@
     "value": null,
     "description": "Short-sequence MHA optimization for DSA models: For short prefill sequences, use MHA (kv_b_proj expansion + standard attention) instead of the absorption path, which has overhead from extra BMMs and larger head_dim (kv_lora_rank + qk_rope_head_dim). Only active when rope_fusion is True (DSA with TrtllmAttention).",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Mla Short Seq Mha Threshold"
   },
   "TRTLLM_MOE_A2A_WORKSPACE_MB": {
     "category": "pytorch_backend",
@@ -694,7 +1900,8 @@
     "value": null,
     "description": "Check for environment variable override",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Moe A2a Workspace Mb"
   },
   "TRTLLM_MOE_FUSED_FC2_ALPHA": {
     "category": "pytorch_backend",
@@ -703,7 +1910,8 @@
     "value": null,
     "description": "Environment variable to control fc2_alpha fusion into FC1's alpha_post. Default: disabled (0). Set to \"1\" to enable fusion (known accuracy issue under TP).",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Moe Fused Fc2 Alpha"
   },
   "TRTLLM_MOE_POST_QUANT_ALLTOALLV": {
     "category": "pytorch_backend",
@@ -712,7 +1920,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Moe Post Quant Alltoallv"
   },
   "TRTLLM_NIXL_SPLIT_BATCH_SIZE": {
     "category": "pytorch_backend",
@@ -721,7 +1930,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm NIXL Split Batch Size"
   },
   "TRTLLM_PP_MULTI_STREAM_SAMPLE": {
     "category": "pytorch_backend",
@@ -730,7 +1940,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Pp Multi Stream Sample"
   },
   "TRTLLM_PP_REQ_SEND_ASYNC": {
     "category": "pytorch_backend",
@@ -739,7 +1950,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Pp Req Send Async"
   },
   "TRTLLM_PRINT_SKIP_SOFTMAX_STAT": {
     "category": "pytorch_backend",
@@ -748,7 +1960,8 @@
     "value": null,
     "description": "Default disabled, but allow manual enabling through `TRTLLM_PRINT_SKIP_SOFTMAX_STAT=1`",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Print Skip Softmax Stat"
   },
   "TRTLLM_PRINT_STACKS_PERIOD": {
     "category": "general",
@@ -757,7 +1970,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Print Stacks Period"
   },
   "TRTLLM_QWEN3_EAGER_FUSION_DISABLED": {
     "category": "pytorch_backend",
@@ -766,7 +1980,8 @@
     "value": null,
     "description": "TODO: enable eager_fusion by default",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Qwen3 Eager Fusion Disabled"
   },
   "TRTLLM_RAY_BUNDLE_INDICES": {
     "category": "executor",
@@ -775,7 +1990,8 @@
     "value": null,
     "description": "path 1",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Ray Bundle Indices"
   },
   "TRTLLM_RAY_PER_WORKER_GPUS": {
     "category": "executor",
@@ -784,7 +2000,8 @@
     "value": null,
     "description": "When set to be a fraction, it allows Ray to schedule multiple actors on a single GPU for colocate use cases.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Ray Per Worker Gpus"
   },
   "TRTLLM_RESPONSES_API_DISABLE_STORE": {
     "category": "server",
@@ -793,7 +2010,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Responses API Disable Store"
   },
   "TRTLLM_SERVER_DISABLE_GC": {
     "category": "serve",
@@ -802,7 +2020,8 @@
     "value": null,
     "description": "Optionally disable GC (default: not disabled)",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Server Disable Gc"
   },
   "TRTLLM_SKIP_KV_CACHE_ESTIMATION": {
     "category": "pytorch_backend",
@@ -811,7 +2030,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Skip KV Cache Estimation"
   },
   "TRTLLM_USAGE_FORCE_ENABLED": {
     "category": "general",
@@ -820,7 +2040,8 @@
     "value": null,
     "description": "Allow force-enable override for CI-based deployments",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Usage Force Enabled"
   },
   "TRTLLM_USAGE_HEARTBEAT_INTERVAL": {
     "category": "general",
@@ -829,7 +2050,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Usage Heartbeat Interval"
   },
   "TRTLLM_USAGE_STATS_SERVER": {
     "category": "general",
@@ -838,7 +2060,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Usage Stats Server"
   },
   "TRTLLM_USE_CPP_MAMBA": {
     "category": "pytorch_backend",
@@ -847,7 +2070,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Use Cpp Mamba"
   },
   "TRTLLM_WINDOW_SIZE_SHARES": {
     "category": "pytorch_backend",
@@ -856,7 +2080,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Window Size Shares"
   },
   "TRTLLM_WORKER_DISABLE_GC": {
     "category": "executor",
@@ -865,7 +2090,8 @@
     "value": null,
     "description": "Optionally disable GC (default: not disabled)",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Worker Disable Gc"
   },
   "TRTLLM_WORKER_PRINT_STACKS_PERIOD": {
     "category": "executor",
@@ -874,7 +2100,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Worker Print Stacks Period"
   },
   "TRTLLM_XGUIDANCE_LENIENT": {
     "category": "general",
@@ -883,6 +2110,7 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trtllm Xguidance Lenient"
   }
 }

@@ -1,8 +1,8 @@
 {
   "engine": "tensorrt_llm",
   "version": "1.3.0rc13",
-  "date": "2026-05-11",
-  "source": "tensorrt_llm.commands.serve (Click) + tensorrt_llm.llmapi.llm_args (Pydantic)",
+  "date": "2026-05-12",
+  "source": "tensorrt_llm.commands.serve (Click) + tensorrt_llm.llmapi.llm_args (Pydantic) + Dynamo backend ArgGroups",
   "backend": {
     "type": "str",
     "flag": false,
@@ -22,7 +22,8 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "backend"
+    "config_key": "backend",
+    "display_name": "Backend"
   },
   "enable_lora": {
     "type": "bool",
@@ -35,7 +36,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable LoRA"
   },
   "lora_config": {
     "type": "str",
@@ -48,7 +50,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "LoRA Config"
   },
   "server_role": {
     "type": "str",
@@ -61,7 +64,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Server Role"
   },
   "disagg_cluster_uri": {
     "type": "str",
@@ -74,7 +78,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Disagg Cluster Uri"
   },
   "kv_connector_config": {
     "type": "str",
@@ -88,7 +93,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Connector Config"
   },
   "cache_transceiver_config": {
     "type": "str",
@@ -102,7 +108,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Cache Transceiver Config"
   },
   "kv_cache_config": {
     "type": "str",
@@ -115,24 +122,26 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Cache Config"
   },
   "guided_decoding_backend": {
     "type": "str",
     "flag": false,
-    "arg": "guided_decoding_backend",
-    "config_key": "guided_decoding_backend",
+    "arg": "--guided-decoding-backend",
     "default_value": null,
     "value": null,
-    "description": "Guided decoding backend. llguidance is supported in PyTorch backend only.",
+    "description": "Backend to use for guided decoding (structured output). Options: xgrammar, llguidance.",
     "choices": [
       "xgrammar",
       "llguidance"
     ],
-    "module": "base",
-    "config_class": "BaseLlmArgs",
+    "env_var": "DYN_TRTLLM_GUIDED_DECODING_BACKEND",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Guided Decoding Backend"
   },
   "reasoning_parser": {
     "type": "str",
@@ -157,7 +166,8 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "reasoning_parser"
+    "config_key": "reasoning_parser",
+    "display_name": "Reasoning Parser"
   },
   "tool_parser": {
     "type": "str",
@@ -182,7 +192,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Tool Parser"
   },
   "custom_tokenizer": {
     "type": "str",
@@ -198,7 +209,8 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "custom_tokenizer"
+    "config_key": "custom_tokenizer",
+    "display_name": "Custom Tokenizer"
   },
   "media_io_kwargs": {
     "type": "str",
@@ -211,7 +223,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Media Io Kwargs"
   },
   "video_pruning_rate": {
     "type": "float",
@@ -227,7 +240,8 @@
     "aic": false,
     "pydantic_module": "pytorch",
     "pydantic_config_class": "TorchLlmArgs",
-    "config_key": "video_pruning_rate"
+    "config_key": "video_pruning_rate",
+    "display_name": "Video Pruning Rate"
   },
   "speculative_config": {
     "type": "str",
@@ -240,7 +254,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Speculative Config"
   },
   "batching_type": {
     "type": "str",
@@ -253,7 +268,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Batching Type"
   },
   "scheduler_config": {
     "type": "str",
@@ -267,7 +283,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Scheduler Config"
   },
   "decoding_config": {
     "type": "str",
@@ -281,15 +298,1068 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Decoding Config"
+  },
+  "namespace": {
+    "type": "str",
+    "flag": false,
+    "arg": "--namespace",
+    "default_value": "dynamo",
+    "value": null,
+    "description": "Dynamo namespace. If DYN_NAMESPACE_WORKER_SUFFIX is set, '-{suffix}' is appended to support multiple worker pools",
+    "env_var": "DYN_NAMESPACE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Namespace"
+  },
+  "endpoint": {
+    "type": "str",
+    "flag": false,
+    "arg": "--endpoint",
+    "default_value": null,
+    "value": null,
+    "description": "Dynamo endpoint string in 'dyn://namespace.component.endpoint' format. Example: dyn://dynamo.backend.generate.",
+    "env_var": "DYN_ENDPOINT",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Endpoint"
+  },
+  "discovery_backend": {
+    "type": "str",
+    "flag": false,
+    "arg": "--discovery-backend",
+    "default_value": "etcd",
+    "value": null,
+    "description": "Discovery backend: kubernetes (K8s API), etcd (distributed KV), file (local filesystem), mem (in-memory). Etcd uses the ETCD_* env vars (e.g. ETCD_ENDPOINTS) for connection details. File uses root dir from env var DYN_FILE_KV or defaults to $TMPDIR/dynamo_store_kv.",
+    "choices": [
+      "kubernetes",
+      "etcd",
+      "file",
+      "mem"
+    ],
+    "env_var": "DYN_DISCOVERY_BACKEND",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Discovery Backend"
+  },
+  "request_plane": {
+    "type": "str",
+    "flag": false,
+    "arg": "--request-plane",
+    "default_value": "tcp",
+    "value": null,
+    "description": "Determines how requests are distributed from routers to workers. 'tcp' is fastest.",
+    "choices": [
+      "tcp",
+      "nats",
+      "http"
+    ],
+    "env_var": "DYN_REQUEST_PLANE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Request Plane"
+  },
+  "event_plane": {
+    "type": "str",
+    "flag": false,
+    "arg": "--event-plane",
+    "default_value": "nats",
+    "value": null,
+    "description": "Determines how events are published.",
+    "choices": [
+      "nats",
+      "zmq"
+    ],
+    "env_var": "DYN_EVENT_PLANE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Event Plane"
+  },
+  "connector": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--connector",
+    "default_value": [],
+    "value": null,
+    "description": "[Deprecated for vLLM] Use --kv-transfer-config instead. For TRT-LLM, options: nixl, lmcache, kvbm, null, none.",
+    "multiple": true,
+    "env_var": "DYN_CONNECTOR",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Connector"
+  },
+  "durable_kv_events": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--durable-kv-events",
+    "false_arg": "--no-durable-kv-events",
+    "description": "[Deprecated] Enable durable KV events using NATS JetStream instead of the local indexer. This option will be removed in a future release. The event-plane subscriber (local_indexer mode) is now the recommended path.",
+    "env_var": "DYN_DURABLE_KV_EVENTS",
+    "status": "deprecated",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Durable KV Events"
+  },
+  "dyn_tool_call_parser": {
+    "type": "str",
+    "flag": false,
+    "arg": "--dyn-tool-call-parser",
+    "default_value": null,
+    "value": null,
+    "description": "Tool call parser name for the model.",
+    "choices": [
+      "kimi_k2",
+      "jamba",
+      "minimax_m2",
+      "nemotron_nano",
+      "mistral",
+      "hermes",
+      "llama3_json",
+      "default",
+      "glm47",
+      "qwen3_coder",
+      "pythonic",
+      "harmony",
+      "deepseek_v3",
+      "deepseek_v3_2",
+      "deepseek_v3_1",
+      "nemotron_deci",
+      "phi4"
+    ],
+    "env_var": "DYN_TOOL_CALL_PARSER",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Tool Call Parser"
+  },
+  "dyn_reasoning_parser": {
+    "type": "str",
+    "flag": false,
+    "arg": "--dyn-reasoning-parser",
+    "default_value": null,
+    "value": null,
+    "description": "Reasoning parser name for the model. If not specified, no reasoning parsing is performed.",
+    "choices": [
+      "nemotron3",
+      "nemotron_nano",
+      "gpt_oss",
+      "minimax_append_think",
+      "mistral",
+      "kimi",
+      "granite",
+      "basic",
+      "nemotron_deci",
+      "kimi_k25",
+      "deepseek_r1",
+      "step3",
+      "qwen3",
+      "glm45"
+    ],
+    "env_var": "DYN_REASONING_PARSER",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Reasoning Parser"
+  },
+  "exclude_tools_when_tool_choice_none": {
+    "type": "bool",
+    "flag": true,
+    "default_value": true,
+    "value": null,
+    "true_arg": "--exclude-tools-when-tool-choice-none",
+    "false_arg": "--no-exclude-tools-when-tool-choice-none",
+    "description": "Exclude tool definitions from the chat template when tool_choice='none'. Prevents models from generating raw XML tool calls in the content field.",
+    "env_var": "DYN_EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Exclude Tools When Tool Choice None"
+  },
+  "custom_jinja_template": {
+    "type": "str",
+    "flag": false,
+    "arg": "--custom-jinja-template",
+    "default_value": null,
+    "value": null,
+    "description": "Path to a custom Jinja template file to override the model's default chat template. This template will take precedence over any template found in the model repository.",
+    "env_var": "DYN_CUSTOM_JINJA_TEMPLATE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Custom Jinja Template"
+  },
+  "endpoint_types": {
+    "type": "str",
+    "flag": false,
+    "arg": "--endpoint-types",
+    "default_value": "chat,completions",
+    "value": null,
+    "description": "Comma-separated list of endpoint types to enable. Options: 'chat', 'completions'. Use 'completions' for models without chat templates.",
+    "env_var": "DYN_ENDPOINT_TYPES",
+    "deprecated_alias": "--dyn-endpoint-types",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Endpoint Types"
+  },
+  "dump_config_to": {
+    "type": "str",
+    "flag": false,
+    "arg": "--dump-config-to",
+    "default_value": null,
+    "value": null,
+    "description": "Dump resolved configuration to the specified file path.",
+    "env_var": "DYN_DUMP_CONFIG_TO",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dump Config To"
+  },
+  "multimodal_embedding_cache_capacity_gb": {
+    "type": "float",
+    "flag": false,
+    "arg": "--multimodal-embedding-cache-capacity-gb",
+    "default_value": 0,
+    "value": null,
+    "description": "Capacity of the multimodal embedding cache in GB. 0 = disabled.",
+    "env_var": "DYN_MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Multimodal Embedding Cache Capacity Gb"
+  },
+  "output_modalities": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--output-modalities",
+    "default_value": [
+      "text"
+    ],
+    "value": null,
+    "description": "Output modalities for omni/diffusion mode (e.g., --output-modalities text image audio video).",
+    "multiple": true,
+    "env_var": "DYN_OUTPUT_MODALITIES",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Output Modalities"
+  },
+  "media_output_fs_url": {
+    "type": "str",
+    "flag": false,
+    "arg": "--media-output-fs-url",
+    "default_value": "file:///tmp/dynamo_media",
+    "value": null,
+    "description": "Filesystem URL for storing generated images and videos (e.g. file:///tmp/dynamo_media, s3://bucket/path).",
+    "env_var": "DYN_MEDIA_OUTPUT_FS_URL",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Media Output Fs Url"
+  },
+  "media_output_http_url": {
+    "type": "str",
+    "flag": false,
+    "arg": "--media-output-http-url",
+    "default_value": null,
+    "value": null,
+    "description": "Base URL for rewriting media file paths in responses (e.g. http://localhost:8000/media). If unset, returns raw filesystem paths.",
+    "env_var": "DYN_MEDIA_OUTPUT_HTTP_URL",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Media Output Http Url"
+  },
+  "model": {
+    "type": "str",
+    "flag": false,
+    "arg": "--model",
+    "default_value": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "value": null,
+    "description": "Path to disk model or HuggingFace model identifier to load.",
+    "env_var": "DYN_TRTLLM_MODEL",
+    "deprecated_alias": "--model-path",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Model"
+  },
+  "served_model_name": {
+    "type": "str",
+    "flag": false,
+    "arg": "--served-model-name",
+    "default_value": null,
+    "value": null,
+    "description": "Name to serve the model under. Defaults to deriving it from model path.",
+    "env_var": "DYN_TRTLLM_SERVED_MODEL_NAME",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Served Model Name"
+  },
+  "tensor_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--tensor-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Tensor parallelism size.",
+    "env_var": "DYN_TRTLLM_TENSOR_PARALLEL_SIZE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Tensor Parallel Size"
+  },
+  "pipeline_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--pipeline-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Pipeline parallelism size.",
+    "env_var": "DYN_TRTLLM_PIPELINE_PARALLEL_SIZE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Pipeline Parallel Size"
+  },
+  "expert_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--expert-parallel-size",
+    "default_value": null,
+    "value": null,
+    "description": "Expert parallelism size.",
+    "env_var": "DYN_TRTLLM_EXPERT_PARALLEL_SIZE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Expert Parallel Size"
+  },
+  "enable_attention_dp": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-attention-dp",
+    "false_arg": "--no-enable-attention-dp",
+    "description": "Enable attention data parallelism. When enabled, attention_dp_size equals tensor_parallel_size.",
+    "env_var": "DYN_TRTLLM_ENABLE_ATTENTION_DP",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Attention Dp"
+  },
+  "kv_block_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--kv-block-size",
+    "default_value": 32,
+    "value": null,
+    "description": "Size of a KV cache block.",
+    "env_var": "DYN_TRTLLM_KV_BLOCK_SIZE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "KV Block Size"
+  },
+  "gpus_per_node": {
+    "type": "int",
+    "flag": false,
+    "arg": "--gpus-per-node",
+    "default_value": null,
+    "value": null,
+    "description": "Number of GPUs per node. If not provided, inferred from the environment.",
+    "env_var": "DYN_TRTLLM_GPUS_PER_NODE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Gpus Per Node"
+  },
+  "max_batch_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-batch-size",
+    "default_value": 2048,
+    "value": null,
+    "description": "Maximum number of requests that the engine can schedule.",
+    "env_var": "DYN_TRTLLM_MAX_BATCH_SIZE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Batch Size"
+  },
+  "max_num_tokens": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-num-tokens",
+    "default_value": 8192,
+    "value": null,
+    "description": "Maximum number of batched input tokens after padding is removed in each batch.",
+    "env_var": "DYN_TRTLLM_MAX_NUM_TOKENS",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Num Tokens"
+  },
+  "max_seq_len": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-seq-len",
+    "default_value": null,
+    "value": null,
+    "description": "Maximum total length of one request, including prompt and outputs. If unspecified, the value is deduced from the model config.",
+    "env_var": "DYN_TRTLLM_MAX_SEQ_LEN",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Seq Len"
   },
   "max_beam_width": {
     "type": "int",
     "flag": false,
-    "arg": "--max_beam_width",
+    "arg": "--max-beam-width",
     "default_value": 1,
     "value": null,
     "description": "Maximum number of beams for beam search decoding.",
+    "env_var": "DYN_TRTLLM_MAX_BEAM_WIDTH",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Beam Width"
+  },
+  "free_gpu_memory_fraction": {
+    "type": "float",
+    "flag": false,
+    "arg": "--free-gpu-memory-fraction",
+    "default_value": 0.9,
+    "value": null,
+    "description": "Free GPU memory fraction reserved for KV Cache,  after model weights and buffers are allocated.",
+    "env_var": "DYN_TRTLLM_FREE_GPU_MEMORY_FRACTION",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Free GPU Memory Fraction"
+  },
+  "extra_engine_args": {
+    "type": "str",
+    "flag": false,
+    "arg": "--extra-engine-args",
+    "default_value": "",
+    "value": null,
+    "description": "Path to a YAML file containing additional keyword arguments to pass to the TRTLLM engine.",
+    "env_var": "DYN_TRTLLM_EXTRA_ENGINE_ARGS",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Extra Engine Args"
+  },
+  "override_engine_args": {
+    "type": "str",
+    "flag": false,
+    "arg": "--override-engine-args",
+    "default_value": "",
+    "value": null,
+    "description": "Python dictionary string to override specific engine arguments from the YAML file. Example: '{\"tensor_parallel_size\": 2, \"kv_cache_config\": {\"enable_block_reuse\": false}}'",
+    "env_var": "DYN_TRTLLM_OVERRIDE_ENGINE_ARGS",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Override Engine Args"
+  },
+  "publish_events_and_metrics": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--publish-events-and-metrics",
+    "false_arg": "--no-publish-events-and-metrics",
+    "description": "If set, publish events and metrics to Dynamo components.",
+    "env_var": "DYN_TRTLLM_PUBLISH_EVENTS_AND_METRICS",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Publish Events And Metrics"
+  },
+  "load_format": {
+    "type": "str",
+    "flag": false,
+    "arg": "--load-format",
+    "default_value": "auto",
+    "value": null,
+    "description": "Model weight loading format passed to TensorRT-LLM (e.g. 'auto', 'gms').",
+    "env_var": "DYN_TRTLLM_LOAD_FORMAT",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Load Format"
+  },
+  "model_loader_extra_config": {
+    "type": "str",
+    "flag": false,
+    "arg": "--model-loader-extra-config",
+    "default_value": "",
+    "value": null,
+    "description": "JSON object passed as extra config to the model loader (e.g. '{\"gms_read_only\": true}').",
+    "env_var": "DYN_TRTLLM_MODEL_LOADER_EXTRA_CONFIG",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Model Loader Extra Config"
+  },
+  "disaggregation_mode": {
+    "type": "str",
+    "flag": false,
+    "arg": "--disaggregation-mode",
+    "default_value": "prefill_and_decode",
+    "value": null,
+    "description": "Mode to use for disaggregation.",
+    "choices": [
+      "prefill_and_decode",
+      "prefill",
+      "decode",
+      "encode"
+    ],
+    "env_var": "DYN_TRTLLM_DISAGGREGATION_MODE",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Disaggregation Mode"
+  },
+  "modality": {
+    "type": "str",
+    "flag": false,
+    "arg": "--modality",
+    "default_value": "text",
+    "value": null,
+    "description": "Modality to use for the model.",
+    "choices": [
+      "text",
+      "multimodal",
+      "video_diffusion"
+    ],
+    "env_var": "DYN_TRTLLM_MODALITY",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Modality"
+  },
+  "encode_endpoint": {
+    "type": "str",
+    "flag": false,
+    "arg": "--encode-endpoint",
+    "default_value": "",
+    "value": null,
+    "description": "Endpoint (in 'dyn://namespace.component.endpoint' format) for the encode worker.",
+    "env_var": "DYN_TRTLLM_ENCODE_ENDPOINT",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Encode Endpoint"
+  },
+  "allowed_local_media_path": {
+    "type": "str",
+    "flag": false,
+    "arg": "--allowed-local-media-path",
+    "default_value": "",
+    "value": null,
+    "description": "Path to a directory that is allowed to be accessed by the model.",
+    "env_var": "DYN_TRTLLM_ALLOWED_LOCAL_MEDIA_PATH",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Allowed Local Media Path"
+  },
+  "max_file_size_mb": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-file-size-mb",
+    "default_value": 50,
+    "value": null,
+    "description": "Maximum size of downloadable embedding files/Image URLs.",
+    "env_var": "DYN_TRTLLM_MAX_FILE_SIZE_MB",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max File Size Mb"
+  },
+  "frontend_decoding": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--frontend-decoding",
+    "false_arg": "--no-frontend-decoding",
+    "description": "Enable frontend decoding of multimodal images. When enabled, images are decoded in the Rust frontend and transferred to the backend via NIXL RDMA. Without this flag, images are decoded in the Python backend (default behavior).",
+    "env_var": "DYN_TRTLLM_FRONTEND_DECODING",
+    "module": "dynamo_trtllm",
+    "config_class": "Dynamo TRT-LLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Frontend Decoding"
+  },
+  "default_height": {
+    "type": "int",
+    "flag": false,
+    "arg": "--default-height",
+    "default_value": 480,
+    "value": null,
+    "description": "Default video/image height in pixels.",
+    "env_var": "DYN_TRTLLM_DEFAULT_HEIGHT",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Default Height"
+  },
+  "default_width": {
+    "type": "int",
+    "flag": false,
+    "arg": "--default-width",
+    "default_value": 832,
+    "value": null,
+    "description": "Default video/image width in pixels.",
+    "env_var": "DYN_TRTLLM_DEFAULT_WIDTH",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Default Width"
+  },
+  "default_num_frames": {
+    "type": "int",
+    "flag": false,
+    "arg": "--default-num-frames",
+    "default_value": 81,
+    "value": null,
+    "description": "Default number of frames for video generation.",
+    "env_var": "DYN_TRTLLM_DEFAULT_NUM_FRAMES",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Default Num Frames"
+  },
+  "default_num_inference_steps": {
+    "type": "int",
+    "flag": false,
+    "arg": "--default-num-inference-steps",
+    "default_value": 50,
+    "value": null,
+    "description": "Default number of inference steps.",
+    "env_var": "DYN_TRTLLM_DEFAULT_NUM_INFERENCE_STEPS",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Default Num Inference Steps"
+  },
+  "default_guidance_scale": {
+    "type": "float",
+    "flag": false,
+    "arg": "--default-guidance-scale",
+    "default_value": 5.0,
+    "value": null,
+    "description": "Default CFG guidance scale.",
+    "env_var": "DYN_TRTLLM_DEFAULT_GUIDANCE_SCALE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Default Guidance Scale"
+  },
+  "torch_dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--torch-dtype",
+    "default_value": "bfloat16",
+    "value": null,
+    "description": "Torch dtype for model loading. bfloat16 recommended for Ampere+ GPUs.",
+    "choices": [
+      "bfloat16",
+      "float16",
+      "float32"
+    ],
+    "env_var": "DYN_TRTLLM_TORCH_DTYPE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Torch Dtype"
+  },
+  "revision": {
+    "type": "str",
+    "flag": false,
+    "arg": "--revision",
+    "default_value": null,
+    "value": null,
+    "description": "HuggingFace Hub revision (branch, tag, or commit SHA) for model download.",
+    "env_var": "DYN_TRTLLM_REVISION",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Revision"
+  },
+  "enable_teacache": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-teacache",
+    "false_arg": "--no-enable-teacache",
+    "description": "Enable TeaCache optimization for faster generation.",
+    "env_var": "DYN_TRTLLM_ENABLE_TEACACHE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Teacache"
+  },
+  "teacache_use_ret_steps": {
+    "type": "bool",
+    "flag": true,
+    "default_value": true,
+    "value": null,
+    "true_arg": "--teacache-use-ret-steps",
+    "false_arg": "--no-teacache-use-ret-steps",
+    "description": "Use retention steps for TeaCache.",
+    "env_var": "DYN_TRTLLM_TEACACHE_USE_RET_STEPS",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Teacache Use Ret Steps"
+  },
+  "teacache_thresh": {
+    "type": "float",
+    "flag": false,
+    "arg": "--teacache-thresh",
+    "default_value": 0.2,
+    "value": null,
+    "description": "TeaCache threshold.",
+    "env_var": "DYN_TRTLLM_TEACACHE_THRESH",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Teacache Thresh"
+  },
+  "attn_backend": {
+    "type": "str",
+    "flag": false,
+    "arg": "--attn-backend",
+    "default_value": "VANILLA",
+    "value": null,
+    "description": "Attention backend for diffusion models. VANILLA = PyTorch SDPA, TRTLLM = TensorRT-LLM kernels.",
+    "choices": [
+      "VANILLA",
+      "TRTLLM"
+    ],
+    "env_var": "DYN_TRTLLM_ATTN_BACKEND",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Attn Backend"
+  },
+  "quant_algo": {
+    "type": "str",
+    "flag": false,
+    "arg": "--quant-algo",
+    "default_value": null,
+    "value": null,
+    "description": "Quantization algorithm for diffusion models. BF16 weights are quantized on-the-fly during loading.",
+    "choices": [
+      "FP8",
+      "FP8_BLOCK_SCALES",
+      "NVFP4",
+      "W4A16_AWQ",
+      "W4A8_AWQ",
+      "W8A8_SQ_PER_CHANNEL"
+    ],
+    "env_var": "DYN_TRTLLM_QUANT_ALGO",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Quant Algo"
+  },
+  "quant_dynamic": {
+    "type": "bool",
+    "flag": true,
+    "default_value": true,
+    "value": null,
+    "true_arg": "--quant-dynamic",
+    "false_arg": "--no-quant-dynamic",
+    "description": "Enable dynamic weight quantization (quantize BF16 weights on-the-fly during loading).",
+    "env_var": "DYN_TRTLLM_QUANT_DYNAMIC",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Quant Dynamic"
+  },
+  "disable_torch_compile": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--disable-torch-compile",
+    "false_arg": "--no-disable-torch-compile",
+    "description": "Disable torch.compile optimization.",
+    "env_var": "DYN_TRTLLM_DISABLE_TORCH_COMPILE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Disable Torch Compile"
+  },
+  "enable_fullgraph": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-fullgraph",
+    "false_arg": "--no-enable-fullgraph",
+    "description": "Enable torch.compile fullgraph mode (stricter but potentially faster).",
+    "env_var": "DYN_TRTLLM_ENABLE_FULLGRAPH",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Fullgraph"
+  },
+  "fuse_qkv": {
+    "type": "bool",
+    "flag": true,
+    "default_value": true,
+    "value": null,
+    "true_arg": "--fuse-qkv",
+    "false_arg": "--no-fuse-qkv",
+    "description": "Enable QKV fusion for transformer attention layers.",
+    "env_var": "DYN_TRTLLM_FUSE_QKV",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Fuse Qkv"
+  },
+  "enable_cuda_graph": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-cuda-graph",
+    "false_arg": "--no-enable-cuda-graph",
+    "description": "Enable CUDA graph capture for transformer forward passes. Mutually exclusive with torch.compile.",
+    "env_var": "DYN_TRTLLM_ENABLE_CUDA_GRAPH",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable CUDA Graph"
+  },
+  "enable_layerwise_nvtx_marker": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-layerwise-nvtx-marker",
+    "false_arg": "--no-enable-layerwise-nvtx-marker",
+    "description": "Enable per-layer NVTX markers for profiling with Nsight Systems.",
+    "env_var": "DYN_TRTLLM_ENABLE_LAYERWISE_NVTX_MARKER",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Layerwise Nvtx Marker"
+  },
+  "skip_warmup": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--skip-warmup",
+    "false_arg": "--no-skip-warmup",
+    "description": "Skip warmup inference during initialization.",
+    "env_var": "DYN_TRTLLM_SKIP_WARMUP",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Skip Warmup"
+  },
+  "dit_dp_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--dit-dp-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Data parallel size for DiT.",
+    "env_var": "DYN_TRTLLM_DIT_DP_SIZE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dit Dp Size"
+  },
+  "dit_tp_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--dit-tp-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Tensor parallel size for DiT.",
+    "env_var": "DYN_TRTLLM_DIT_TP_SIZE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dit TP Size"
+  },
+  "dit_ulysses_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--dit-ulysses-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Ulysses parallel size for DiT.",
+    "env_var": "DYN_TRTLLM_DIT_ULYSSES_SIZE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dit Ulysses Size"
+  },
+  "dit_ring_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--dit-ring-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Ring parallel size for DiT.",
+    "env_var": "DYN_TRTLLM_DIT_RING_SIZE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dit Ring Size"
+  },
+  "dit_cfg_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--dit-cfg-size",
+    "default_value": 1,
+    "value": null,
+    "description": "CFG parallel size for DiT.",
+    "env_var": "DYN_TRTLLM_DIT_CFG_SIZE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dit Cfg Size"
+  },
+  "dit_fsdp_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--dit-fsdp-size",
+    "default_value": 1,
+    "value": null,
+    "description": "FSDP size for DiT.",
+    "env_var": "DYN_TRTLLM_DIT_FSDP_SIZE",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dit Fsdp Size"
+  },
+  "enable_async_cpu_offload": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-async-cpu-offload",
+    "false_arg": "--no-enable-async-cpu-offload",
+    "description": "Enable async CPU offload for memory efficiency.",
+    "env_var": "DYN_TRTLLM_ENABLE_ASYNC_CPU_OFFLOAD",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Async CPU Offload"
+  },
+  "skip_components": {
+    "type": "str",
+    "flag": false,
+    "arg": "--skip-components",
+    "default_value": "",
+    "value": null,
+    "description": "Comma-separated list of pipeline components to skip loading. Valid values: transformer, vae, text_encoder, tokenizer, scheduler, image_encoder, image_processor.",
+    "env_var": "DYN_TRTLLM_SKIP_COMPONENTS",
+    "module": "dynamo_diffusion_options_experimental",
+    "config_class": "Diffusion Options [Experimental]",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Skip Components"
+  },
+  "tokenizer": {
+    "type": "str",
+    "flag": false,
+    "arg": "--tokenizer",
+    "default_value": null,
+    "value": null,
+    "description": "Path or name of the tokenizer. When using the PyTorch backend, this replaces the default HuggingFace tokenizer.",
     "status": "beta",
     "module": "serve",
     "config_class": "ServeCommand",
@@ -297,23 +1367,36 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "max_beam_width"
+    "config_key": "tokenizer",
+    "display_name": "Tokenizer"
   },
-  "num_postprocess_workers": {
-    "type": "int",
+  "host": {
+    "type": "str",
     "flag": false,
-    "arg": "--num_postprocess_workers",
-    "default_value": 0,
+    "arg": "--host",
+    "default_value": "localhost",
     "value": null,
-    "description": "Number of workers to postprocess raw responses to comply with OpenAI protocol.",
-    "status": "prototype",
+    "description": "Hostname of the server.",
+    "status": "beta",
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
     "aic": false,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "num_postprocess_workers"
+    "display_name": "Host"
+  },
+  "port": {
+    "type": "int",
+    "flag": false,
+    "arg": "--port",
+    "default_value": 8000,
+    "value": null,
+    "description": "Port of the server.",
+    "status": "beta",
+    "module": "serve",
+    "config_class": "ServeCommand",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Port"
   },
   "custom_module_dirs": {
     "type": "List[path]",
@@ -326,7 +1409,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Custom Module Dirs"
   },
   "log_level": {
     "type": "str",
@@ -348,15 +1432,16 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Log Level"
   },
-  "gpus_per_node": {
+  "context_parallel_size": {
     "type": "int",
     "flag": false,
-    "arg": "--gpus_per_node",
-    "default_value": null,
+    "arg": "--context_parallel_size",
+    "default_value": 1,
     "value": null,
-    "description": "Number of GPUs per node. Default to None, and it will be detected automatically.",
+    "description": "Context parallelism size.",
     "status": "beta",
     "module": "serve",
     "config_class": "ServeCommand",
@@ -364,15 +1449,87 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "gpus_per_node"
+    "config_key": "context_parallel_size",
+    "display_name": "Context Parallel Size"
   },
-  "revision": {
+  "moe_expert_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--moe_expert_parallel_size",
+    "default_value": null,
+    "value": null,
+    "description": "expert parallelism size",
+    "status": "beta",
+    "module": "serve",
+    "config_class": "ServeCommand",
+    "ui": "less_frequent",
+    "aic": false,
+    "pydantic_module": "base",
+    "pydantic_config_class": "BaseLlmArgs",
+    "config_key": "moe_expert_parallel_size",
+    "display_name": "Moe Expert Parallel Size"
+  },
+  "moe_cluster_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--moe_cluster_parallel_size",
+    "default_value": null,
+    "value": null,
+    "description": "[Deprecated] Expert cluster parallelism size. This option is no longer supported and will be removed in a future release.",
+    "status": "deprecated",
+    "module": "serve",
+    "config_class": "ServeCommand",
+    "ui": "less_frequent",
+    "aic": false,
+    "pydantic_module": "base",
+    "pydantic_config_class": "BaseLlmArgs",
+    "config_key": "moe_cluster_parallel_size",
+    "display_name": "Moe Cluster Parallel Size"
+  },
+  "kv_cache_dtype": {
     "type": "str",
     "flag": false,
-    "arg": "--hf_revision",
-    "default_value": null,
+    "arg": "--kv_cache_dtype",
+    "default_value": "auto",
     "value": null,
-    "description": "The revision to use for the HuggingFace model (branch name, tag name, or commit id). Prefer --hf_revision over --revision.",
+    "choices": [
+      "auto",
+      "fp8",
+      "nvfp4"
+    ],
+    "description": "KV cache quantization dtype for PyTorch backend. 'auto' uses checkpoint/model metadata; explicit values force override.",
+    "status": "prototype",
+    "module": "serve",
+    "config_class": "ServeCommand",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "KV Cache Dtype"
+  },
+  "num_postprocess_workers": {
+    "type": "int",
+    "flag": false,
+    "arg": "--num_postprocess_workers",
+    "default_value": 0,
+    "value": null,
+    "description": "Number of workers to postprocess raw responses to comply with OpenAI protocol.",
+    "status": "prototype",
+    "module": "serve",
+    "config_class": "ServeCommand",
+    "ui": "less_frequent",
+    "aic": false,
+    "pydantic_module": "base",
+    "pydantic_config_class": "BaseLlmArgs",
+    "config_key": "num_postprocess_workers",
+    "display_name": "Num Postprocess Workers"
+  },
+  "trust_remote_code": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--trust_remote_code",
+    "false_arg": null,
+    "description": "Flag for HF transformers.",
     "status": "beta",
     "module": "serve",
     "config_class": "ServeCommand",
@@ -380,7 +1537,8 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "revision"
+    "config_key": "trust_remote_code",
+    "display_name": "Trust Remote Code"
   },
   "extra_llm_api_options": {
     "type": "str",
@@ -393,7 +1551,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Extra Llm API Options"
   },
   "metadata_server_config_file": {
     "type": "str",
@@ -406,7 +1565,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Metadata Server Config File"
   },
   "fail_fast_on_attention_window_too_large": {
     "type": "bool",
@@ -423,7 +1583,8 @@
     "aic": false,
     "pydantic_module": "tensorrt",
     "pydantic_config_class": "TrtLlmArgs",
-    "config_key": "fail_fast_on_attention_window_too_large"
+    "config_key": "fail_fast_on_attention_window_too_large",
+    "display_name": "Fail Fast On Attention Window Too Large"
   },
   "otlp_traces_endpoint": {
     "type": "str",
@@ -439,7 +1600,8 @@
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "otlp_traces_endpoint"
+    "config_key": "otlp_traces_endpoint",
+    "display_name": "Otlp Traces Endpoint"
   },
   "telemetry": {
     "type": "bool",
@@ -452,24 +1614,26 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Telemetry"
   },
-  "enable_attention_dp": {
+  "enable_chunked_prefill": {
     "type": "bool",
     "flag": true,
     "default_value": false,
     "value": null,
-    "true_arg": "--enable_attention_dp",
+    "true_arg": "--enable_chunked_prefill",
     "false_arg": null,
-    "description": "Enable attention data parallel.",
-    "status": "beta",
+    "description": "Enable chunked prefill",
+    "status": "prototype",
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
     "aic": false,
     "pydantic_module": "base",
     "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "enable_attention_dp"
+    "config_key": "enable_chunked_prefill",
+    "display_name": "Enable Chunked Prefill"
   },
   "chat_template": {
     "type": "str",
@@ -482,7 +1646,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Chat Template"
   },
   "grpc": {
     "type": "bool",
@@ -495,7 +1660,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Grpc"
   },
   "extra_visual_gen_options": {
     "type": "str",
@@ -508,7 +1674,8 @@
     "module": "serve",
     "config_class": "ServeCommand",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Extra Visual Gen Options"
   },
   "tokenizer_mode": {
     "type": "str",
@@ -525,7 +1692,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tokenizer Mode"
   },
   "skip_tokenizer_init": {
     "type": "bool",
@@ -538,7 +1706,22 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Skip Tokenizer Init"
+  },
+  "dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "dtype",
+    "config_key": "dtype",
+    "default_value": "auto",
+    "value": null,
+    "description": "The data type to use for the model.",
+    "module": "base",
+    "config_class": "BaseLlmArgs",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dtype"
   },
   "tokenizer_revision": {
     "type": "str",
@@ -551,7 +1734,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tokenizer Revision"
   },
   "model_kwargs": {
     "type": "Dict[str, Any]",
@@ -565,7 +1749,22 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Model Kwargs"
+  },
+  "moe_tensor_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "moe_tensor_parallel_size",
+    "config_key": "moe_tensor_parallel_size",
+    "default_value": null,
+    "value": null,
+    "description": "The tensor parallel size for MoE model's expert weights.",
+    "module": "base",
+    "config_class": "BaseLlmArgs",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Moe Tensor Parallel Size"
   },
   "enable_lm_head_tp_in_adp": {
     "type": "bool",
@@ -579,7 +1778,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Lm Head TP In Adp"
   },
   "pp_partition": {
     "type": "List[int]",
@@ -593,7 +1793,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Pp Partition"
   },
   "cp_config": {
     "type": "str",
@@ -607,7 +1808,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Cp Config"
   },
   "batched_logits_processor": {
     "type": "str",
@@ -620,7 +1822,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Batched Logits Processor"
   },
   "iter_stats_max_iterations": {
     "type": "int",
@@ -634,7 +1837,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Iter Stats Max Iterations"
   },
   "request_stats_max_iterations": {
     "type": "int",
@@ -648,7 +1852,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Request Stats Max Iterations"
   },
   "peft_cache_config": {
     "type": "str",
@@ -662,7 +1867,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Peft Cache Config"
   },
   "sparse_attention_config": {
     "type": "str",
@@ -676,7 +1882,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sparse Attention Config"
   },
   "max_input_len": {
     "type": "int",
@@ -689,7 +1896,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Input Len"
   },
   "gather_generation_logits": {
     "type": "bool",
@@ -703,7 +1911,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Gather Generation Logits"
   },
   "postprocess_tokenizer_dir": {
     "type": "str",
@@ -717,7 +1926,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Postprocess Tokenizer Dir"
   },
   "mpi_session": {
     "type": "str",
@@ -730,7 +1940,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Mpi Session"
   },
   "return_perf_metrics": {
     "type": "bool",
@@ -744,7 +1955,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Return Perf Metrics"
   },
   "perf_metrics_max_requests": {
     "type": "int",
@@ -758,7 +1970,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Perf Metrics Max Requests"
   },
   "prometheus_metrics_config": {
     "type": "str",
@@ -772,7 +1985,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Prometheus Metrics Config"
   },
   "enable_energy_metrics": {
     "type": "bool",
@@ -786,7 +2000,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Energy Metrics"
   },
   "orchestrator_type": {
     "type": "str",
@@ -804,7 +2019,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Orchestrator Type"
   },
   "env_overrides": {
     "type": "Dict[str, Any]",
@@ -818,7 +2034,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Env Overrides"
   },
   "telemetry_config": {
     "type": "str",
@@ -832,7 +2049,8 @@
     "module": "base",
     "config_class": "BaseLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Telemetry Config"
   },
   "enable_tqdm": {
     "type": "bool",
@@ -845,7 +2063,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Tqdm"
   },
   "workspace": {
     "type": "str",
@@ -858,7 +2077,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Workspace"
   },
   "enable_build_cache": {
     "type": "str",
@@ -871,7 +2091,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Build Cache"
   },
   "extended_runtime_perf_knob_config": {
     "type": "str",
@@ -884,7 +2105,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Extended Runtime Perf Knob Config"
   },
   "calib_config": {
     "type": "str",
@@ -897,7 +2119,41 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Calib Config"
+  },
+  "quant_config": {
+    "type": "str",
+    "flag": false,
+    "arg": "quant_config",
+    "config_key": "quant_config",
+    "default_value": "quant_algo=None kv_cache_quant_algo=None group_size=128 smoothquant_val=0.5 clamp_val=None use_meta_recipe=False has_zero_point=False pre_quant_scale=False exclude_modules=None mamba_ssm_cache_dtype=None mamba_ssm_stochastic_rounding=False mamba_ssm_philox_rounds=10",
+    "value": null,
+    "description": "Quantization config.",
+    "module": "tensorrt",
+    "config_class": "TrtLlmArgs",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Quant Config"
+  },
+  "embedding_parallel_mode": {
+    "type": "str",
+    "flag": false,
+    "arg": "embedding_parallel_mode",
+    "config_key": "embedding_parallel_mode",
+    "default_value": "SHARDING_ALONG_VOCAB",
+    "value": null,
+    "description": "The embedding parallel mode.",
+    "choices": [
+      "NONE",
+      "SHARDING_ALONG_VOCAB",
+      "SHARDING_ALONG_HIDDEN"
+    ],
+    "module": "tensorrt",
+    "config_class": "TrtLlmArgs",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Embedding Parallel Mode"
   },
   "fast_build": {
     "type": "bool",
@@ -910,7 +2166,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Fast Build"
   },
   "build_config": {
     "type": "str",
@@ -923,7 +2180,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Build Config"
   },
   "enable_prompt_adapter": {
     "type": "bool",
@@ -936,7 +2194,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Prompt Adapter"
   },
   "max_prompt_adapter_token": {
     "type": "int",
@@ -949,7 +2208,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Prompt Adapter Token"
   },
   "normalize_log_probs": {
     "type": "bool",
@@ -962,7 +2222,8 @@
     "module": "tensorrt",
     "config_class": "TrtLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Normalize Log Probs"
   },
   "garbage_collection_gen0_threshold": {
     "type": "int",
@@ -976,7 +2237,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Garbage Collection Gen0 Threshold"
   },
   "cuda_graph_config": {
     "type": "str",
@@ -990,7 +2252,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "CUDA Graph Config"
   },
   "attention_dp_config": {
     "type": "str",
@@ -1004,7 +2267,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Attention Dp Config"
   },
   "disable_overlap_scheduler": {
     "type": "bool",
@@ -1018,7 +2282,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Overlap Scheduler"
   },
   "moe_config": {
     "type": "str",
@@ -1032,7 +2297,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Moe Config"
   },
   "nvfp4_gemm_config": {
     "type": "str",
@@ -1046,7 +2312,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Nvfp4 Gemm Config"
   },
   "dwdp_config": {
     "type": "str",
@@ -1060,21 +2327,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "attn_backend": {
-    "type": "str",
-    "flag": false,
-    "arg": "attn_backend",
-    "config_key": "attn_backend",
-    "default_value": "TRTLLM",
-    "value": null,
-    "description": "Attention backend to use.",
-    "status": "beta",
-    "module": "pytorch",
-    "config_class": "TorchLlmArgs",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dwdp Config"
   },
   "sampler_type": {
     "type": "str",
@@ -1088,7 +2342,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sampler Type"
   },
   "sampler_force_async_worker": {
     "type": "bool",
@@ -1102,7 +2357,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sampler Force Async Worker"
   },
   "enable_iter_perf_stats": {
     "type": "bool",
@@ -1116,7 +2372,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Iter Perf Stats"
   },
   "enable_iter_req_stats": {
     "type": "bool",
@@ -1130,7 +2387,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Iter Req Stats"
   },
   "print_iter_log": {
     "type": "bool",
@@ -1144,7 +2402,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Print Iter Log"
   },
   "batch_wait_timeout_ms": {
     "type": "float",
@@ -1158,7 +2417,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Batch Wait Timeout Ms"
   },
   "batch_wait_timeout_iters": {
     "type": "int",
@@ -1172,7 +2432,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Batch Wait Timeout Iters"
   },
   "batch_wait_max_tokens_ratio": {
     "type": "float",
@@ -1186,7 +2447,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Batch Wait Max Tokens Ratio"
   },
   "torch_compile_config": {
     "type": "str",
@@ -1200,7 +2462,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Torch Compile Config"
   },
   "enable_autotuner": {
     "type": "bool",
@@ -1214,21 +2477,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "enable_layerwise_nvtx_marker": {
-    "type": "bool",
-    "flag": false,
-    "arg": "enable_layerwise_nvtx_marker",
-    "config_key": "enable_layerwise_nvtx_marker",
-    "default_value": false,
-    "value": null,
-    "description": "If true, enable layerwise nvtx marker.",
-    "status": "beta",
-    "module": "pytorch",
-    "config_class": "TorchLlmArgs",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Autotuner"
   },
   "enable_min_latency": {
     "type": "bool",
@@ -1242,7 +2492,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Min Latency"
   },
   "stream_interval": {
     "type": "int",
@@ -1255,7 +2506,23 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Stream Interval"
+  },
+  "force_dynamic_quantization": {
+    "type": "bool",
+    "flag": false,
+    "arg": "force_dynamic_quantization",
+    "config_key": "force_dynamic_quantization",
+    "default_value": false,
+    "value": null,
+    "description": "If true, force dynamic quantization. Defaults to False.",
+    "status": "prototype",
+    "module": "pytorch",
+    "config_class": "TorchLlmArgs",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Force Dynamic Quantization"
   },
   "allreduce_strategy": {
     "type": "str",
@@ -1280,7 +2547,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allreduce Strategy"
   },
   "checkpoint_loader": {
     "type": "str",
@@ -1294,7 +2562,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Checkpoint Loader"
   },
   "checkpoint_format": {
     "type": "str",
@@ -1308,7 +2577,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Checkpoint Format"
   },
   "mm_encoder_only": {
     "type": "bool",
@@ -1322,7 +2592,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Encoder Only"
   },
   "ray_worker_extension_cls": {
     "type": "str",
@@ -1336,7 +2607,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Ray Worker Extension Cls"
   },
   "ray_placement_config": {
     "type": "str",
@@ -1350,7 +2622,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Ray Placement Config"
   },
   "ray_worker_nsight_options": {
     "type": "Dict[str, Any]",
@@ -1364,7 +2637,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Ray Worker Nsight Options"
   },
   "sleep_config": {
     "type": "str",
@@ -1378,7 +2652,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sleep Config"
   },
   "use_cute_dsl_blockscaling_mm": {
     "type": "bool",
@@ -1392,7 +2667,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Use Cute Dsl Blockscaling MM"
   },
   "use_cute_dsl_blockscaling_bmm": {
     "type": "bool",
@@ -1406,7 +2682,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Use Cute Dsl Blockscaling Bmm"
   },
   "disable_flashinfer_sampling": {
     "type": "bool",
@@ -1420,7 +2697,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Flashinfer Sampling"
   },
   "max_stats_len": {
     "type": "int",
@@ -1434,7 +2712,8 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Stats Len"
   },
   "layer_wise_benchmarks_config": {
     "type": "str",
@@ -1448,358 +2727,7 @@
     "module": "pytorch",
     "config_class": "TorchLlmArgs",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "model": {
-    "type": "str",
-    "flag": false,
-    "arg": "model",
-    "default_value": null,
-    "value": null,
-    "required": true,
-    "description": "The path to the model checkpoint or the model name from the Hugging Face Hub.",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "model"
-  },
-  "dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "dtype",
-    "config_key": "dtype",
-    "default_value": "auto",
-    "value": null,
-    "description": "The data type to use for the model.",
-    "module": "base",
-    "config_class": "BaseLlmArgs",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "tensor_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--tensor_parallel_size",
-    "default_value": 1,
-    "value": null,
-    "description": "Tensor parallelism size.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "tensor_parallel_size"
-  },
-  "pipeline_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--pipeline_parallel_size",
-    "default_value": 1,
-    "value": null,
-    "description": "Pipeline parallelism size.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "pipeline_parallel_size"
-  },
-  "host": {
-    "type": "str",
-    "flag": false,
-    "arg": "--host",
-    "default_value": "localhost",
-    "value": null,
-    "description": "Hostname of the server.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "port": {
-    "type": "int",
-    "flag": false,
-    "arg": "--port",
-    "default_value": 8000,
-    "value": null,
-    "description": "Port of the server.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "served_model_name": {
-    "type": "str",
-    "flag": false,
-    "arg": "--served_model_name",
-    "default_value": null,
-    "value": null,
-    "description": "The model name used in the API. If not specified, the model path is used as the model name. This is useful when the model path is long or when you want to expose a custom name to clients.",
-    "status": "prototype",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_batch_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max_batch_size",
-    "default_value": 2048,
-    "value": null,
-    "description": "Maximum number of requests that the engine can schedule.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "max_batch_size"
-  },
-  "max_num_tokens": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max_num_tokens",
-    "default_value": 8192,
-    "value": null,
-    "description": "Maximum number of batched input tokens after padding is removed in each batch.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "max_num_tokens"
-  },
-  "trust_remote_code": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--trust_remote_code",
-    "false_arg": null,
-    "description": "Flag for HF transformers.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "trust_remote_code"
-  },
-  "tokenizer": {
-    "type": "str",
-    "flag": false,
-    "arg": "--tokenizer",
-    "default_value": null,
-    "value": null,
-    "description": "Path or name of the tokenizer. When using the PyTorch backend, this replaces the default HuggingFace tokenizer.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "tokenizer"
-  },
-  "max_seq_len": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max_seq_len",
-    "default_value": null,
-    "value": null,
-    "description": "Maximum total length of one request, including prompt and outputs. If unspecified, the value is deduced from the model config.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "max_seq_len"
-  },
-  "context_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--context_parallel_size",
-    "default_value": 1,
-    "value": null,
-    "description": "Context parallelism size.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "context_parallel_size"
-  },
-  "moe_expert_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--moe_expert_parallel_size",
-    "default_value": null,
-    "value": null,
-    "description": "expert parallelism size",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "moe_expert_parallel_size"
-  },
-  "moe_cluster_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--moe_cluster_parallel_size",
-    "default_value": null,
-    "value": null,
-    "description": "[Deprecated] Expert cluster parallelism size. This option is no longer supported and will be removed in a future release.",
-    "status": "deprecated",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "moe_cluster_parallel_size"
-  },
-  "free_gpu_memory_fraction": {
-    "type": "float",
-    "flag": false,
-    "arg": "--free_gpu_memory_fraction",
-    "default_value": 0.9,
-    "value": null,
-    "description": "Free GPU memory fraction reserved for KV Cache, after allocating model weights and buffers.",
-    "status": "beta",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "kv_cache_dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--kv_cache_dtype",
-    "default_value": "auto",
-    "value": null,
-    "choices": [
-      "auto",
-      "fp8",
-      "nvfp4"
-    ],
-    "description": "KV cache quantization dtype for PyTorch backend. 'auto' uses checkpoint/model metadata; explicit values force override.",
-    "status": "prototype",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "enable_chunked_prefill": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--enable_chunked_prefill",
-    "false_arg": null,
-    "description": "Enable chunked prefill",
-    "status": "prototype",
-    "module": "serve",
-    "config_class": "ServeCommand",
-    "ui": "less_frequent",
-    "aic": true,
-    "pydantic_module": "base",
-    "pydantic_config_class": "BaseLlmArgs",
-    "config_key": "enable_chunked_prefill"
-  },
-  "moe_tensor_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "moe_tensor_parallel_size",
-    "config_key": "moe_tensor_parallel_size",
-    "default_value": null,
-    "value": null,
-    "description": "The tensor parallel size for MoE model's expert weights.",
-    "module": "base",
-    "config_class": "BaseLlmArgs",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "load_format": {
-    "type": "str",
-    "flag": false,
-    "arg": "load_format",
-    "config_key": "load_format",
-    "default_value": "auto",
-    "value": null,
-    "description": "The format to load the model.",
-    "choices": [
-      "auto",
-      "dummy"
-    ],
-    "module": "base",
-    "config_class": "BaseLlmArgs",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "quant_config": {
-    "type": "str",
-    "flag": false,
-    "arg": "quant_config",
-    "config_key": "quant_config",
-    "default_value": "quant_algo=None kv_cache_quant_algo=None group_size=128 smoothquant_val=0.5 clamp_val=None use_meta_recipe=False has_zero_point=False pre_quant_scale=False exclude_modules=None mamba_ssm_cache_dtype=None mamba_ssm_stochastic_rounding=False mamba_ssm_philox_rounds=10",
-    "value": null,
-    "description": "Quantization config.",
-    "module": "tensorrt",
-    "config_class": "TrtLlmArgs",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "embedding_parallel_mode": {
-    "type": "str",
-    "flag": false,
-    "arg": "embedding_parallel_mode",
-    "config_key": "embedding_parallel_mode",
-    "default_value": "SHARDING_ALONG_VOCAB",
-    "value": null,
-    "description": "The embedding parallel mode.",
-    "choices": [
-      "NONE",
-      "SHARDING_ALONG_VOCAB",
-      "SHARDING_ALONG_HIDDEN"
-    ],
-    "module": "tensorrt",
-    "config_class": "TrtLlmArgs",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "force_dynamic_quantization": {
-    "type": "bool",
-    "flag": false,
-    "arg": "force_dynamic_quantization",
-    "config_key": "force_dynamic_quantization",
-    "default_value": false,
-    "value": null,
-    "description": "If true, force dynamic quantization. Defaults to False.",
-    "status": "prototype",
-    "module": "pytorch",
-    "config_class": "TorchLlmArgs",
-    "ui": "less_frequent",
-    "aic": true
+    "aic": false,
+    "display_name": "Layer Wise Benchmarks Config"
   }
 }

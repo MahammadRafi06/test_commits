@@ -1,0 +1,17 @@
+Failed to capture: python -m dynamo.sglang --help
+stderr:
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/usr/local/lib/python3.12/dist-packages/dynamo/sglang/__main__.py", line 9, in <module>
+    from dynamo.sglang.main import main
+  File "/usr/local/lib/python3.12/dist-packages/dynamo/sglang/main.py", line 15, in <module>
+    from dynamo.sglang.init_diffusion import (
+  File "/usr/local/lib/python3.12/dist-packages/dynamo/sglang/init_diffusion.py", line 20, in <module>
+    from dynamo.sglang.publisher import handle_non_leader_node, setup_sgl_metrics
+  File "/usr/local/lib/python3.12/dist-packages/dynamo/sglang/publisher.py", line 60, in <module>
+    class DynamoSglangPublisher:
+  File "/usr/local/lib/python3.12/dist-packages/dynamo/sglang/publisher.py", line 67, in DynamoSglangPublisher
+    engine: sgl.Engine,
+            ^^^^^^^^^^
+AttributeError: module 'sglang' has no attribute 'Engine'

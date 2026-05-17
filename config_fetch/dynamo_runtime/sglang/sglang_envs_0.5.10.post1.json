@@ -1,119 +1,167 @@
 {
   "engine": "sglang",
   "version": "0.5.10.post1",
-  "date": "2026-05-11",
-  "source": "introspected from sglang.srt.environ.Envs + Dynamo wrapper overlay",
+  "date": "2026-05-12",
+  "source": "introspected from sglang.srt.environ.Envs + Dynamo backend ArgGroups",
   "DYN_SGL_EMBEDDING_WORKER": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "bool",
     "default_value": false,
     "value": null,
-    "description": "Run as embedding worker (also sets SGLang's --is-embedding).",
-    "arg": "--embedding-worker",
+    "description": "Run as embedding worker component (Dynamo flag, also sets SGLang's --is-embedding).",
+    "true_arg": "--embedding-worker",
+    "false_arg": "--no-embedding-worker",
+    "arg_key": "embedding_worker",
     "ui": "primary",
     "aic": false,
-    "native_effects": [
-      "--is-embedding"
-    ]
+    "display_name": "Dyn Sgl Embedding Worker"
   },
   "DYN_SGL_MULTIMODAL_ENCODE_WORKER": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "bool",
     "default_value": false,
     "value": null,
-    "description": "Run as multimodal encode worker (frontend-facing).",
-    "arg": "--multimodal-encode-worker",
+    "description": "Run as multimodal encode worker component for processing images/videos.",
+    "true_arg": "--multimodal-encode-worker",
+    "false_arg": "--no-multimodal-encode-worker",
+    "arg_key": "multimodal_encode_worker",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Sgl Multimodal Encode Worker"
   },
   "DYN_SGL_MULTIMODAL_WORKER": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "bool",
     "default_value": false,
     "value": null,
-    "description": "Run as multimodal LLM worker.",
-    "arg": "--multimodal-worker",
+    "description": "Run as multimodal worker component for LLM inference with multimodal data.",
+    "true_arg": "--multimodal-worker",
+    "false_arg": "--no-multimodal-worker",
+    "arg_key": "multimodal_worker",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Sgl Multimodal Worker"
   },
   "DYN_SGL_IMAGE_DIFFUSION_WORKER": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "bool",
     "default_value": false,
     "value": null,
-    "description": "Run as image diffusion worker.",
-    "arg": "--image-diffusion-worker",
+    "description": "Run as image diffusion worker for image generation.",
+    "true_arg": "--image-diffusion-worker",
+    "false_arg": "--no-image-diffusion-worker",
+    "arg_key": "image_diffusion_worker",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Sgl Image Diffusion Worker"
   },
   "DYN_SGL_VIDEO_GENERATION_WORKER": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "bool",
     "default_value": false,
     "value": null,
-    "description": "Run as video generation worker.",
-    "arg": "--video-generation-worker",
+    "description": "Run as video generation worker for video generation (T2V/I2V).",
+    "true_arg": "--video-generation-worker",
+    "false_arg": "--no-video-generation-worker",
+    "arg_key": "video_generation_worker",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Sgl Video Generation Worker"
   },
   "DYN_SGL_DISAGG_CONFIG": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "str",
     "default_value": null,
     "value": null,
-    "description": "Path to YAML disaggregation config file.",
+    "description": "Disaggregation configuration file in YAML format.",
     "arg": "--disagg-config",
+    "arg_key": "disagg_config",
     "ui": "advanced",
     "aic": false,
-    "requires": [
-      "disagg_config_key"
-    ]
+    "display_name": "Dyn Sgl Disagg Config"
   },
   "DYN_SGL_DISAGG_CONFIG_KEY": {
-    "category": "dynamo",
+    "category": "dynamo_sglang",
     "type": "str",
     "default_value": null,
     "value": null,
-    "description": "Key to select from disaggregation config, for example prefill or decode.",
+    "description": "Key to select from nested disaggregation configuration file (e.g., 'prefill', 'decode').",
     "arg": "--disagg-config-key",
+    "arg_key": "disagg_config_key",
     "ui": "advanced",
     "aic": false,
-    "requires": [
-      "disagg_config"
-    ]
+    "display_name": "Dyn Sgl Disagg Config Key"
   },
   "DYN_TOOL_CALL_PARSER": {
-    "category": "dynamo",
+    "category": "dynamo_runtime",
     "type": "str",
     "default_value": null,
     "value": null,
-    "description": "Tool call parser (overrides SGLang's --tool-call-parser).",
+    "description": "Tool call parser name for the model.",
     "arg": "--dyn-tool-call-parser",
-    "ui": "advanced",
-    "aic": false
-  },
-  "DYN_REASONING_PARSER": {
-    "category": "dynamo",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Reasoning parser for chain-of-thought models.",
-    "arg": "--dyn-reasoning-parser",
-    "ui": "advanced",
-    "aic": false
-  },
-  "DYN_CUSTOM_JINJA_TEMPLATE": {
-    "category": "dynamo",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Custom chat template path.",
-    "arg": "--custom-jinja-template",
+    "arg_key": "dyn_tool_call_parser",
     "ui": "advanced",
     "aic": false,
-    "conflicts_with": [
-      "use_sglang_tokenizer"
-    ]
+    "choices": [
+      "nemotron_deci",
+      "llama3_json",
+      "mistral",
+      "pythonic",
+      "harmony",
+      "nemotron_nano",
+      "jamba",
+      "default",
+      "deepseek_v3_2",
+      "deepseek_v3",
+      "glm47",
+      "phi4",
+      "kimi_k2",
+      "qwen3_coder",
+      "minimax_m2",
+      "deepseek_v3_1",
+      "hermes"
+    ],
+    "display_name": "Dyn Tool Call Parser"
+  },
+  "DYN_REASONING_PARSER": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Reasoning parser name for the model. If not specified, no reasoning parsing is performed.",
+    "arg": "--dyn-reasoning-parser",
+    "arg_key": "dyn_reasoning_parser",
+    "ui": "advanced",
+    "aic": false,
+    "choices": [
+      "nemotron_nano",
+      "nemotron3",
+      "kimi",
+      "glm45",
+      "minimax_append_think",
+      "step3",
+      "mistral",
+      "qwen3",
+      "gpt_oss",
+      "kimi_k25",
+      "deepseek_r1",
+      "nemotron_deci",
+      "granite",
+      "basic"
+    ],
+    "display_name": "Dyn Reasoning Parser"
+  },
+  "DYN_CUSTOM_JINJA_TEMPLATE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Path to a custom Jinja template file to override the model's default chat template. This template will take precedence over any template found in the model repository.",
+    "arg": "--custom-jinja-template",
+    "arg_key": "custom_jinja_template",
+    "ui": "advanced",
+    "aic": false,
+    "display_name": "Dyn Custom Jinja Template"
   },
   "SGLANG_FORWARD_UNKNOWN_TOOLS": {
     "category": "tool_calling",
@@ -122,7 +170,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Forward Unknown Tools"
   },
   "SGLANG_TOOL_STRICT_LEVEL": {
     "category": "tool_calling",
@@ -131,7 +180,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Tool Strict Level"
   },
   "SGLANG_VLM_CACHE_SIZE_MB": {
     "category": "multimodal",
@@ -140,7 +190,8 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Vlm Cache Size Mb"
   },
   "SGLANG_MM_FEATURE_CACHE_MB": {
     "category": "multimodal",
@@ -149,180 +200,441 @@
     "value": null,
     "description": "",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang MM Feature Cache Mb"
   },
-  "DYN_SGL_USE_TOKENIZER": {
-    "category": "dynamo",
-    "type": "bool",
-    "default_value": false,
+  "DYN_NAMESPACE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "dynamo",
     "value": null,
-    "description": "[Deprecated] Use --dyn-chat-processor sglang on the frontend instead.",
-    "arg": "--use-sglang-tokenizer",
+    "description": "Dynamo namespace. If DYN_NAMESPACE_WORKER_SUFFIX is set, '-{suffix}' is appended to support multiple worker pools",
+    "arg": "--namespace",
+    "arg_key": "namespace",
     "ui": "less_frequent",
     "aic": false,
-    "status": "deprecated"
+    "display_name": "Dyn Namespace"
   },
-  "SGLANG_USE_MODELSCOPE": {
-    "category": "model",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SORT_WEIGHT_FILES": {
-    "category": "model",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TIMEOUT_KEEP_ALIVE": {
-    "category": "networking",
-    "type": "int",
-    "default_value": 5,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_LOG_REQUEST_EXCEEDED_MS": {
-    "category": "logging",
-    "type": "int",
-    "default_value": -1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_LOG_GC": {
-    "category": "logging",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DETECT_SLOW_RANK": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISABLE_OUTLINES_DISK_CACHE": {
-    "category": "grammar",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_GRAMMAR_POLL_INTERVAL": {
-    "category": "grammar",
-    "type": "float",
-    "default_value": 0.005,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TCP_STORE_PORT": {
-    "category": "distributed",
-    "type": "int",
-    "default_value": 29600,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ONE_VISIBLE_DEVICE_PER_PROCESS": {
-    "category": "distributed",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISTRIBUTED_INIT_METHOD_OVERRIDE": {
-    "category": "distributed",
+  "DYN_ENDPOINT": {
+    "category": "dynamo_runtime",
     "type": "str",
     "default_value": null,
     "value": null,
-    "description": "Override the distributed init method used by torch.distributed.init_process_group. Set to \"env://\" to use an externally-created TCPStore via MASTER_ADDR/MASTER_PORT.",
+    "description": "Dynamo endpoint string in 'dyn://namespace.component.endpoint' format. Example: dyn://dynamo.backend.generate.",
+    "arg": "--endpoint",
+    "arg_key": "endpoint",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Endpoint"
   },
-  "SGLANG_FORCE_SHUTDOWN": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
+  "DYN_DISCOVERY_BACKEND": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "etcd",
     "value": null,
-    "description": "",
+    "description": "Discovery backend: kubernetes (K8s API), etcd (distributed KV), file (local filesystem), mem (in-memory). Etcd uses the ETCD_* env vars (e.g. ETCD_ENDPOINTS) for connection details. File uses root dir from env var DYN_FILE_KV or defaults to $TMPDIR/dynamo_store_kv.",
+    "arg": "--discovery-backend",
+    "arg_key": "discovery_backend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "choices": [
+      "kubernetes",
+      "etcd",
+      "file",
+      "mem"
+    ],
+    "display_name": "Dyn Discovery Backend"
   },
-  "SGLANG_OTLP_EXPORTER_SCHEDULE_DELAY_MILLIS": {
-    "category": "debug",
-    "type": "int",
-    "default_value": 500,
+  "DYN_REQUEST_PLANE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "tcp",
     "value": null,
-    "description": "",
+    "description": "Determines how requests are distributed from routers to workers. 'tcp' is fastest.",
+    "arg": "--request-plane",
+    "arg_key": "request_plane",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "choices": [
+      "tcp",
+      "nats",
+      "http"
+    ],
+    "display_name": "Dyn Request Plane"
   },
-  "SGLANG_LOG_MS": {
-    "category": "logging",
-    "type": "bool",
-    "default_value": false,
+  "DYN_EVENT_PLANE": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "nats",
     "value": null,
-    "description": "",
+    "description": "Determines how events are published.",
+    "arg": "--event-plane",
+    "arg_key": "event_plane",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "choices": [
+      "nats",
+      "zmq"
+    ],
+    "display_name": "Dyn Event Plane"
   },
-  "SGLANG_LOG_FORWARD_ITERS": {
-    "category": "logging",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_LOG_REQUEST_HEADERS": {
-    "category": "logging",
+  "DYN_CONNECTOR": {
+    "category": "dynamo_runtime",
     "type": "List[str]",
     "default_value": [],
     "value": null,
-    "description": "",
+    "description": "[Deprecated for vLLM] Use --kv-transfer-config instead. For TRT-LLM, options: nixl, lmcache, kvbm, null, none.",
+    "arg": "--connector",
+    "arg_key": "connector",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "multiple": true,
+    "display_name": "Dyn Connector"
   },
-  "SGLANG_LOG_SCHEDULER_STATUS_TARGET": {
-    "category": "logging",
+  "DYN_DURABLE_KV_EVENTS": {
+    "category": "dynamo_runtime",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "[Deprecated] Enable durable KV events using NATS JetStream instead of the local indexer. This option will be removed in a future release. The event-plane subscriber (local_indexer mode) is now the recommended path.",
+    "true_arg": "--durable-kv-events",
+    "false_arg": "--no-durable-kv-events",
+    "arg_key": "durable_kv_events",
+    "ui": "less_frequent",
+    "aic": false,
+    "status": "deprecated",
+    "display_name": "Dyn Durable KV Events"
+  },
+  "DYN_EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE": {
+    "category": "dynamo_runtime",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "Exclude tool definitions from the chat template when tool_choice='none'. Prevents models from generating raw XML tool calls in the content field.",
+    "true_arg": "--exclude-tools-when-tool-choice-none",
+    "false_arg": "--no-exclude-tools-when-tool-choice-none",
+    "arg_key": "exclude_tools_when_tool_choice_none",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Exclude Tools When Tool Choice None"
+  },
+  "DYN_ENDPOINT_TYPES": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "chat,completions",
+    "value": null,
+    "description": "Comma-separated list of endpoint types to enable. Options: 'chat', 'completions'. Use 'completions' for models without chat templates.",
+    "arg": "--endpoint-types",
+    "arg_key": "endpoint_types",
+    "ui": "less_frequent",
+    "aic": false,
+    "deprecated_alias": "--dyn-endpoint-types",
+    "display_name": "Dyn Endpoint Types"
+  },
+  "DYN_DUMP_CONFIG_TO": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Dump resolved configuration to the specified file path.",
+    "arg": "--dump-config-to",
+    "arg_key": "dump_config_to",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Dump Config To"
+  },
+  "DYN_MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB": {
+    "category": "dynamo_runtime",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "Capacity of the multimodal embedding cache in GB. 0 = disabled.",
+    "arg": "--multimodal-embedding-cache-capacity-gb",
+    "arg_key": "multimodal_embedding_cache_capacity_gb",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Multimodal Embedding Cache Capacity Gb"
+  },
+  "DYN_OUTPUT_MODALITIES": {
+    "category": "dynamo_runtime",
+    "type": "List[str]",
+    "default_value": [
+      "text"
+    ],
+    "value": null,
+    "description": "Output modalities for omni/diffusion mode (e.g., --output-modalities text image audio video).",
+    "arg": "--output-modalities",
+    "arg_key": "output_modalities",
+    "ui": "less_frequent",
+    "aic": false,
+    "multiple": true,
+    "display_name": "Dyn Output Modalities"
+  },
+  "DYN_MEDIA_OUTPUT_FS_URL": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": "file:///tmp/dynamo_media",
+    "value": null,
+    "description": "Filesystem URL for storing generated images and videos (e.g. file:///tmp/dynamo_media, s3://bucket/path).",
+    "arg": "--media-output-fs-url",
+    "arg_key": "media_output_fs_url",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Media Output Fs Url"
+  },
+  "DYN_MEDIA_OUTPUT_HTTP_URL": {
+    "category": "dynamo_runtime",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Base URL for rewriting media file paths in responses (e.g. http://localhost:8000/media). If unset, returns raw filesystem paths.",
+    "arg": "--media-output-http-url",
+    "arg_key": "media_output_http_url",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Media Output Http Url"
+  },
+  "DYN_SGL_USE_TOKENIZER": {
+    "category": "dynamo_sglang",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "[Deprecated] Use SGLang's tokenizer for pre and post processing. This option will be removed in a future release. Use '--dyn-chat-processor sglang' on the frontend instead, which provides the same SGLang-native pre/post processing with KV router support.",
+    "true_arg": "--use-sglang-tokenizer",
+    "false_arg": "--no-use-sglang-tokenizer",
+    "arg_key": "use_sglang_tokenizer",
+    "ui": "less_frequent",
+    "aic": false,
+    "status": "deprecated",
+    "display_name": "Dyn Sgl Use Tokenizer"
+  },
+  "DYN_SGL_EMBEDDING_TRANSFER_MODE": {
+    "category": "dynamo_sglang",
+    "type": "str",
+    "default_value": "nixl-write",
+    "value": null,
+    "description": "Worker embedding transfer mode: 'local', 'nixl-write', or 'nixl-read'. Can also be set with environment variable DYN_SGL_EMBEDDING_TRANSFER_MODE.",
+    "arg": "--embedding-transfer-mode",
+    "arg_key": "embedding_transfer_mode",
+    "ui": "less_frequent",
+    "aic": false,
+    "choices": [
+      "local",
+      "nixl-write",
+      "nixl-read"
+    ],
+    "display_name": "Dyn Sgl Embedding Transfer Mode"
+  },
+  "DYN_SGL_ENABLE_RL": {
+    "category": "dynamo_sglang",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Enable RL training support. Registers the call_tokenizer_manager engine route for generic tokenizer_manager passthrough.",
+    "true_arg": "--enable-rl",
+    "false_arg": "--no-enable-rl",
+    "arg_key": "enable_rl",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Sgl Enable Rl"
+  },
+  "DYN_COMPONENT": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Component"
+  },
+  "DYN_GRACEFUL_SHUTDOWN_GRACE_PERIOD_SECS": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/graceful_shutdown.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Graceful Shutdown Grace Period Secs"
+  },
+  "DYN_LORA_ENABLED": {
+    "category": "dynamo_sglang",
     "type": "str",
     "default_value": "",
     "value": null,
     "description": "",
+    "source_file": "request_handlers/handler_base.py",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn LoRA Enabled"
   },
-  "SGLANG_LOG_SCHEDULER_STATUS_INTERVAL": {
-    "category": "logging",
-    "type": "float",
-    "default_value": 60.0,
+  "DYN_MM_ALLOW_INTERNAL": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "0",
     "value": null,
     "description": "",
+    "source_file": "multimodal/url_validator.py",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn MM Allow Internal"
+  },
+  "DYN_MM_HTTP_CONCURRENCY": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Concurrency"
+  },
+  "DYN_MM_HTTP_CONNECT_TIMEOUT": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Connect Timeout"
+  },
+  "DYN_MM_HTTP_MAX_CONNECTIONS": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Max Connections"
+  },
+  "DYN_MM_HTTP_MAX_KEEPALIVE": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Max Keepalive"
+  },
+  "DYN_MM_HTTP_POOL_TIMEOUT": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Pool Timeout"
+  },
+  "DYN_MM_HTTP_READ_TIMEOUT": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/http_client.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Http Read Timeout"
+  },
+  "DYN_MM_IMAGE_CACHE_SIZE": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "8",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/image_loader.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Image Cache Size"
+  },
+  "DYN_MM_LOCAL_PATH": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/url_validator.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Local Path"
+  },
+  "DYN_MM_VIDEO_NUM_FRAMES": {
+    "category": "dynamo_common_multimodal",
+    "type": "str",
+    "default_value": "32",
+    "value": null,
+    "description": "",
+    "source_file": "multimodal/video_loader.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn MM Video Num Frames"
+  },
+  "DYN_NAMESPACE_WORKER_SUFFIX": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/namespace.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Namespace Worker Suffix"
+  },
+  "DYN_NVTX": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": "0",
+    "value": null,
+    "description": "",
+    "source_file": "utils/nvtx_utils.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Nvtx"
+  },
+  "DYN_PARENT_DGD_K8S_NAME": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Parent Dgd K8s Name"
+  },
+  "DYN_PARENT_DGD_K8S_NAMESPACE": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Parent Dgd K8s Namespace"
+  },
+  "DYN_SNAPSHOT_CONTROL_DIR": {
+    "category": "dynamo_common_utils",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "source_file": "utils/snapshot.py",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dyn Snapshot Control Dir"
   },
   "SGLANG_DISAGGREGATION_THREAD_POOL_SIZE": {
     "category": "disaggregation",
@@ -331,7 +643,8 @@
     "value": null,
     "description": "NOTE: For SGLANG_DISAGGREGATION_THREAD_POOL_SIZE, the effective default is computed dynamically at runtime based on cpu_count; see disaggregation backends.",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Disaggregation Thread Pool Size"
   },
   "SGLANG_DISAGGREGATION_QUEUE_SIZE": {
     "category": "disaggregation",
@@ -340,7 +653,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Disaggregation Queue Size"
   },
   "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": {
     "category": "disaggregation",
@@ -349,655 +663,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENCODER_GRPC_TIMEOUT_SECS": {
-    "category": "networking",
-    "type": "int",
-    "default_value": 60,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENCODER_MM_RECEIVER_MODE": {
-    "category": "networking",
-    "type": "str",
-    "default_value": "http",
-    "value": null,
-    "description": "Encoder receiver selection: http|grpc (used by EPD paths).",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION": {
-    "category": "networking",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_MESSAGE_QUEUE_BROADCASTER": {
-    "category": "distributed",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_HICACHE_FILE_BACKEND_STORAGE_DIR": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_HICACHE_DECODE_OFFLOAD_STRIDE": {
-    "category": "kv_cache",
-    "type": "int",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "IS_H200": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SET_CPU_AFFINITY": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_GRAMMAR_MAX_POLL_ITERATIONS": {
-    "category": "grammar",
-    "type": "int",
-    "default_value": 10000,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISABLED_MODEL_ARCHS": {
-    "category": "model",
-    "type": "List[str]",
-    "default_value": [],
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_RECORD_STEP_TIME": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISABLE_REQUEST_LOGGING": {
-    "category": "logging",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_IS_IN_CI": {
-    "category": "ci",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_IS_IN_CI_AMD": {
-    "category": "ci",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_CUDA_COREDUMP": {
-    "category": "ci",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_CUDA_COREDUMP_DIR": {
-    "category": "ci",
-    "type": "str",
-    "default_value": "/tmp/sglang_cuda_coredumps",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_MAX_RETRY": {
-    "category": "ci",
-    "type": "int",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_STUCK_DETOKENIZER": {
-    "category": "debug",
-    "type": "float",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_STUCK_DP_CONTROLLER": {
-    "category": "debug",
-    "type": "float",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_STUCK_SCHEDULER_INIT": {
-    "category": "debug",
-    "type": "float",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_STUCK_TOKENIZER": {
-    "category": "debug",
-    "type": "float",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_CRASH_AFTER_STREAM_OUTPUTS": {
-    "category": "debug",
-    "type": "int",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PROFILE_WITH_STACK": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PROFILE_RECORD_SHAPES": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PROFILE_V2": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DEBUG_MEMORY_POOL": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_REQUEST_TIME_STATS": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISABLE_TP_MEMORY_INBALANCE_CHECK": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SIMULATE_ACC_LEN": {
-    "category": "debug",
-    "type": "float",
-    "default_value": -1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SIMULATE_ACC_METHOD": {
-    "category": "debug",
-    "type": "str",
-    "default_value": "multinomial",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TORCH_PROFILER_DIR": {
-    "category": "debug",
-    "type": "str",
-    "default_value": "/tmp",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_OTLP_EXPORTER_MAX_EXPORT_BATCH_SIZE": {
-    "category": "debug",
-    "type": "int",
-    "default_value": 64,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NATIVE_MOVE_KV_CACHE": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK": {
-    "category": "debug",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_RETRACT": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_RETRACT_INTERVAL": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 3,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_RETRACT_NO_PREFILL_BS": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 2147483648,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_STRICT_MEM_CHECK_DURING_BUSY": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_STRICT_MEM_CHECK_DURING_IDLE": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_INIT_NEW_TOKEN_RATIO": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": 0.7,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MIN_NEW_TOKEN_RATIO_FACTOR": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": 0.14,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NEW_TOKEN_RATIO_DECAY_STEPS": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 600,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_RETRACT_DECODE_STEPS": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 20,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_CLIP_MAX_NEW_TOKENS_ESTIMATION": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 4096,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_DEFAULT": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 1000,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_DECODE": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_TARGET_VERIFY": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_NONE": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_HEARTBEAT_INTERVAL": {
-    "category": "disaggregation",
-    "type": "float",
-    "default_value": 5.0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_HEARTBEAT_MAX_FAILURE": {
-    "category": "disaggregation",
-    "type": "int",
-    "default_value": 2,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_WAITING_TIMEOUT": {
-    "category": "disaggregation",
-    "type": "int",
-    "default_value": 300,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_NIXL_BACKEND": {
-    "category": "disaggregation",
-    "type": "str",
-    "default_value": "UCX",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_ALL_CP_RANKS_TRANSFER": {
-    "category": "disaggregation",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_NUM_PRE_ALLOCATE_REQS": {
-    "category": "disaggregation",
-    "type": "int",
-    "default_value": 0,
-    "value": null,
-    "description": "Extra slots in req_to_token_pool for decode workers (only effective when max_num_reqs > 32). Increases pool capacity so more KV cache transfers can overlap with decode execution without raising max_running_requests.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EMPTY_CACHE_INTERVAL": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": -1,
-    "value": null,
-    "description": "in seconds. Set if you observe high memory accumulation over a long serving period.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISABLE_CONSECUTIVE_PREFILL_OVERLAP": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_MAX_RECV_PER_POLL": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": -1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EXPERIMENTAL_CPP_RADIX_TREE": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DYNAMIC_CHUNKING_SMOOTH_FACTOR": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": 0.75,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_SKIP_ALL_GATHER": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PREFILL_DELAYER_MAX_DELAY_PASSES": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PREFILL_DELAYER_TOKEN_USAGE_LOW_WATERMARK": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DATA_PARALLEL_BUDGET_INTERVAL": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_REQ_WAITING_TIMEOUT": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": -1,
-    "value": null,
-    "description": "in seconds",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NCCL_ALL_GATHER_IN_OVERLAP_SCHEDULER_SYNC_BATCH": {
-    "category": "scheduler",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_REQ_RUNNING_TIMEOUT": {
-    "category": "scheduler",
-    "type": "float",
-    "default_value": -1,
-    "value": null,
-    "description": "in seconds",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DISAGGREGATION_BOOTSTRAP_ENTRY_CLEANUP_INTERVAL": {
-    "category": "scheduler",
-    "type": "int",
-    "default_value": 120,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_PD_DISAGG_BACKEND": {
-    "category": "disaggregation",
-    "type": "str",
-    "default_value": "mooncake",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TEST_PD_DISAGG_DEVICES": {
-    "category": "disaggregation",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_HICACHE_HF3FS_CONFIG_PATH": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_HICACHE_NIXL_BACKEND_STORAGE_DIR": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Disaggregation Bootstrap Timeout"
   },
   "SGLANG_DISAGG_STAGING_BUFFER": {
     "category": "kv_cache",
@@ -1006,7 +673,8 @@
     "value": null,
     "description": "Staging buffer for heterogeneous TP KV transfer",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Disagg Staging Buffer"
   },
   "SGLANG_DISAGG_STAGING_BUFFER_SIZE_MB": {
     "category": "kv_cache",
@@ -1015,808 +683,38 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Disagg Staging Buffer Size Mb"
   },
-  "SGLANG_DISAGG_STAGING_POOL_SIZE_MB": {
-    "category": "kv_cache",
+  "SGLANG_PREFILL_DELAYER_MAX_DELAY_PASSES": {
+    "category": "scheduler",
     "type": "int",
-    "default_value": 4096,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_STAGING_USE_TORCH": {
-    "category": "kv_cache",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "TODO(yangminl): remove SGLANG_STAGING_USE_TORCH and the torch fallback in staging_buffer.py once Triton kernels are fully validated in production.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MOONCAKE_CUSTOM_MEM_POOL": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Mooncake KV Transfer",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "ENABLE_ASCEND_TRANSFER_WITH_MOONCAKE": {
-    "category": "kv_cache",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "ASCEND_NPU_PHY_ID": {
-    "category": "kv_cache",
-    "type": "int",
-    "default_value": -1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MOONCAKE_SEND_AUX_TCP": {
-    "category": "kv_cache",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_HICACHE_MOONCAKE_CONFIG_PATH": {
-    "category": "kv_cache",
-    "type": "str",
     "default_value": null,
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Prefill Delayer Max Delay Passes"
   },
-  "SGLANG_HICACHE_MOONCAKE_REUSE_TE": {
-    "category": "kv_cache",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_MASTER": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_CLIENT": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_LOCAL_HOSTNAME": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": "localhost",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_TE_META_DATA_SERVER": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": "P2PHANDSHAKE",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_GLOBAL_SEGMENT_SIZE": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": "4gb",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_PROTOCOL": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": "tcp",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_DEVICE": {
-    "category": "kv_cache",
-    "type": "str",
-    "default_value": "",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_MASTER_METRICS_PORT": {
-    "category": "kv_cache",
-    "type": "int",
-    "default_value": 9003,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_CHECK_SERVER": {
-    "category": "kv_cache",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "MOONCAKE_STANDALONE_STORAGE": {
-    "category": "kv_cache",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_AITER": {
-    "category": "rocm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ROCM_FUSED_DECODE_MLA": {
-    "category": "rocm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ROCM_DISABLE_LINEARQUANT": {
-    "category": "rocm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_MLX": {
-    "category": "mps",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NPU_DISABLE_ACL_FORMAT_WEIGHT": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NPU_USE_MULTI_STREAM": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NPU_USE_MLAPO": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NPU_FORWARD_NATIVE_GELUTANH": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Forward native implementation for activation gelu tanh for model Skywork-Reward-Gemma-2-27B-v0.2",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NPU_FORWARD_NATIVE_GEMMA_RMS_NORM": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Forward native implementation for gemma rms norm for model Skywork-Reward-Gemma-2-27B-v0.2",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_AG_AFTER_QLORA": {
-    "category": "npu",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Delay all-gather after qlora for better performance for Deepseek v3.2",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NPU_FUSED_MOE_MODE": {
-    "category": "npu",
-    "type": "int",
-    "default_value": 1,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_INT4_WEIGHT": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_CPU_QUANTIZATION": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_DYNAMIC_MXFP4_LINEAR": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_FORCE_FP8_MARLIN": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MOE_NVFP4_DISPATCH": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NVFP4_CKPT_FP8_GEMM_IN_ATTN": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_PER_TOKEN_GROUP_QUANT_8BIT_V2": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NVFP4_CKPT_FP8_NEXTN_MOE": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_QUANT_ALLOW_DOWNCASTING": {
-    "category": "quantization",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_FP8_IGNORED_LAYERS": {
-    "category": "quantization",
-    "type": "str",
-    "default_value": "",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_IS_FLASHINFER_AVAILABLE": {
-    "category": "flashinfer",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_FLASHINFER_WORKSPACE_SIZE": {
-    "category": "flashinfer",
-    "type": "int",
-    "default_value": 402653184,
-    "value": null,
-    "description": "Default to the pick from flashinfer",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SKIP_SOFTMAX_PREFILL_THRESHOLD_SCALE_FACTOR": {
-    "category": "flashinfer",
-    "type": "float",
-    "default_value": null,
-    "value": null,
-    "description": "Skip-softmax threshold scale factor for TRT-LLM attention (prefill and decode separately). None = standard attention. See https://arxiv.org/abs/2512.12087",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SKIP_SOFTMAX_DECODE_THRESHOLD_SCALE_FACTOR": {
-    "category": "flashinfer",
+  "SGLANG_PREFILL_DELAYER_TOKEN_USAGE_LOW_WATERMARK": {
+    "category": "scheduler",
     "type": "float",
     "default_value": null,
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Prefill Delayer Token Usage Low Watermark"
   },
-  "SGLANG_FLASHINFER_FORCE_POSIX_FD_TRANSPORT": {
-    "category": "flashinfer",
-    "type": "bool",
+  "SGLANG_HICACHE_DECODE_OFFLOAD_STRIDE": {
+    "category": "kv_cache",
+    "type": "int",
     "default_value": null,
     "value": null,
-    "description": "TODO(mmangkad): Remove this once the FlashInfer unified allreduce-fusion transport issue on GB200/GB300 platforms is fixed and verified resolved.",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TRITON_DECODE_ATTN_STATIC_KV_SPLITS": {
-    "category": "triton",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_CUSTOM_TRITON_KERNEL_CACHE": {
-    "category": "triton",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_TORCH_COMPILE": {
-    "category": "compilation",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EXPERT_LOCATION_UPDATER_LOG_INPUT": {
-    "category": "eplb",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EXPERT_LOCATION_UPDATER_CANARY": {
-    "category": "eplb",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EXPERT_LOCATION_UPDATER_LOG_METRICS": {
-    "category": "eplb",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_LOG_EXPERT_LOCATION_METADATA": {
-    "category": "eplb",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EXPERT_DISTRIBUTION_RECORDER_DIR": {
-    "category": "eplb",
-    "type": "str",
-    "default_value": "/tmp",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_EPLB_HEATMAP_COLLECTION_INTERVAL": {
-    "category": "eplb",
-    "type": "int",
-    "default_value": 0,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_EPLB_BALANCEDNESS_METRIC": {
-    "category": "eplb",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_TBO_DEBUG": {
-    "category": "tbo",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_JIT_DEEPGEMM": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_JIT_DEEPGEMM_PRECOMPILE": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_JIT_DEEPGEMM_FAST_WARMUP": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_JIT_DEEPGEMM_COMPILE_WORKERS": {
-    "category": "deepgemm",
-    "type": "int",
-    "default_value": 4,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_IN_DEEPGEMM_PRECOMPILE_STAGE": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DG_CACHE_DIR": {
-    "category": "deepgemm",
-    "type": "str",
-    "default_value": "~/.cache/deep_gemm",
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DG_USE_NVRTC": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_DEEPGEMM_BMM": {
-    "category": "deepgemm",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_CHUNKED_PREFIX_CACHE_THRESHOLD": {
-    "category": "deepseek",
-    "type": "int",
-    "default_value": 8192,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DEEPEP_BF16_DISPATCH": {
-    "category": "deepep",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
-    "category": "deepep",
-    "type": "int",
-    "default_value": 128,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_DEEPEP_LL_COMBINE_SEND_NUM_SMS": {
-    "category": "deepep",
-    "type": "int",
-    "default_value": 32,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_BLACKWELL_OVERLAP_SHARED_EXPERTS_OUTSIDE_SBO": {
-    "category": "deepep",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NIXL_EP_BF16_DISPATCH": {
-    "category": "nixl",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NIXL_EP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
-    "category": "nixl",
-    "type": "int",
-    "default_value": 128,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NSA_FUSE_TOPK": {
-    "category": "nsa",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NSA_ENABLE_MTP_PRECOMPUTE_METADATA": {
-    "category": "nsa",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_FUSED_METADATA_COPY": {
-    "category": "nsa",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_NSA_PREFILL_DENSE_ATTN_KV_LEN_THRESHOLD": {
-    "category": "nsa",
-    "type": "int",
-    "default_value": 2048,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SKIP_SGL_KERNEL_VERSION_CHECK": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "USE_VLLM_CUTLASS_W8A8_FP8_KERNEL": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "vLLM dependencies (TODO: they have been deprecated, we can remove them safely)",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "USE_TRITON_W8A8_FP8_KERNEL": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_RETURN_ORIGINAL_LOGPROB": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_MOE_PADDING": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_CUTLASS_MOE": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "HF_HUB_DISABLE_XET": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "DISABLE_OPENAPI_DOC": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_TORCH_INFERENCE_MODE": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_IS_FIRST_RANK_ON_NODE": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": true,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_SYNC_TOKEN_IDS_ACROSS_TP": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_COLOCATED_BATCH_GEN": {
-    "category": "kernel",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_ENABLE_DETERMINISTIC_INFERENCE": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "",
-    "ui": "less_frequent",
-    "aic": false
-  },
-  "SGLANG_USE_1STAGE_ALLREDUCE": {
-    "category": "engine",
-    "type": "bool",
-    "default_value": false,
-    "value": null,
-    "description": "Use 1-stage all-reduce kernel on AMD (deterministic, fixed accumulation order) If not set: auto (enabled when --enable-deterministic-inference is on) Set to 1: force enable (even without --enable-deterministic-inference) Set to 0: force disable (use default Aiter AR even with --enable-deterministic-inference)",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Hicache Decode Offload Stride"
   },
   "SGLANG_FLASHINFER_PREFILL_SPLIT_TILE_SIZE": {
     "category": "engine",
@@ -1825,7 +723,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Flashinfer Prefill Split Tile Size"
   },
   "SGLANG_FLASHINFER_DECODE_SPLIT_TILE_SIZE": {
     "category": "engine",
@@ -1834,7 +733,1728 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Flashinfer Decode Split Tile Size"
+  },
+  "SGLANG_LOG_MS": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Ms"
+  },
+  "SGLANG_LOG_REQUEST_HEADERS": {
+    "category": "logging",
+    "type": "List[str]",
+    "default_value": [],
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Request Headers"
+  },
+  "SGLANG_USE_MODELSCOPE": {
+    "category": "model",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Modelscope"
+  },
+  "SGLANG_SORT_WEIGHT_FILES": {
+    "category": "model",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Sort Weight Files"
+  },
+  "SGLANG_DISABLED_MODEL_ARCHS": {
+    "category": "model",
+    "type": "List[str]",
+    "default_value": [],
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disabled Model Archs"
+  },
+  "SGLANG_LOG_GC": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Gc"
+  },
+  "SGLANG_LOG_FORWARD_ITERS": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Forward Iters"
+  },
+  "SGLANG_DISABLE_REQUEST_LOGGING": {
+    "category": "logging",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disable Request Logging"
+  },
+  "SGLANG_LOG_REQUEST_EXCEEDED_MS": {
+    "category": "logging",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Request Exceeded Ms"
+  },
+  "SGLANG_LOG_SCHEDULER_STATUS_TARGET": {
+    "category": "logging",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Scheduler Status Target"
+  },
+  "SGLANG_LOG_SCHEDULER_STATUS_INTERVAL": {
+    "category": "logging",
+    "type": "float",
+    "default_value": 60.0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Scheduler Status Interval"
+  },
+  "SGLANG_IS_IN_CI": {
+    "category": "ci",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Is In Ci"
+  },
+  "SGLANG_IS_IN_CI_AMD": {
+    "category": "ci",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Is In Ci Amd"
+  },
+  "SGLANG_CUDA_COREDUMP": {
+    "category": "ci",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang CUDA Coredump"
+  },
+  "SGLANG_CUDA_COREDUMP_DIR": {
+    "category": "ci",
+    "type": "str",
+    "default_value": "/tmp/sglang_cuda_coredumps",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang CUDA Coredump Dir"
+  },
+  "SGLANG_TEST_MAX_RETRY": {
+    "category": "ci",
+    "type": "int",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Max Retry"
+  },
+  "SGLANG_GRAMMAR_POLL_INTERVAL": {
+    "category": "grammar",
+    "type": "float",
+    "default_value": 0.005,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Grammar Poll Interval"
+  },
+  "SGLANG_GRAMMAR_MAX_POLL_ITERATIONS": {
+    "category": "grammar",
+    "type": "int",
+    "default_value": 10000,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Grammar Max Poll Iterations"
+  },
+  "SGLANG_DISABLE_OUTLINES_DISK_CACHE": {
+    "category": "grammar",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disable Outlines Disk Cache"
+  },
+  "SGLANG_DETECT_SLOW_RANK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Detect Slow Rank"
+  },
+  "SGLANG_TEST_STUCK_DETOKENIZER": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Stuck Detokenizer"
+  },
+  "SGLANG_TEST_STUCK_DP_CONTROLLER": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Stuck Dp Controller"
+  },
+  "SGLANG_TEST_STUCK_SCHEDULER_INIT": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Stuck Scheduler Init"
+  },
+  "SGLANG_TEST_STUCK_TOKENIZER": {
+    "category": "debug",
+    "type": "float",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Stuck Tokenizer"
+  },
+  "SGLANG_TEST_CRASH_AFTER_STREAM_OUTPUTS": {
+    "category": "debug",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Crash After Stream Outputs"
+  },
+  "IS_H200": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Is H200"
+  },
+  "SGLANG_SET_CPU_AFFINITY": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Set CPU Affinity"
+  },
+  "SGLANG_PROFILE_WITH_STACK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Profile With Stack"
+  },
+  "SGLANG_PROFILE_RECORD_SHAPES": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Profile Record Shapes"
+  },
+  "SGLANG_PROFILE_V2": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Profile V2"
+  },
+  "SGLANG_RECORD_STEP_TIME": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Record Step Time"
+  },
+  "SGLANG_FORCE_SHUTDOWN": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Force Shutdown"
+  },
+  "SGLANG_DEBUG_MEMORY_POOL": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Debug Memory Pool"
+  },
+  "SGLANG_TEST_REQUEST_TIME_STATS": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Request Time Stats"
+  },
+  "SGLANG_DISABLE_TP_MEMORY_INBALANCE_CHECK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disable TP Memory Inbalance Check"
+  },
+  "SGLANG_SIMULATE_ACC_LEN": {
+    "category": "debug",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Simulate Acc Len"
+  },
+  "SGLANG_SIMULATE_ACC_METHOD": {
+    "category": "debug",
+    "type": "str",
+    "default_value": "multinomial",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Simulate Acc Method"
+  },
+  "SGLANG_TORCH_PROFILER_DIR": {
+    "category": "debug",
+    "type": "str",
+    "default_value": "/tmp",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Torch Profiler Dir"
+  },
+  "SGLANG_OTLP_EXPORTER_SCHEDULE_DELAY_MILLIS": {
+    "category": "debug",
+    "type": "int",
+    "default_value": 500,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Otlp Exporter Schedule Delay Millis"
+  },
+  "SGLANG_OTLP_EXPORTER_MAX_EXPORT_BATCH_SIZE": {
+    "category": "debug",
+    "type": "int",
+    "default_value": 64,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Otlp Exporter Max Export Batch Size"
+  },
+  "SGLANG_NATIVE_MOVE_KV_CACHE": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Native Move KV Cache"
+  },
+  "SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK": {
+    "category": "debug",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable TP Memory Inbalance Check"
+  },
+  "SGLANG_TEST_RETRACT": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Retract"
+  },
+  "SGLANG_TEST_RETRACT_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 3,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Retract Interval"
+  },
+  "SGLANG_TEST_RETRACT_NO_PREFILL_BS": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 2147483648,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Retract No Prefill Bs"
+  },
+  "SGLANG_ENABLE_STRICT_MEM_CHECK_DURING_BUSY": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Strict Mem Check During Busy"
+  },
+  "SGLANG_ENABLE_STRICT_MEM_CHECK_DURING_IDLE": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Strict Mem Check During Idle"
+  },
+  "SGLANG_INIT_NEW_TOKEN_RATIO": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 0.7,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Init New Token Ratio"
+  },
+  "SGLANG_MIN_NEW_TOKEN_RATIO_FACTOR": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 0.14,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Min New Token Ratio Factor"
+  },
+  "SGLANG_NEW_TOKEN_RATIO_DECAY_STEPS": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 600,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang New Token Ratio Decay Steps"
+  },
+  "SGLANG_RETRACT_DECODE_STEPS": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 20,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Retract Decode Steps"
+  },
+  "SGLANG_CLIP_MAX_NEW_TOKENS_ESTIMATION": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Clip Max New Tokens Estimation"
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_DEFAULT": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1000,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Recv Skipper Weight Default"
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_DECODE": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Recv Skipper Weight Decode"
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_TARGET_VERIFY": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Recv Skipper Weight Target Verify"
+  },
+  "SGLANG_SCHEDULER_RECV_SKIPPER_WEIGHT_NONE": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Recv Skipper Weight None"
+  },
+  "SGLANG_DISAGGREGATION_HEARTBEAT_INTERVAL": {
+    "category": "disaggregation",
+    "type": "float",
+    "default_value": 5.0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation Heartbeat Interval"
+  },
+  "SGLANG_DISAGGREGATION_HEARTBEAT_MAX_FAILURE": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 2,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation Heartbeat Max Failure"
+  },
+  "SGLANG_DISAGGREGATION_WAITING_TIMEOUT": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 300,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation Waiting Timeout"
+  },
+  "SGLANG_DISAGGREGATION_NIXL_BACKEND": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": "UCX",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation NIXL Backend"
+  },
+  "SGLANG_DISAGGREGATION_ALL_CP_RANKS_TRANSFER": {
+    "category": "disaggregation",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation All Cp Ranks Transfer"
+  },
+  "SGLANG_DISAGGREGATION_NUM_PRE_ALLOCATE_REQS": {
+    "category": "disaggregation",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "Extra slots in req_to_token_pool for decode workers (only effective when max_num_reqs > 32). Increases pool capacity so more KV cache transfers can overlap with decode execution without raising max_running_requests.",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation Num Pre Allocate Reqs"
+  },
+  "SGLANG_EMPTY_CACHE_INTERVAL": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds. Set if you observe high memory accumulation over a long serving period.",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Empty Cache Interval"
+  },
+  "SGLANG_DISABLE_CONSECUTIVE_PREFILL_OVERLAP": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disable Consecutive Prefill Overlap"
+  },
+  "SGLANG_SCHEDULER_MAX_RECV_PER_POLL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Max Recv Per Poll"
+  },
+  "SGLANG_EXPERIMENTAL_CPP_RADIX_TREE": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Experimental Cpp Radix Tree"
+  },
+  "SGLANG_DYNAMIC_CHUNKING_SMOOTH_FACTOR": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": 0.75,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Dynamic Chunking Smooth Factor"
+  },
+  "SGLANG_SCHEDULER_SKIP_ALL_GATHER": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Skip All Gather"
+  },
+  "SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Scheduler Decrease Prefill Idle"
+  },
+  "SGLANG_DATA_PARALLEL_BUDGET_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Data Parallel Budget Interval"
+  },
+  "SGLANG_REQ_WAITING_TIMEOUT": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Req Waiting Timeout"
+  },
+  "SGLANG_NCCL_ALL_GATHER_IN_OVERLAP_SCHEDULER_SYNC_BATCH": {
+    "category": "scheduler",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang NCCL All Gather In Overlap Scheduler Sync Batch"
+  },
+  "SGLANG_REQ_RUNNING_TIMEOUT": {
+    "category": "scheduler",
+    "type": "float",
+    "default_value": -1,
+    "value": null,
+    "description": "in seconds",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Req Running Timeout"
+  },
+  "SGLANG_DISAGGREGATION_BOOTSTRAP_ENTRY_CLEANUP_INTERVAL": {
+    "category": "scheduler",
+    "type": "int",
+    "default_value": 120,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disaggregation Bootstrap Entry Cleanup Interval"
+  },
+  "SGLANG_TEST_PD_DISAGG_BACKEND": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": "mooncake",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Pd Disagg Backend"
+  },
+  "SGLANG_TEST_PD_DISAGG_DEVICES": {
+    "category": "disaggregation",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Test Pd Disagg Devices"
+  },
+  "SGLANG_USE_MESSAGE_QUEUE_BROADCASTER": {
+    "category": "distributed",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Message Queue Broadcaster"
+  },
+  "SGLANG_ONE_VISIBLE_DEVICE_PER_PROCESS": {
+    "category": "distributed",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang One Visible Device Per Process"
+  },
+  "SGLANG_DISTRIBUTED_INIT_METHOD_OVERRIDE": {
+    "category": "distributed",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Override the distributed init method used by torch.distributed.init_process_group. Set to \"env://\" to use an externally-created TCPStore via MASTER_ADDR/MASTER_PORT.",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Distributed Init Method Override"
+  },
+  "SGLANG_TCP_STORE_PORT": {
+    "category": "distributed",
+    "type": "int",
+    "default_value": 29600,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Tcp Store Port"
+  },
+  "SGLANG_HICACHE_HF3FS_CONFIG_PATH": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Hicache Hf3fs Config Path"
+  },
+  "SGLANG_HICACHE_FILE_BACKEND_STORAGE_DIR": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Hicache File Backend Storage Dir"
+  },
+  "SGLANG_HICACHE_NIXL_BACKEND_STORAGE_DIR": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Hicache NIXL Backend Storage Dir"
+  },
+  "SGLANG_DISAGG_STAGING_POOL_SIZE_MB": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": 4096,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Disagg Staging Pool Size Mb"
+  },
+  "SGLANG_STAGING_USE_TORCH": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "TODO(yangminl): remove SGLANG_STAGING_USE_TORCH and the torch fallback in staging_buffer.py once Triton kernels are fully validated in production.",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Staging Use Torch"
+  },
+  "SGLANG_MOONCAKE_CUSTOM_MEM_POOL": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "Mooncake KV Transfer",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Mooncake Custom Mem Pool"
+  },
+  "ENABLE_ASCEND_TRANSFER_WITH_MOONCAKE": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Ascend Transfer With Mooncake"
+  },
+  "ASCEND_NPU_PHY_ID": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": -1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Ascend Npu Phy Id"
+  },
+  "SGLANG_MOONCAKE_SEND_AUX_TCP": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Mooncake Send Aux Tcp"
+  },
+  "SGLANG_HICACHE_MOONCAKE_CONFIG_PATH": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Hicache Mooncake Config Path"
+  },
+  "SGLANG_HICACHE_MOONCAKE_REUSE_TE": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Hicache Mooncake Reuse Te"
+  },
+  "MOONCAKE_MASTER": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Master"
+  },
+  "MOONCAKE_CLIENT": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Client"
+  },
+  "MOONCAKE_LOCAL_HOSTNAME": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "localhost",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Local Hostname"
+  },
+  "MOONCAKE_TE_META_DATA_SERVER": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "P2PHANDSHAKE",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Te Meta Data Server"
+  },
+  "MOONCAKE_GLOBAL_SEGMENT_SIZE": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "4gb",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Global Segment Size"
+  },
+  "MOONCAKE_PROTOCOL": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "tcp",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Protocol"
+  },
+  "MOONCAKE_DEVICE": {
+    "category": "kv_cache",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Device"
+  },
+  "MOONCAKE_MASTER_METRICS_PORT": {
+    "category": "kv_cache",
+    "type": "int",
+    "default_value": 9003,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Master Metrics Port"
+  },
+  "MOONCAKE_CHECK_SERVER": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Check Server"
+  },
+  "MOONCAKE_STANDALONE_STORAGE": {
+    "category": "kv_cache",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mooncake Standalone Storage"
+  },
+  "SGLANG_USE_AITER": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Aiter"
+  },
+  "SGLANG_ROCM_FUSED_DECODE_MLA": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Rocm Fused Decode Mla"
+  },
+  "SGLANG_ROCM_DISABLE_LINEARQUANT": {
+    "category": "rocm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Rocm Disable Linearquant"
+  },
+  "SGLANG_USE_MLX": {
+    "category": "mps",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Mlx"
+  },
+  "SGLANG_NPU_DISABLE_ACL_FORMAT_WEIGHT": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Npu Disable Acl Format Weight"
+  },
+  "SGLANG_NPU_USE_MULTI_STREAM": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Npu Use Multi Stream"
+  },
+  "SGLANG_NPU_USE_MLAPO": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Npu Use Mlapo"
+  },
+  "SGLANG_NPU_FORWARD_NATIVE_GELUTANH": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Forward native implementation for activation gelu tanh for model Skywork-Reward-Gemma-2-27B-v0.2",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Npu Forward Native Gelutanh"
+  },
+  "SGLANG_NPU_FORWARD_NATIVE_GEMMA_RMS_NORM": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Forward native implementation for gemma rms norm for model Skywork-Reward-Gemma-2-27B-v0.2",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Npu Forward Native Gemma Rms Norm"
+  },
+  "SGLANG_USE_AG_AFTER_QLORA": {
+    "category": "npu",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Delay all-gather after qlora for better performance for Deepseek v3.2",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Ag After Qlora"
+  },
+  "SGLANG_NPU_FUSED_MOE_MODE": {
+    "category": "npu",
+    "type": "int",
+    "default_value": 1,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Npu Fused Moe Mode"
+  },
+  "SGLANG_INT4_WEIGHT": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Int4 Weight"
+  },
+  "SGLANG_CPU_QUANTIZATION": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang CPU Quantization"
+  },
+  "SGLANG_USE_DYNAMIC_MXFP4_LINEAR": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Dynamic Mxfp4 Linear"
+  },
+  "SGLANG_FORCE_FP8_MARLIN": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Force Fp8 Marlin"
+  },
+  "SGLANG_MOE_NVFP4_DISPATCH": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Moe Nvfp4 Dispatch"
+  },
+  "SGLANG_NVFP4_CKPT_FP8_GEMM_IN_ATTN": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Nvfp4 Ckpt Fp8 Gemm In Attn"
+  },
+  "SGLANG_PER_TOKEN_GROUP_QUANT_8BIT_V2": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Per Token Group Quant 8bit V2"
+  },
+  "SGLANG_NVFP4_CKPT_FP8_NEXTN_MOE": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Nvfp4 Ckpt Fp8 Nextn Moe"
+  },
+  "SGLANG_QUANT_ALLOW_DOWNCASTING": {
+    "category": "quantization",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Quant Allow Downcasting"
+  },
+  "SGLANG_FP8_IGNORED_LAYERS": {
+    "category": "quantization",
+    "type": "str",
+    "default_value": "",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Fp8 Ignored Layers"
+  },
+  "SGLANG_IS_FLASHINFER_AVAILABLE": {
+    "category": "flashinfer",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Is Flashinfer Available"
+  },
+  "SGLANG_FLASHINFER_WORKSPACE_SIZE": {
+    "category": "flashinfer",
+    "type": "int",
+    "default_value": 402653184,
+    "value": null,
+    "description": "Default to the pick from flashinfer",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Flashinfer Workspace Size"
+  },
+  "SGLANG_SKIP_SOFTMAX_PREFILL_THRESHOLD_SCALE_FACTOR": {
+    "category": "flashinfer",
+    "type": "float",
+    "default_value": null,
+    "value": null,
+    "description": "Skip-softmax threshold scale factor for TRT-LLM attention (prefill and decode separately). None = standard attention. See https://arxiv.org/abs/2512.12087",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Skip Softmax Prefill Threshold Scale Factor"
+  },
+  "SGLANG_SKIP_SOFTMAX_DECODE_THRESHOLD_SCALE_FACTOR": {
+    "category": "flashinfer",
+    "type": "float",
+    "default_value": null,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Skip Softmax Decode Threshold Scale Factor"
+  },
+  "SGLANG_FLASHINFER_FORCE_POSIX_FD_TRANSPORT": {
+    "category": "flashinfer",
+    "type": "bool",
+    "default_value": null,
+    "value": null,
+    "description": "TODO(mmangkad): Remove this once the FlashInfer unified allreduce-fusion transport issue on GB200/GB300 platforms is fixed and verified resolved.",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Flashinfer Force Posix Fd Transport"
+  },
+  "SGLANG_TRITON_DECODE_ATTN_STATIC_KV_SPLITS": {
+    "category": "triton",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Triton Decode Attn Static KV Splits"
+  },
+  "SGLANG_USE_CUSTOM_TRITON_KERNEL_CACHE": {
+    "category": "triton",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Custom Triton Kernel Cache"
+  },
+  "SGLANG_ENABLE_TORCH_COMPILE": {
+    "category": "compilation",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Torch Compile"
+  },
+  "SGLANG_EXPERT_LOCATION_UPDATER_LOG_INPUT": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Expert Location Updater Log Input"
+  },
+  "SGLANG_EXPERT_LOCATION_UPDATER_CANARY": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Expert Location Updater Canary"
+  },
+  "SGLANG_EXPERT_LOCATION_UPDATER_LOG_METRICS": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Expert Location Updater Log Metrics"
+  },
+  "SGLANG_LOG_EXPERT_LOCATION_METADATA": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Log Expert Location Metadata"
+  },
+  "SGLANG_EXPERT_DISTRIBUTION_RECORDER_DIR": {
+    "category": "eplb",
+    "type": "str",
+    "default_value": "/tmp",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Expert Distribution Recorder Dir"
+  },
+  "SGLANG_EPLB_HEATMAP_COLLECTION_INTERVAL": {
+    "category": "eplb",
+    "type": "int",
+    "default_value": 0,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Eplb Heatmap Collection Interval"
+  },
+  "SGLANG_ENABLE_EPLB_BALANCEDNESS_METRIC": {
+    "category": "eplb",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Eplb Balancedness Metric"
+  },
+  "SGLANG_TBO_DEBUG": {
+    "category": "tbo",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Tbo Debug"
+  },
+  "SGLANG_ENABLE_JIT_DEEPGEMM": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Jit Deepgemm"
+  },
+  "SGLANG_JIT_DEEPGEMM_PRECOMPILE": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Jit Deepgemm Precompile"
+  },
+  "SGLANG_JIT_DEEPGEMM_FAST_WARMUP": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Jit Deepgemm Fast Warmup"
+  },
+  "SGLANG_JIT_DEEPGEMM_COMPILE_WORKERS": {
+    "category": "deepgemm",
+    "type": "int",
+    "default_value": 4,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Jit Deepgemm Compile Workers"
+  },
+  "SGLANG_IN_DEEPGEMM_PRECOMPILE_STAGE": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang In Deepgemm Precompile Stage"
+  },
+  "SGLANG_DG_CACHE_DIR": {
+    "category": "deepgemm",
+    "type": "str",
+    "default_value": "~/.cache/deep_gemm",
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Dg Cache Dir"
+  },
+  "SGLANG_DG_USE_NVRTC": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Dg Use Nvrtc"
+  },
+  "SGLANG_USE_DEEPGEMM_BMM": {
+    "category": "deepgemm",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Deepgemm Bmm"
+  },
+  "SGLANG_CHUNKED_PREFIX_CACHE_THRESHOLD": {
+    "category": "deepseek",
+    "type": "int",
+    "default_value": 8192,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Chunked Prefix Cache Threshold"
+  },
+  "SGLANG_DEEPEP_BF16_DISPATCH": {
+    "category": "deepep",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Deepep Bf16 Dispatch"
+  },
+  "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
+    "category": "deepep",
+    "type": "int",
+    "default_value": 128,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Deepep Num Max Dispatch Tokens Per Rank"
+  },
+  "SGLANG_DEEPEP_LL_COMBINE_SEND_NUM_SMS": {
+    "category": "deepep",
+    "type": "int",
+    "default_value": 32,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Deepep Ll Combine Send Num Sms"
+  },
+  "SGLANG_BLACKWELL_OVERLAP_SHARED_EXPERTS_OUTSIDE_SBO": {
+    "category": "deepep",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Blackwell Overlap Shared Experts Outside Sbo"
+  },
+  "SGLANG_NIXL_EP_BF16_DISPATCH": {
+    "category": "nixl",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang NIXL Ep Bf16 Dispatch"
+  },
+  "SGLANG_NIXL_EP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": {
+    "category": "nixl",
+    "type": "int",
+    "default_value": 128,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang NIXL Ep Num Max Dispatch Tokens Per Rank"
+  },
+  "SGLANG_NSA_FUSE_TOPK": {
+    "category": "nsa",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Nsa Fuse Topk"
+  },
+  "SGLANG_NSA_ENABLE_MTP_PRECOMPUTE_METADATA": {
+    "category": "nsa",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Nsa Enable Mtp Precompute Metadata"
+  },
+  "SGLANG_USE_FUSED_METADATA_COPY": {
+    "category": "nsa",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use Fused Metadata Copy"
+  },
+  "SGLANG_NSA_PREFILL_DENSE_ATTN_KV_LEN_THRESHOLD": {
+    "category": "nsa",
+    "type": "int",
+    "default_value": 2048,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Nsa Prefill Dense Attn KV Len Threshold"
+  },
+  "SGLANG_SKIP_SGL_KERNEL_VERSION_CHECK": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Skip Sgl Kernel Version Check"
+  },
+  "USE_VLLM_CUTLASS_W8A8_FP8_KERNEL": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "vLLM dependencies (TODO: they have been deprecated, we can remove them safely)",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Use vLLM Cutlass W8a8 Fp8 Kernel"
+  },
+  "USE_TRITON_W8A8_FP8_KERNEL": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Use Triton W8a8 Fp8 Kernel"
+  },
+  "SGLANG_RETURN_ORIGINAL_LOGPROB": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Return Original Logprob"
+  },
+  "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Allow Overwrite Longer Context Len"
+  },
+  "SGLANG_MOE_PADDING": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Moe Padding"
+  },
+  "SGLANG_CUTLASS_MOE": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Cutlass Moe"
+  },
+  "HF_HUB_DISABLE_XET": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Hf Hub Disable Xet"
+  },
+  "DISABLE_OPENAPI_DOC": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Disable Openapi Doc"
+  },
+  "SGLANG_ENABLE_TORCH_INFERENCE_MODE": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Torch Inference Mode"
+  },
+  "SGLANG_IS_FIRST_RANK_ON_NODE": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Is First Rank On Node"
+  },
+  "SGLANG_SYNC_TOKEN_IDS_ACROSS_TP": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Sync Token Ids Across TP"
+  },
+  "SGLANG_ENABLE_COLOCATED_BATCH_GEN": {
+    "category": "kernel",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Colocated Batch Gen"
+  },
+  "SGLANG_ENABLE_DETERMINISTIC_INFERENCE": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Deterministic Inference"
+  },
+  "SGLANG_USE_1STAGE_ALLREDUCE": {
+    "category": "engine",
+    "type": "bool",
+    "default_value": false,
+    "value": null,
+    "description": "Use 1-stage all-reduce kernel on AMD (deterministic, fixed accumulation order) If not set: auto (enabled when --enable-deterministic-inference is on) Set to 1: force enable (even without --enable-deterministic-inference) Set to 0: force disable (use default Aiter AR even with --enable-deterministic-inference)",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Use 1stage Allreduce"
   },
   "SGLANG_TRITON_PREFILL_TRUNCATION_ALIGN_SIZE": {
     "category": "engine",
@@ -1843,7 +2463,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Triton Prefill Truncation Align Size"
   },
   "SGLANG_TRITON_DECODE_SPLIT_TILE_SIZE": {
     "category": "engine",
@@ -1852,7 +2473,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Triton Decode Split Tile Size"
   },
   "SGLANG_SPEC_EXPANSION_SAFETY_FACTOR": {
     "category": "attention",
@@ -1861,7 +2483,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Spec Expansion Safety Factor"
   },
   "SGLANG_ROPE_CACHE_SAFETY_MARGIN": {
     "category": "attention",
@@ -1870,7 +2493,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Rope Cache Safety Margin"
   },
   "SGLANG_ROPE_CACHE_ALIGN": {
     "category": "attention",
@@ -1879,7 +2503,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Rope Cache Align"
   },
   "SGLANG_ENABLE_SPEC_V2": {
     "category": "speculative",
@@ -1888,7 +2513,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Enable Spec V2"
   },
   "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": {
     "category": "speculative",
@@ -1897,7 +2523,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Enable Overlap Plan Stream"
   },
   "SGLANG_SPEC_ENABLE_STRICT_FILTER_CHECK": {
     "category": "speculative",
@@ -1906,7 +2533,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Spec Enable Strict Filter Check"
   },
   "SGLANG_SPEC_NAN_DETECTION": {
     "category": "speculative",
@@ -1915,7 +2543,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Spec Nan Detection"
   },
   "SGLANG_SPEC_OOB_DETECTION": {
     "category": "speculative",
@@ -1924,7 +2553,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Spec Oob Detection"
   },
   "SGLANG_IMAGE_MAX_PIXELS": {
     "category": "multimodal",
@@ -1933,7 +2563,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Image Max Pixels"
   },
   "SGLANG_RESIZE_RESAMPLE": {
     "category": "multimodal",
@@ -1942,7 +2573,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Resize Resample"
   },
   "SGLANG_MM_BUFFER_SIZE_MB": {
     "category": "multimodal",
@@ -1951,7 +2583,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang MM Buffer Size Mb"
   },
   "SGLANG_MM_PRECOMPUTE_HASH": {
     "category": "multimodal",
@@ -1960,7 +2593,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang MM Precompute Hash"
   },
   "SGLANG_VIT_ENABLE_CUDA_GRAPH": {
     "category": "multimodal",
@@ -1969,7 +2603,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Vit Enable CUDA Graph"
   },
   "SGLANG_MM_SKIP_COMPUTE_HASH": {
     "category": "multimodal",
@@ -1978,7 +2613,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang MM Skip Compute Hash"
   },
   "SGLANG_USE_CUDA_IPC_TRANSPORT": {
     "category": "multimodal",
@@ -1987,7 +2623,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Use CUDA Ipc Transport"
   },
   "SGLANG_USE_IPC_POOL_HANDLE_CACHE": {
     "category": "multimodal",
@@ -1996,7 +2633,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Use Ipc Pool Handle Cache"
   },
   "SGLANG_MM_ITEM_MEM_POOL_RECYCLE_INTERVAL_SEC": {
     "category": "multimodal",
@@ -2005,7 +2643,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang MM Item Mem Pool Recycle Interval Sec"
   },
   "SGLANG_MAMBA_CONV_DTYPE": {
     "category": "mamba",
@@ -2014,7 +2653,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Mamba Conv Dtype"
   },
   "SGLANG_MAMBA_SSM_DTYPE": {
     "category": "mamba",
@@ -2023,7 +2663,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Mamba Ssm Dtype"
   },
   "SGLANG_MEMORY_SAVER_CUDA_GRAPH": {
     "category": "engine",
@@ -2032,7 +2673,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Memory Saver CUDA Graph"
   },
   "SGLANG_EMBEDDINGS_SPARSE_HEAD": {
     "category": "engine",
@@ -2041,7 +2683,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Embeddings Sparse Head"
   },
   "SGLANG_ENABLE_LOGITS_PROCESSER_CHUNK": {
     "category": "engine",
@@ -2050,7 +2693,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Enable Logits Processer Chunk"
   },
   "SGLANG_LOGITS_PROCESSER_CHUNK_SIZE": {
     "category": "engine",
@@ -2059,7 +2703,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Logits Processer Chunk Size"
   },
   "SGLANG_NGRAM_FORCE_GREEDY_VERIFY": {
     "category": "speculative",
@@ -2068,7 +2713,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Ngram Force Greedy Verify"
   },
   "SGLANG_WARMUP_TIMEOUT": {
     "category": "engine",
@@ -2077,7 +2723,48 @@
     "value": null,
     "description": "in seconds. If a warmup forward batch takes longer than this, the server will crash to prevent hanging. Recommend to increase warmup timeout to 1800 to accommodate some kernel JIT precache e.g. deep gemm",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Warmup Timeout"
+  },
+  "SGLANG_TIMEOUT_KEEP_ALIVE": {
+    "category": "networking",
+    "type": "int",
+    "default_value": 5,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Timeout Keep Alive"
+  },
+  "SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION": {
+    "category": "networking",
+    "type": "bool",
+    "default_value": true,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Enable Health Endpoint Generation"
+  },
+  "SGLANG_ENCODER_GRPC_TIMEOUT_SECS": {
+    "category": "networking",
+    "type": "int",
+    "default_value": 60,
+    "value": null,
+    "description": "",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Encoder Grpc Timeout Secs"
+  },
+  "SGLANG_ENCODER_MM_RECEIVER_MODE": {
+    "category": "networking",
+    "type": "str",
+    "default_value": "http",
+    "value": null,
+    "description": "Encoder receiver selection: http|grpc (used by EPD paths).",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Sglang Encoder MM Receiver Mode"
   },
   "SGLANG_EXTERNAL_MODEL_PACKAGE": {
     "category": "external",
@@ -2086,7 +2773,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang External Model Package"
   },
   "SGLANG_EXTERNAL_MM_MODEL_ARCH": {
     "category": "external",
@@ -2095,7 +2783,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang External MM Model Arch"
   },
   "SGLANG_EXTERNAL_MM_PROCESSOR_PACKAGE": {
     "category": "external",
@@ -2104,7 +2793,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang External MM Processor Package"
   },
   "SGLANG_NUMA_BIND_V2": {
     "category": "system",
@@ -2113,7 +2803,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Numa Bind V2"
   },
   "SGLANG_AUTO_NUMA_BIND": {
     "category": "system",
@@ -2122,7 +2813,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Auto Numa Bind"
   },
   "SGLANG_ENABLE_METRICS_DEVICE_TIMER": {
     "category": "observability",
@@ -2131,7 +2823,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Enable Metrics Device Timer"
   },
   "SGLANG_ENABLE_METRICS_DP_ATTENTION": {
     "category": "observability",
@@ -2140,7 +2833,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Enable Metrics Dp Attention"
   },
   "SGLANG_PATCH_TOKENIZER": {
     "category": "engine",
@@ -2149,7 +2843,8 @@
     "value": null,
     "description": "TODO enable by default",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Patch Tokenizer"
   },
   "SGLANG_REQUEST_STATE_WAIT_TIMEOUT": {
     "category": "engine",
@@ -2158,7 +2853,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Request State Wait Timeout"
   },
   "SGLANG_SYMM_MEM_PREALLOC_GB_SIZE": {
     "category": "engine",
@@ -2167,7 +2863,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Symm Mem Prealloc Gb Size"
   },
   "SGLANG_USE_AITER_FP8_PER_TOKEN": {
     "category": "rocm",
@@ -2176,7 +2873,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Use Aiter Fp8 Per Token"
   },
   "SGLANG_ENCODER_RECV_TIMEOUT": {
     "category": "disaggregation",
@@ -2185,7 +2883,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Encoder Recv Timeout"
   },
   "SGLANG_ENCODER_SEND_TIMEOUT": {
     "category": "disaggregation",
@@ -2194,7 +2893,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Encoder Send Timeout"
   },
   "SGLANG_ENCODER_DISPATCH_MIN_ITEMS": {
     "category": "disaggregation",
@@ -2203,7 +2903,8 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Sglang Encoder Dispatch Min Items"
   },
   "SGLANG_BACKUP_PORT_BASE": {
     "category": "networking",
@@ -2212,17 +2913,7 @@
     "value": null,
     "description": "",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "DYN_ENDPOINT": {
-    "category": "dynamo",
-    "type": "str",
-    "default_value": null,
-    "value": null,
-    "description": "Dynamo endpoint in dyn://namespace.component.endpoint format.",
-    "arg": "--endpoint",
-    "ui": "less_frequent",
-    "aic": true,
-    "default_note": "Auto-generated"
+    "aic": false,
+    "display_name": "Sglang Backup Port Base"
   }
 }

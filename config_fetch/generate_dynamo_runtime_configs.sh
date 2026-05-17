@@ -83,7 +83,20 @@ docker_flags_string="${DYNAMO_DOCKER_FLAGS:---gpus all --network host --rm}"
 # shellcheck disable=SC2206
 docker_flags=(${docker_flags_string})
 
+host_python="${PYTHON:-}"
+if [[ -z "$host_python" ]]; then
+  if command -v python3 >/dev/null 2>&1; then
+    host_python="python3"
+  elif command -v python >/dev/null 2>&1; then
+    host_python="python"
+  else
+    echo "python3 or python is required on the host for validation/copying" >&2
+    exit 127
+  fi
+fi
+
 tmp_dir="$(mktemp -d "${script_dir}/.generated_dynamo_runtime.XXXXXX")"
+chmod 0777 "$tmp_dir"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -121,7 +134,11 @@ container_cmd_for_engine() {
   case "$1" in
     vllm)
       cat <<'EOF'
-python -m dynamo.vllm --help > /out/vllm_dynamo_help.txt
+python -m dynamo.vllm --help > /out/vllm_dynamo_help.txt 2>/out/vllm_dynamo_help.err || {
+  echo "Failed to capture: python -m dynamo.vllm --help" > /out/vllm_dynamo_help.txt
+  echo "stderr:" >> /out/vllm_dynamo_help.txt
+  cat /out/vllm_dynamo_help.err >> /out/vllm_dynamo_help.txt
+}
 python vllm/gen_vllm_args.py --out /out/vllm_args.json
 python vllm/gen_vllm_envs.py --out /out/vllm_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine vllm --out /out/vllm_dynamo_wrapper.json
@@ -135,7 +152,11 @@ EOF
       ;;
     vllm_omni)
       cat <<'EOF'
-python -m dynamo.vllm --help > /out/vllm_omni_dynamo_help.txt
+python -m dynamo.vllm --help > /out/vllm_omni_dynamo_help.txt 2>/out/vllm_omni_dynamo_help.err || {
+  echo "Failed to capture: python -m dynamo.vllm --help" > /out/vllm_omni_dynamo_help.txt
+  echo "stderr:" >> /out/vllm_omni_dynamo_help.txt
+  cat /out/vllm_omni_dynamo_help.err >> /out/vllm_omni_dynamo_help.txt
+}
 python vllm/gen_vllm_args.py --out /out/vllm_omni_args.json
 python vllm/gen_vllm_envs.py --out /out/vllm_omni_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine vllm --out /out/vllm_omni_dynamo_wrapper.json
@@ -152,7 +173,11 @@ EOF
       ;;
     sglang)
       cat <<'EOF'
-python -m dynamo.sglang --help > /out/sglang_dynamo_help.txt
+python -m dynamo.sglang --help > /out/sglang_dynamo_help.txt 2>/out/sglang_dynamo_help.err || {
+  echo "Failed to capture: python -m dynamo.sglang --help" > /out/sglang_dynamo_help.txt
+  echo "stderr:" >> /out/sglang_dynamo_help.txt
+  cat /out/sglang_dynamo_help.err >> /out/sglang_dynamo_help.txt
+}
 python sglang/gen_sglang_args.py --out /out/sglang_args.json
 python sglang/gen_sglang_envs.py --out /out/sglang_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine sglang --out /out/sglang_dynamo_wrapper.json
@@ -166,7 +191,11 @@ EOF
       ;;
     tensorrt_llm)
       cat <<'EOF'
-python -m dynamo.trtllm --help > /out/trtllm_dynamo_help.txt
+python -m dynamo.trtllm --help > /out/trtllm_dynamo_help.txt 2>/out/trtllm_dynamo_help.err || {
+  echo "Failed to capture: python -m dynamo.trtllm --help" > /out/trtllm_dynamo_help.txt
+  echo "stderr:" >> /out/trtllm_dynamo_help.txt
+  cat /out/trtllm_dynamo_help.err >> /out/trtllm_dynamo_help.txt
+}
 python tensorrt_llm/gen_trtllm_args.py --out /out/trtllm_args.json
 python tensorrt_llm/gen_trtllm_envs.py --out /out/trtllm_envs.json
 python dynamo/gen_dynamo_wrapper_args.py --engine tensorrt_llm --out /out/trtllm_dynamo_wrapper.json
@@ -215,7 +244,7 @@ for requested_engine in "${engines[@]}"; do
     -lc "set -Eeuo pipefail; ${container_cmd}"
 done
 
-python - "$tmp_dir" "$out_dir" "$tag" "${selected[@]}" <<'PY'
+"$host_python" - "$tmp_dir" "$out_dir" "$tag" "${selected[@]}" <<'PY'
 import json
 import re
 import shutil
@@ -378,4 +407,4 @@ rebucket_args=(--root "$out_dir")
 for engine in "${selected[@]}"; do
   rebucket_args+=(--engine "$engine")
 done
-python "${script_dir}/rebucket_runtime_configs.py" "${rebucket_args[@]}"
+"$host_python" "${script_dir}/rebucket_runtime_configs.py" "${rebucket_args[@]}"

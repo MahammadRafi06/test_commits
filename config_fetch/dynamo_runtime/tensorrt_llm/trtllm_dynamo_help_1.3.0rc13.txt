@@ -1,0 +1,296 @@
+🚨 Config not found for parakeet. You can manually add it to HARDCODED_CONFIG_FOR_MODELS in utils/auto_docstring.py
+🚨 Config not found for parakeet. You can manually add it to HARDCODED_CONFIG_FOR_MODELS in utils/auto_docstring.py
+🚨 Config not found for parakeet. You can manually add it to HARDCODED_CONFIG_FOR_MODELS in utils/auto_docstring.py
+[TensorRT-LLM] TensorRT LLM version: 1.3.0rc13
+usage: __main__.py [-h] [--namespace NAMESPACE] [--endpoint ENDPOINT]
+                   [--discovery-backend {kubernetes,etcd,file,mem}]
+                   [--request-plane {tcp,nats,http}]
+                   [--event-plane {nats,zmq}] [--connector [CONNECTOR ...]]
+                   [--durable-kv-events | --no-durable-kv-events]
+                   [--dyn-tool-call-parser {default,nemotron_nano,glm47,deepseek_v3_2,phi4,deepseek_v3,pythonic,jamba,deepseek_v3_1,hermes,nemotron_deci,mistral,kimi_k2,harmony,minimax_m2,llama3_json,qwen3_coder}]
+                   [--dyn-reasoning-parser {deepseek_r1,step3,mistral,glm45,granite,qwen3,nemotron_deci,nemotron_nano,basic,kimi_k25,nemotron3,minimax_append_think,kimi,gpt_oss}]
+                   [--exclude-tools-when-tool-choice-none | --no-exclude-tools-when-tool-choice-none]
+                   [--custom-jinja-template CUSTOM_JINJA_TEMPLATE]
+                   [--endpoint-types ENDPOINT_TYPES]
+                   [--dump-config-to DUMP_CONFIG_TO]
+                   [--multimodal-embedding-cache-capacity-gb MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB]
+                   [--output-modalities [OUTPUT_MODALITIES ...]]
+                   [--media-output-fs-url MEDIA_OUTPUT_FS_URL]
+                   [--media-output-http-url MEDIA_OUTPUT_HTTP_URL] [--version]
+                   [--model MODEL] [--served-model-name SERVED_MODEL_NAME]
+                   [--tensor-parallel-size TENSOR_PARALLEL_SIZE]
+                   [--pipeline-parallel-size PIPELINE_PARALLEL_SIZE]
+                   [--expert-parallel-size EXPERT_PARALLEL_SIZE]
+                   [--enable-attention-dp | --no-enable-attention-dp]
+                   [--kv-block-size KV_BLOCK_SIZE]
+                   [--gpus-per-node GPUS_PER_NODE]
+                   [--max-batch-size MAX_BATCH_SIZE]
+                   [--max-num-tokens MAX_NUM_TOKENS]
+                   [--max-seq-len MAX_SEQ_LEN]
+                   [--max-beam-width MAX_BEAM_WIDTH]
+                   [--free-gpu-memory-fraction FREE_GPU_MEMORY_FRACTION]
+                   [--extra-engine-args EXTRA_ENGINE_ARGS]
+                   [--override-engine-args OVERRIDE_ENGINE_ARGS]
+                   [--publish-events-and-metrics | --no-publish-events-and-metrics]
+                   [--load-format LOAD_FORMAT]
+                   [--model-loader-extra-config MODEL_LOADER_EXTRA_CONFIG]
+                   [--disaggregation-mode {prefill_and_decode,prefill,decode,encode}]
+                   [--modality {text,multimodal,video_diffusion}]
+                   [--encode-endpoint ENCODE_ENDPOINT]
+                   [--allowed-local-media-path ALLOWED_LOCAL_MEDIA_PATH]
+                   [--max-file-size-mb MAX_FILE_SIZE_MB]
+                   [--frontend-decoding | --no-frontend-decoding]
+                   [--guided-decoding-backend {xgrammar,llguidance}]
+                   [--default-height DEFAULT_HEIGHT]
+                   [--default-width DEFAULT_WIDTH]
+                   [--default-num-frames DEFAULT_NUM_FRAMES]
+                   [--default-num-inference-steps DEFAULT_NUM_INFERENCE_STEPS]
+                   [--default-guidance-scale DEFAULT_GUIDANCE_SCALE]
+                   [--torch-dtype {bfloat16,float16,float32}]
+                   [--revision REVISION]
+                   [--enable-teacache | --no-enable-teacache]
+                   [--teacache-use-ret-steps | --no-teacache-use-ret-steps]
+                   [--teacache-thresh TEACACHE_THRESH]
+                   [--attn-backend {VANILLA,TRTLLM}]
+                   [--quant-algo {FP8,FP8_BLOCK_SCALES,NVFP4,W4A16_AWQ,W4A8_AWQ,W8A8_SQ_PER_CHANNEL}]
+                   [--quant-dynamic | --no-quant-dynamic]
+                   [--disable-torch-compile | --no-disable-torch-compile]
+                   [--enable-fullgraph | --no-enable-fullgraph]
+                   [--fuse-qkv | --no-fuse-qkv]
+                   [--enable-cuda-graph | --no-enable-cuda-graph]
+                   [--enable-layerwise-nvtx-marker | --no-enable-layerwise-nvtx-marker]
+                   [--skip-warmup | --no-skip-warmup]
+                   [--dit-dp-size DIT_DP_SIZE] [--dit-tp-size DIT_TP_SIZE]
+                   [--dit-ulysses-size DIT_ULYSSES_SIZE]
+                   [--dit-ring-size DIT_RING_SIZE]
+                   [--dit-cfg-size DIT_CFG_SIZE]
+                   [--dit-fsdp-size DIT_FSDP_SIZE]
+                   [--enable-async-cpu-offload | --no-enable-async-cpu-offload]
+                   [--skip-components SKIP_COMPONENTS]
+
+Dynamo TensorRT-LLM worker configuration
+
+Dynamic engine configuration can be passed via dotted flags:
+  --trtllm.<group>.<key> <value>
+Example:
+  --trtllm.kv_cache_config.free_gpu_memory_fraction 0.7
+These flags are mutually exclusive with --override-engine-args.
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+
+Dynamo Runtime Options:
+  --namespace NAMESPACE
+                        Dynamo namespace. If DYN_NAMESPACE_WORKER_SUFFIX is set, '-{suffix}' is appended to support multiple worker pools
+                        env var: DYN_NAMESPACE | default: dynamo
+  --endpoint ENDPOINT   Dynamo endpoint string in 'dyn://namespace.component.endpoint' format. Example: dyn://dynamo.backend.generate.
+                        env var: DYN_ENDPOINT | default: None
+  --discovery-backend {kubernetes,etcd,file,mem}
+                        Discovery backend: kubernetes (K8s API), etcd (distributed KV), file (local filesystem), mem (in-memory). Etcd uses the ETCD_* env vars (e.g. ETCD_ENDPOINTS) for connection details. File uses root dir from env var DYN_FILE_KV or defaults to $TMPDIR/dynamo_store_kv.
+                        env var: DYN_DISCOVERY_BACKEND | default: etcd
+  --request-plane {tcp,nats,http}
+                        Determines how requests are distributed from routers to workers. 'tcp' is fastest.
+                        env var: DYN_REQUEST_PLANE | default: tcp
+  --event-plane {nats,zmq}
+                        Determines how events are published.
+                        env var: DYN_EVENT_PLANE | default: nats
+  --connector [CONNECTOR ...]
+                        [Deprecated for vLLM] Use --kv-transfer-config instead. For TRT-LLM, options: nixl, lmcache, kvbm, null, none.
+                        env var: DYN_CONNECTOR | default: []
+  --durable-kv-events, --no-durable-kv-events
+                        [Deprecated] Enable durable KV events using NATS JetStream instead of the local indexer. This option will be removed in a future release. The event-plane subscriber (local_indexer mode) is now the recommended path.
+                        env var: DYN_DURABLE_KV_EVENTS | default: False
+  --dyn-tool-call-parser {default,nemotron_nano,glm47,deepseek_v3_2,phi4,deepseek_v3,pythonic,jamba,deepseek_v3_1,hermes,nemotron_deci,mistral,kimi_k2,harmony,minimax_m2,llama3_json,qwen3_coder}
+                        Tool call parser name for the model.
+                        env var: DYN_TOOL_CALL_PARSER | default: None
+  --dyn-reasoning-parser {deepseek_r1,step3,mistral,glm45,granite,qwen3,nemotron_deci,nemotron_nano,basic,kimi_k25,nemotron3,minimax_append_think,kimi,gpt_oss}
+                        Reasoning parser name for the model. If not specified, no reasoning parsing is performed.
+                        env var: DYN_REASONING_PARSER | default: None
+  --exclude-tools-when-tool-choice-none, --no-exclude-tools-when-tool-choice-none
+                        Exclude tool definitions from the chat template when tool_choice='none'. Prevents models from generating raw XML tool calls in the content field.
+                        env var: DYN_EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE | default: True
+  --custom-jinja-template CUSTOM_JINJA_TEMPLATE
+                        Path to a custom Jinja template file to override the model's default chat template. This template will take precedence over any template found in the model repository.
+                        env var: DYN_CUSTOM_JINJA_TEMPLATE | default: None
+  --endpoint-types ENDPOINT_TYPES, --dyn-endpoint-types ENDPOINT_TYPES
+                        Comma-separated list of endpoint types to enable. Options: 'chat', 'completions'. Use 'completions' for models without chat templates.
+                        env var: DYN_ENDPOINT_TYPES | default: chat,completions
+                        deprecating flag: --dyn-endpoint-types
+  --dump-config-to DUMP_CONFIG_TO
+                        Dump resolved configuration to the specified file path.
+                        env var: DYN_DUMP_CONFIG_TO | default: None
+  --multimodal-embedding-cache-capacity-gb MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB
+                        Capacity of the multimodal embedding cache in GB. 0 = disabled.
+                        env var: DYN_MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB | default: 0
+  --output-modalities [OUTPUT_MODALITIES ...]
+                        Output modalities for omni/diffusion mode (e.g., --output-modalities text image audio video).
+                        env var: DYN_OUTPUT_MODALITIES | default: ['text']
+  --media-output-fs-url MEDIA_OUTPUT_FS_URL
+                        Filesystem URL for storing generated images and videos (e.g. file:///tmp/dynamo_media, s3://bucket/path).
+                        env var: DYN_MEDIA_OUTPUT_FS_URL | default: file:///tmp/dynamo_media
+  --media-output-http-url MEDIA_OUTPUT_HTTP_URL
+                        Base URL for rewriting media file paths in responses (e.g. http://localhost:8000/media). If unset, returns raw filesystem paths.
+                        env var: DYN_MEDIA_OUTPUT_HTTP_URL | default: None
+
+Dynamo TRT-LLM Options:
+  --model MODEL, --model-path MODEL
+                        Path to disk model or HuggingFace model identifier to load. 
+                        env var: DYN_TRTLLM_MODEL | default: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+                        deprecating flag: --model-path
+  --served-model-name SERVED_MODEL_NAME
+                        Name to serve the model under. Defaults to deriving it from model path.
+                        env var: DYN_TRTLLM_SERVED_MODEL_NAME | default: None
+  --tensor-parallel-size TENSOR_PARALLEL_SIZE
+                        Tensor parallelism size.
+                        env var: DYN_TRTLLM_TENSOR_PARALLEL_SIZE | default: 1
+  --pipeline-parallel-size PIPELINE_PARALLEL_SIZE
+                        Pipeline parallelism size.
+                        env var: DYN_TRTLLM_PIPELINE_PARALLEL_SIZE | default: 1
+  --expert-parallel-size EXPERT_PARALLEL_SIZE
+                        Expert parallelism size.
+                        env var: DYN_TRTLLM_EXPERT_PARALLEL_SIZE | default: None
+  --enable-attention-dp, --no-enable-attention-dp
+                        Enable attention data parallelism. When enabled, attention_dp_size equals tensor_parallel_size.
+                        env var: DYN_TRTLLM_ENABLE_ATTENTION_DP | default: False
+  --kv-block-size KV_BLOCK_SIZE
+                        Size of a KV cache block.
+                        env var: DYN_TRTLLM_KV_BLOCK_SIZE | default: 32
+  --gpus-per-node GPUS_PER_NODE
+                        Number of GPUs per node. If not provided, inferred from the environment.
+                        env var: DYN_TRTLLM_GPUS_PER_NODE | default: None
+  --max-batch-size MAX_BATCH_SIZE
+                        Maximum number of requests that the engine can schedule.
+                        env var: DYN_TRTLLM_MAX_BATCH_SIZE | default: 2048
+  --max-num-tokens MAX_NUM_TOKENS
+                        Maximum number of batched input tokens after padding is removed in each batch.
+                        env var: DYN_TRTLLM_MAX_NUM_TOKENS | default: 8192
+  --max-seq-len MAX_SEQ_LEN
+                        Maximum total length of one request, including prompt and outputs. If unspecified, the value is deduced from the model config.
+                        env var: DYN_TRTLLM_MAX_SEQ_LEN | default: None
+  --max-beam-width MAX_BEAM_WIDTH
+                        Maximum number of beams for beam search decoding.
+                        env var: DYN_TRTLLM_MAX_BEAM_WIDTH | default: 1
+  --free-gpu-memory-fraction FREE_GPU_MEMORY_FRACTION
+                        Free GPU memory fraction reserved for KV Cache,  after model weights and buffers are allocated.
+                        env var: DYN_TRTLLM_FREE_GPU_MEMORY_FRACTION | default: 0.9
+  --extra-engine-args EXTRA_ENGINE_ARGS
+                        Path to a YAML file containing additional keyword arguments to pass to the TRTLLM engine.
+                        env var: DYN_TRTLLM_EXTRA_ENGINE_ARGS | default: 
+  --override-engine-args OVERRIDE_ENGINE_ARGS
+                        Python dictionary string to override specific engine arguments from the YAML file. Example: '{"tensor_parallel_size": 2, "kv_cache_config": {"enable_block_reuse": false}}'
+                        env var: DYN_TRTLLM_OVERRIDE_ENGINE_ARGS | default: 
+  --publish-events-and-metrics, --no-publish-events-and-metrics
+                        If set, publish events and metrics to Dynamo components.
+                        env var: DYN_TRTLLM_PUBLISH_EVENTS_AND_METRICS | default: False
+  --load-format LOAD_FORMAT
+                        Model weight loading format passed to TensorRT-LLM (e.g. 'auto', 'gms').
+                        env var: DYN_TRTLLM_LOAD_FORMAT | default: auto
+  --model-loader-extra-config MODEL_LOADER_EXTRA_CONFIG
+                        JSON object passed as extra config to the model loader (e.g. '{"gms_read_only": true}').
+                        env var: DYN_TRTLLM_MODEL_LOADER_EXTRA_CONFIG | default: 
+  --disaggregation-mode {prefill_and_decode,prefill,decode,encode}
+                        Mode to use for disaggregation.
+                        env var: DYN_TRTLLM_DISAGGREGATION_MODE | default: prefill_and_decode
+  --modality {text,multimodal,video_diffusion}
+                        Modality to use for the model.
+                        env var: DYN_TRTLLM_MODALITY | default: text
+  --encode-endpoint ENCODE_ENDPOINT
+                        Endpoint (in 'dyn://namespace.component.endpoint' format) for the encode worker.
+                        env var: DYN_TRTLLM_ENCODE_ENDPOINT | default: 
+  --allowed-local-media-path ALLOWED_LOCAL_MEDIA_PATH
+                        Path to a directory that is allowed to be accessed by the model.
+                        env var: DYN_TRTLLM_ALLOWED_LOCAL_MEDIA_PATH | default: 
+  --max-file-size-mb MAX_FILE_SIZE_MB
+                        Maximum size of downloadable embedding files/Image URLs.
+                        env var: DYN_TRTLLM_MAX_FILE_SIZE_MB | default: 50
+  --frontend-decoding, --no-frontend-decoding
+                        Enable frontend decoding of multimodal images. When enabled, images are decoded in the Rust frontend and transferred to the backend via NIXL RDMA. Without this flag, images are decoded in the Python backend (default behavior).
+                        env var: DYN_TRTLLM_FRONTEND_DECODING | default: False
+  --guided-decoding-backend {xgrammar,llguidance}
+                        Backend to use for guided decoding (structured output). Options: xgrammar, llguidance.
+                        env var: DYN_TRTLLM_GUIDED_DECODING_BACKEND | default: None
+
+Diffusion Options [Experimental]:
+  Options for video_diffusion modality
+
+  --default-height DEFAULT_HEIGHT
+                        Default video/image height in pixels.
+                        env var: DYN_TRTLLM_DEFAULT_HEIGHT | default: 480
+  --default-width DEFAULT_WIDTH
+                        Default video/image width in pixels.
+                        env var: DYN_TRTLLM_DEFAULT_WIDTH | default: 832
+  --default-num-frames DEFAULT_NUM_FRAMES
+                        Default number of frames for video generation.
+                        env var: DYN_TRTLLM_DEFAULT_NUM_FRAMES | default: 81
+  --default-num-inference-steps DEFAULT_NUM_INFERENCE_STEPS
+                        Default number of inference steps.
+                        env var: DYN_TRTLLM_DEFAULT_NUM_INFERENCE_STEPS | default: 50
+  --default-guidance-scale DEFAULT_GUIDANCE_SCALE
+                        Default CFG guidance scale.
+                        env var: DYN_TRTLLM_DEFAULT_GUIDANCE_SCALE | default: 5.0
+  --torch-dtype {bfloat16,float16,float32}
+                        Torch dtype for model loading. bfloat16 recommended for Ampere+ GPUs.
+                        env var: DYN_TRTLLM_TORCH_DTYPE | default: bfloat16
+  --revision REVISION   HuggingFace Hub revision (branch, tag, or commit SHA) for model download.
+                        env var: DYN_TRTLLM_REVISION | default: None
+  --enable-teacache, --no-enable-teacache
+                        Enable TeaCache optimization for faster generation.
+                        env var: DYN_TRTLLM_ENABLE_TEACACHE | default: False
+  --teacache-use-ret-steps, --no-teacache-use-ret-steps
+                        Use retention steps for TeaCache.
+                        env var: DYN_TRTLLM_TEACACHE_USE_RET_STEPS | default: True
+  --teacache-thresh TEACACHE_THRESH
+                        TeaCache threshold.
+                        env var: DYN_TRTLLM_TEACACHE_THRESH | default: 0.2
+  --attn-backend {VANILLA,TRTLLM}
+                        Attention backend for diffusion models. VANILLA = PyTorch SDPA, TRTLLM = TensorRT-LLM kernels.
+                        env var: DYN_TRTLLM_ATTN_BACKEND | default: VANILLA
+  --quant-algo {FP8,FP8_BLOCK_SCALES,NVFP4,W4A16_AWQ,W4A8_AWQ,W8A8_SQ_PER_CHANNEL}
+                        Quantization algorithm for diffusion models. BF16 weights are quantized on-the-fly during loading.
+                        env var: DYN_TRTLLM_QUANT_ALGO | default: None
+  --quant-dynamic, --no-quant-dynamic
+                        Enable dynamic weight quantization (quantize BF16 weights on-the-fly during loading).
+                        env var: DYN_TRTLLM_QUANT_DYNAMIC | default: True
+  --disable-torch-compile, --no-disable-torch-compile
+                        Disable torch.compile optimization.
+                        env var: DYN_TRTLLM_DISABLE_TORCH_COMPILE | default: False
+  --enable-fullgraph, --no-enable-fullgraph
+                        Enable torch.compile fullgraph mode (stricter but potentially faster).
+                        env var: DYN_TRTLLM_ENABLE_FULLGRAPH | default: False
+  --fuse-qkv, --no-fuse-qkv
+                        Enable QKV fusion for transformer attention layers.
+                        env var: DYN_TRTLLM_FUSE_QKV | default: True
+  --enable-cuda-graph, --no-enable-cuda-graph
+                        Enable CUDA graph capture for transformer forward passes. Mutually exclusive with torch.compile.
+                        env var: DYN_TRTLLM_ENABLE_CUDA_GRAPH | default: False
+  --enable-layerwise-nvtx-marker, --no-enable-layerwise-nvtx-marker
+                        Enable per-layer NVTX markers for profiling with Nsight Systems.
+                        env var: DYN_TRTLLM_ENABLE_LAYERWISE_NVTX_MARKER | default: False
+  --skip-warmup, --no-skip-warmup
+                        Skip warmup inference during initialization.
+                        env var: DYN_TRTLLM_SKIP_WARMUP | default: False
+  --dit-dp-size DIT_DP_SIZE
+                        Data parallel size for DiT.
+                        env var: DYN_TRTLLM_DIT_DP_SIZE | default: 1
+  --dit-tp-size DIT_TP_SIZE
+                        Tensor parallel size for DiT.
+                        env var: DYN_TRTLLM_DIT_TP_SIZE | default: 1
+  --dit-ulysses-size DIT_ULYSSES_SIZE
+                        Ulysses parallel size for DiT.
+                        env var: DYN_TRTLLM_DIT_ULYSSES_SIZE | default: 1
+  --dit-ring-size DIT_RING_SIZE
+                        Ring parallel size for DiT.
+                        env var: DYN_TRTLLM_DIT_RING_SIZE | default: 1
+  --dit-cfg-size DIT_CFG_SIZE
+                        CFG parallel size for DiT.
+                        env var: DYN_TRTLLM_DIT_CFG_SIZE | default: 1
+  --dit-fsdp-size DIT_FSDP_SIZE
+                        FSDP size for DiT.
+                        env var: DYN_TRTLLM_DIT_FSDP_SIZE | default: 1
+  --enable-async-cpu-offload, --no-enable-async-cpu-offload
+                        Enable async CPU offload for memory efficiency.
+                        env var: DYN_TRTLLM_ENABLE_ASYNC_CPU_OFFLOAD | default: False
+  --skip-components SKIP_COMPONENTS
+                        Comma-separated list of pipeline components to skip loading. Valid values: transformer, vae, text_encoder, tokenizer, scheduler, image_encoder, image_processor.
+                        env var: DYN_TRTLLM_SKIP_COMPONENTS | default: 

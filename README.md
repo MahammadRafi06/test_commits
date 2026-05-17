@@ -33,6 +33,21 @@ Use `--skip-pull` when the images are already local. The lower-level
 `config_fetch/generate_dynamo_runtime_configs.sh` script is still available for
 running the container capture step directly.
 
+Run the same flow on AWS in two explicit steps:
+
+```bash
+# Create or start the Terraform-managed GPU instance; no capture runs here.
+config_fetch/provision_aws_gpu_capture.sh
+
+# Copy this repo to the running instance, run capture, copy results back,
+# then stop the instance after a successful run.
+config_fetch/run_aws_gpu_capture.sh --skip-pull
+```
+
+`run_aws_gpu_capture.sh` does not run Terraform and will not create, start, or
+replace instances. If capture fails, it leaves the instance running for
+debugging.
+
 The runner captures:
 
 - Native engine CLI args and env vars.
@@ -47,15 +62,6 @@ Generated files are written under:
 config_fetch/dynamo_runtime/<component>/
 ```
 
-Backend components also get prefill/decode UI bucket views, for example:
-
-```text
-config_fetch/dynamo_runtime/vllm/vllm_prefill_args_<version>.json
-config_fetch/dynamo_runtime/vllm/vllm_decode_args_<version>.json
-```
-
-Those role files keep every captured record and only reorganize the `ui` bucket.
-
 Every args/envs JSON uses the same flat structure:
 
 - Top-level metadata: `engine`, `version`, `date`, `source`.
@@ -66,7 +72,7 @@ Every args/envs JSON uses the same flat structure:
 - Legacy frontend-only fields such as `emit`, `managed_by`, and `reason` are not
   part of the generated structure.
 
-Reapply bucket views without recapturing images:
+Reapply per-engine bucket ordering without recapturing images:
 
 ```bash
 python config_fetch/rebucket_runtime_configs.py --root config_fetch/dynamo_runtime

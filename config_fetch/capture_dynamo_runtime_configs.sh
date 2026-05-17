@@ -7,8 +7,8 @@ Pull NVIDIA Dynamo runtime images and capture config catalogs locally.
 
 This is the end-to-end automation entrypoint. It pulls the selected images,
 runs the config_fetch generators inside the matching runtime containers, copies
-the generated files into a local output folder, and creates role-specific
-prefill/decode catalog views.
+the generated files into a local output folder, and applies per-engine
+primary/advanced/less_frequent UI bucket ordering.
 
 Usage:
   config_fetch/capture_dynamo_runtime_configs.sh [--tag 1.1.1] [--engine vllm]

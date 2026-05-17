@@ -1,0 +1,118 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-agg
+  namespace: None
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - "python3"
+            - "-m"
+            - "dynamo.frontend"
+          args:
+            - "--http-port"
+            - "8000"
+            - "--grpc-metrics-port"
+            - "8788"
+            - "--discovery-backend"
+            - "etcd"
+            - "--request-plane"
+            - "nats"
+            - "--event-plane"
+            - "nats"
+            - "--router-mode"
+            - "kv"
+            - "--router-kv-events"
+            - "true"
+            - "--router-min-initial-workers"
+            - "2"
+            - "--router-prefill-load-model"
+            - "active_blocks"
+            - "--router-track-active-blocks"
+            - "true"
+            - "--router-track-output-blocks"
+            - "true"
+            - "--router-track-prefill-tokens"
+            - "true"
+            - "--router-assume-kv-reuse"
+            - "true"
+            - "--router-replica-sync"
+            - "true"
+            - "--router-queue-policy"
+            - "fcfs"
+            - "--router-queue-threshold"
+            - "4.0"
+            - "--router-event-threads"
+            - "8"
+            - "--router-kv-overlap-score-weight"
+            - "1.0"
+            - "--router-temperature"
+            - "0.0"
+            - "--router-snapshot-threshold"
+            - "1000000"
+            - "--router-ttl-secs"
+            - "120.0"
+            - "--router-max-tree-size"
+            - "1048576"
+            - "--router-prune-target-ratio"
+            - "0.8"
+            - "--use-remote-indexer"
+            - "false"
+            - "--serve-indexer"
+            - "true"
+            - "--enforce-disagg"
+            - "true"
+            - "--dyn-chat-processor"
+            - "dynamo"
+            - "--dyn-preprocess-workers"
+            - "2"
+            - "--enable-anthropic-api"
+            - "false"
+            - "--dyn-debug-perf"
+            - "false"
+            - "DYN_NAMESPACE"
+            - "clustra-trtllm-disagg"
+            - "DYN_LOG"
+            - "info"
+    VllmWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      replicas: 4
+      resources:
+        limits:
+          gpu: "8"
+      extraPodSpec:
+      
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+            - python3
+            - -m
+            - dynamo.vllm
+          args:
+            - --model
+            - "Qwen/Qwen3-32B-FP8"
+            - "--tensor-parallel-size"
+            - "8"
+            - "--pipeline-parallel-size"
+            - "1"
+            - "--data-parallel-size"
+            - "1"
+            - "--kv-cache-dtype"
+            - "fp8"
+            - "--max-model-len"
+            - "6500"
+            - "--max-num-seqs"
+            - "512"
+            - "--max-num-batched-tokens"
+            - "6012"

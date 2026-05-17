@@ -1,0 +1,15 @@
+{
+  "component": "frontend",
+  "version": "1.1.1",
+  "date": "2026-05-12",
+  "source": "captured from python -m dynamo.frontend --help",
+  "raw_version_output": "Dynamo Frontend 1.1.1",
+  "settings": {
+    "frontend": 35,
+    "kv_router": 18,
+    "aic": 5,
+    "total": 58
+  },
+  "args": 58,
+  "envs": 58
+}

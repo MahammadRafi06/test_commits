@@ -1,0 +1,264 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-disagg
+  namespace: None
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - "python3"
+            - "-m"
+            - "dynamo.frontend"
+          args:
+            - "--http-port"
+            - "8000"
+            - "--grpc-metrics-port"
+            - "8788"
+            - "--discovery-backend"
+            - "etcd"
+            - "--request-plane"
+            - "nats"
+            - "--event-plane"
+            - "nats"
+            - "--router-mode"
+            - "kv"
+            - "--router-kv-events"
+            - "true"
+            - "--router-min-initial-workers"
+            - "2"
+            - "--router-prefill-load-model"
+            - "active_blocks"
+            - "--router-track-active-blocks"
+            - "true"
+            - "--router-track-output-blocks"
+            - "true"
+            - "--router-track-prefill-tokens"
+            - "true"
+            - "--router-assume-kv-reuse"
+            - "true"
+            - "--router-replica-sync"
+            - "true"
+            - "--router-queue-policy"
+            - "fcfs"
+            - "--router-queue-threshold"
+            - "4.0"
+            - "--router-event-threads"
+            - "8"
+            - "--router-kv-overlap-score-weight"
+            - "1.0"
+            - "--router-temperature"
+            - "0.0"
+            - "--router-snapshot-threshold"
+            - "1000000"
+            - "--router-ttl-secs"
+            - "120.0"
+            - "--router-max-tree-size"
+            - "1048576"
+            - "--router-prune-target-ratio"
+            - "0.8"
+            - "--use-remote-indexer"
+            - "false"
+            - "--serve-indexer"
+            - "true"
+            - "--enforce-disagg"
+            - "true"
+            - "--dyn-chat-processor"
+            - "dynamo"
+            - "--dyn-preprocess-workers"
+            - "2"
+            - "--enable-anthropic-api"
+            - "false"
+            - "--dyn-debug-perf"
+            - "false"
+            - "DYN_NAMESPACE"
+            - "clustra-trtllm-disagg"
+            - "DYN_LOG"
+            - "info"
+    VllmPrefillWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: prefill
+      replicas: 8
+      resources:
+        limits:
+          gpu: "1"
+      extraPodSpec:
+      
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+            - python3
+            - -m
+            - dynamo.vllm
+          args:
+            - "--tensor-parallel-size"
+            - "1"
+            - "--pipeline-parallel-size"
+            - "1"
+            - "--data-parallel-size"
+            - "1"
+            - "--kv-cache-dtype"
+            - "fp8"
+            - "--max-num-seqs"
+            - "1"
+            - "--max-num-batched-tokens"
+            - "5500"
+            - "--is-prefill-worker"
+            - "--kv-transfer-config"
+            - "{\"kv_connector\":\"NixlConnector\",\"kv_role\":\"kv_both\"}"
+            - "--model"
+            - "meta-llama/Llama-3.1-8B-Instruct"
+            - "--served-model-name"
+            - "llama-3.1-8b-instruct"
+            - "--tokenizer"
+            - "meta-llama/Llama-3.1-8B-Instruct"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "8801"
+            - "--endpoint"
+            - "dyn://clustra-trtllm-disagg.trtllm.generate"
+            - "--endpoint-types"
+            - "chat,completions"
+            - "--backend"
+            - "pytorch"
+            - "--server_role"
+            - "prefill"
+            - "--disaggregation-mode"
+            - "prefill"
+            - "--disagg_cluster_uri"
+            - "etcd://etcd-client.dynamo:2379/clustra-trtllm-disagg"
+            - "--torch-dtype"
+            - "bfloat16"
+            - "--quant-algo"
+            - "FP8"
+            - "--kv_cache_dtype"
+            - "fp8"
+            - "--max-batch-size"
+            - "16"
+            - "--max-num-tokens"
+            - "16384"
+            - "--max-seq-len"
+            - "16384"
+            - "--free-gpu-memory-fraction"
+            - "0.7"
+            - "--enable_chunked_prefill"
+            - "true"
+            - "--attn-backend"
+            - "TRTLLM"
+            - "--fail_fast_on_attention_window_too_large"
+            - "true"
+            - "--durable-kv-events"
+            - "true"
+            - "--guided-decoding-backend"
+            - "xgrammar"
+            - "--exclude-tools-when-tool-choice-none"
+            - "true"
+            - "--modality"
+            - "text"
+            - "--frontend-decoding"
+            - "false"
+            - "--load-format"
+            - "auto"
+            - "--allowed-local-media-path"
+            - ""
+    VllmDecodeWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: decode
+      replicas: 6
+      resources:
+        limits:
+          gpu: "4"
+      extraPodSpec:
+      
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+            - python3
+            - -m
+            - dynamo.vllm
+          args:
+            - "--tensor-parallel-size"
+            - "4"
+            - "--pipeline-parallel-size"
+            - "1"
+            - "--data-parallel-size"
+            - "1"
+            - "--kv-cache-dtype"
+            - "fp8"
+            - "--max-num-seqs"
+            - "512"
+            - "--max-num-batched-tokens"
+            - "512"
+            - "--is-decode-worker"
+            - "--kv-transfer-config"
+            - "{\"kv_connector\":\"NixlConnector\",\"kv_role\":\"kv_both\"}"
+            - "--model"
+            - "meta-llama/Llama-3.1-8B-Instruct"
+            - "--served-model-name"
+            - "llama-3.1-8b-instruct"
+            - "--tokenizer"
+            - "meta-llama/Llama-3.1-8B-Instruct"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "8802"
+            - "--endpoint"
+            - "dyn://clustra-trtllm-disagg.trtllm.generate"
+            - "--endpoint-types"
+            - "chat,completions"
+            - "--backend"
+            - "pytorch"
+            - "--server_role"
+            - "decode"
+            - "--disaggregation-mode"
+            - "decode"
+            - "--disagg_cluster_uri"
+            - "etcd://etcd-client.dynamo:2379/clustra-trtllm-disagg"
+            - "--torch-dtype"
+            - "bfloat16"
+            - "--quant-algo"
+            - "FP8"
+            - "--kv_cache_dtype"
+            - "fp8"
+            - "--max-batch-size"
+            - "256"
+            - "--max-num-tokens"
+            - "8192"
+            - "--max-seq-len"
+            - "16384"
+            - "--free-gpu-memory-fraction"
+            - "0.92"
+            - "--enable_chunked_prefill"
+            - "false"
+            - "--attn-backend"
+            - "TRTLLM"
+            - "--fail_fast_on_attention_window_too_large"
+            - "true"
+            - "--durable-kv-events"
+            - "true"
+            - "--guided-decoding-backend"
+            - "xgrammar"
+            - "--exclude-tools-when-tool-choice-none"
+            - "true"
+            - "--modality"
+            - "text"
+            - "--frontend-decoding"
+            - "false"
+            - "--load-format"
+            - "auto"
+            - "--allowed-local-media-path"
+            - ""

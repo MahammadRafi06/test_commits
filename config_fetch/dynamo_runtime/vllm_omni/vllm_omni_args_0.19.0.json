@@ -1,20 +1,22 @@
 {
   "engine": "vllm_omni",
   "version": "0.19.0",
-  "date": "2026-05-11",
-  "source": "introspected from vllm.entrypoints.openai.cli_args.make_arg_parser (vllm serve) + vLLM Omni multimodal overlay",
+  "date": "2026-05-12",
+  "source": "introspected from vllm.entrypoints.openai.cli_args.make_arg_parser (vllm serve) + Dynamo backend ArgGroups + vLLM Omni multimodal overlay",
   "enable_multimodal": {
     "type": "bool",
     "flag": true,
-    "true_arg": "--enable-multimodal",
-    "false_arg": null,
     "default_value": false,
     "value": null,
-    "description": "Enable Dynamo/vLLM multimodal request handling for image, video, or audio-capable models.",
+    "true_arg": "--enable-multimodal",
+    "false_arg": "--no-enable-multimodal",
+    "description": "Enable multimodal processing. If not set, none of the multimodal components can be used.",
+    "env_var": "DYN_VLLM_ENABLE_MULTIMODAL",
     "module": "vllm_omni",
     "config_class": "VllmOmniMultimodalConfig",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Multimodal"
   },
   "media_io_kwargs": {
     "type": "str",
@@ -26,20 +28,22 @@
     "module": "vllm_omni",
     "config_class": "VllmOmniMultimodalConfig",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "Media Io Kwargs"
   },
   "multimodal_embedding_cache_capacity_gb": {
     "type": "float",
     "flag": false,
     "arg": "--multimodal-embedding-cache-capacity-gb",
-    "default_value": null,
+    "default_value": 0,
     "value": null,
-    "description": "Capacity in GB for the multimodal embedding cache.",
-    "env_var": "DYN_MULTIMODAL_EMBEDDING_CACHE_GB",
+    "description": "Capacity of the multimodal embedding cache in GB. 0 = disabled.",
+    "env_var": "DYN_MULTIMODAL_EMBEDDING_CACHE_CAPACITY_GB",
     "module": "vllm_omni",
     "config_class": "VllmOmniMultimodalConfig",
     "ui": "primary",
-    "aic": false
+    "aic": false,
+    "display_name": "Multimodal Embedding Cache Capacity Gb"
   },
   "kv_transfer_config": {
     "type": "str",
@@ -51,7 +55,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Transfer Config"
   },
   "kv_events_config": {
     "type": "str",
@@ -63,7 +68,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Events Config"
   },
   "video_pruning_rate": {
     "type": "str",
@@ -75,7 +81,8 @@
     "module": "vllm_omni",
     "config_class": "VllmOmniMultimodalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Video Pruning Rate"
   },
   "enable_lora": {
     "type": "bool",
@@ -88,7 +95,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable LoRA"
   },
   "lora_modules": {
     "type": "List[str]",
@@ -101,7 +109,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "LoRA Modules"
   },
   "max_loras": {
     "type": "int",
@@ -113,7 +122,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Loras"
   },
   "limit_mm_per_prompt": {
     "type": "str",
@@ -125,7 +135,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Limit MM Per Prompt"
   },
   "dyn_tool_call_parser": {
     "type": "str",
@@ -133,18 +144,32 @@
     "arg": "--dyn-tool-call-parser",
     "default_value": null,
     "value": null,
-    "description": "Dynamo tool-call parser override used by Omni models such as Nemotron Nano Omni.",
-    "env_var": "DYN_TOOL_CALL_PARSER",
+    "description": "Tool call parser name for the model.",
     "choices": [
-      "nemotron_nano",
-      "deepseek_v4",
+      "jamba",
+      "harmony",
+      "phi4",
+      "deepseek_v3_2",
+      "kimi_k2",
+      "default",
+      "hermes",
+      "glm47",
+      "deepseek_v3_1",
+      "qwen3_coder",
       "llama3_json",
-      "none"
+      "mistral",
+      "deepseek_v3",
+      "nemotron_nano",
+      "pythonic",
+      "nemotron_deci",
+      "minimax_m2"
     ],
+    "env_var": "DYN_TOOL_CALL_PARSER",
     "module": "vllm_omni",
     "config_class": "VllmOmniMultimodalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Tool Call Parser"
   },
   "dyn_reasoning_parser": {
     "type": "str",
@@ -152,17 +177,29 @@
     "arg": "--dyn-reasoning-parser",
     "default_value": null,
     "value": null,
-    "description": "Dynamo reasoning parser override used by chain-of-thought Omni models.",
-    "env_var": "DYN_REASONING_PARSER",
+    "description": "Reasoning parser name for the model. If not specified, no reasoning parsing is performed.",
     "choices": [
+      "kimi_k25",
+      "mistral",
       "nemotron_nano",
-      "deepseek_v4",
-      "none"
+      "glm45",
+      "qwen3",
+      "kimi",
+      "nemotron3",
+      "basic",
+      "minimax_append_think",
+      "nemotron_deci",
+      "gpt_oss",
+      "granite",
+      "step3",
+      "deepseek_r1"
     ],
+    "env_var": "DYN_REASONING_PARSER",
     "module": "vllm_omni",
     "config_class": "VllmOmniMultimodalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Dyn Reasoning Parser"
   },
   "tool_call_parser": {
     "type": "str",
@@ -174,7 +211,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Tool Call Parser"
   },
   "reasoning_parser": {
     "type": "str",
@@ -186,7 +224,8 @@
     "module": "structured_outputs",
     "config_class": "StructuredOutputsConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Reasoning Parser"
   },
   "chat_template": {
     "type": "str",
@@ -198,7 +237,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Chat Template"
   },
   "chat_template_content_format": {
     "type": "str",
@@ -215,7 +255,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Chat Template Content Format"
   },
   "enable_mm_embeds": {
     "type": "bool",
@@ -228,7 +269,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable MM Embeds"
   },
   "mm_encoder_only": {
     "type": "bool",
@@ -241,7 +283,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Encoder Only"
   },
   "mm_tensor_ipc": {
     "type": "str",
@@ -257,7 +300,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Tensor Ipc"
   },
   "disable_chunked_mm_input": {
     "type": "bool",
@@ -270,7 +314,605 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "advanced",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Chunked MM Input"
+  },
+  "namespace": {
+    "type": "str",
+    "flag": false,
+    "arg": "--namespace",
+    "default_value": "dynamo",
+    "value": null,
+    "description": "Dynamo namespace. If DYN_NAMESPACE_WORKER_SUFFIX is set, '-{suffix}' is appended to support multiple worker pools",
+    "env_var": "DYN_NAMESPACE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Namespace"
+  },
+  "endpoint": {
+    "type": "str",
+    "flag": false,
+    "arg": "--endpoint",
+    "default_value": null,
+    "value": null,
+    "description": "Dynamo endpoint string in 'dyn://namespace.component.endpoint' format. Example: dyn://dynamo.backend.generate.",
+    "env_var": "DYN_ENDPOINT",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Endpoint"
+  },
+  "discovery_backend": {
+    "type": "str",
+    "flag": false,
+    "arg": "--discovery-backend",
+    "default_value": "etcd",
+    "value": null,
+    "description": "Discovery backend: kubernetes (K8s API), etcd (distributed KV), file (local filesystem), mem (in-memory). Etcd uses the ETCD_* env vars (e.g. ETCD_ENDPOINTS) for connection details. File uses root dir from env var DYN_FILE_KV or defaults to $TMPDIR/dynamo_store_kv.",
+    "choices": [
+      "kubernetes",
+      "etcd",
+      "file",
+      "mem"
+    ],
+    "env_var": "DYN_DISCOVERY_BACKEND",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Discovery Backend"
+  },
+  "request_plane": {
+    "type": "str",
+    "flag": false,
+    "arg": "--request-plane",
+    "default_value": "tcp",
+    "value": null,
+    "description": "Determines how requests are distributed from routers to workers. 'tcp' is fastest.",
+    "choices": [
+      "tcp",
+      "nats",
+      "http"
+    ],
+    "env_var": "DYN_REQUEST_PLANE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Request Plane"
+  },
+  "event_plane": {
+    "type": "str",
+    "flag": false,
+    "arg": "--event-plane",
+    "default_value": "nats",
+    "value": null,
+    "description": "Determines how events are published.",
+    "choices": [
+      "nats",
+      "zmq"
+    ],
+    "env_var": "DYN_EVENT_PLANE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Event Plane"
+  },
+  "connector": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--connector",
+    "default_value": [],
+    "value": null,
+    "description": "[Deprecated for vLLM] Use --kv-transfer-config instead. For TRT-LLM, options: nixl, lmcache, kvbm, null, none.",
+    "multiple": true,
+    "env_var": "DYN_CONNECTOR",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Connector"
+  },
+  "durable_kv_events": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--durable-kv-events",
+    "false_arg": "--no-durable-kv-events",
+    "description": "[Deprecated] Enable durable KV events using NATS JetStream instead of the local indexer. This option will be removed in a future release. The event-plane subscriber (local_indexer mode) is now the recommended path.",
+    "env_var": "DYN_DURABLE_KV_EVENTS",
+    "status": "deprecated",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Durable KV Events"
+  },
+  "exclude_tools_when_tool_choice_none": {
+    "type": "bool",
+    "flag": true,
+    "default_value": true,
+    "value": null,
+    "true_arg": "--exclude-tools-when-tool-choice-none",
+    "false_arg": "--no-exclude-tools-when-tool-choice-none",
+    "description": "Exclude tool definitions from the chat template when tool_choice='none'. Prevents models from generating raw XML tool calls in the content field.",
+    "env_var": "DYN_EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Exclude Tools When Tool Choice None"
+  },
+  "custom_jinja_template": {
+    "type": "str",
+    "flag": false,
+    "arg": "--custom-jinja-template",
+    "default_value": null,
+    "value": null,
+    "description": "Path to a custom Jinja template file to override the model's default chat template. This template will take precedence over any template found in the model repository.",
+    "env_var": "DYN_CUSTOM_JINJA_TEMPLATE",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Custom Jinja Template"
+  },
+  "endpoint_types": {
+    "type": "str",
+    "flag": false,
+    "arg": "--endpoint-types",
+    "default_value": "chat,completions",
+    "value": null,
+    "description": "Comma-separated list of endpoint types to enable. Options: 'chat', 'completions'. Use 'completions' for models without chat templates.",
+    "env_var": "DYN_ENDPOINT_TYPES",
+    "deprecated_alias": "--dyn-endpoint-types",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Endpoint Types"
+  },
+  "dump_config_to": {
+    "type": "str",
+    "flag": false,
+    "arg": "--dump-config-to",
+    "default_value": null,
+    "value": null,
+    "description": "Dump resolved configuration to the specified file path.",
+    "env_var": "DYN_DUMP_CONFIG_TO",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dump Config To"
+  },
+  "output_modalities": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--output-modalities",
+    "default_value": [
+      "text"
+    ],
+    "value": null,
+    "description": "Output modalities for omni/diffusion mode (e.g., --output-modalities text image audio video).",
+    "multiple": true,
+    "env_var": "DYN_OUTPUT_MODALITIES",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Output Modalities"
+  },
+  "media_output_fs_url": {
+    "type": "str",
+    "flag": false,
+    "arg": "--media-output-fs-url",
+    "default_value": "file:///tmp/dynamo_media",
+    "value": null,
+    "description": "Filesystem URL for storing generated images and videos (e.g. file:///tmp/dynamo_media, s3://bucket/path).",
+    "env_var": "DYN_MEDIA_OUTPUT_FS_URL",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Media Output Fs Url"
+  },
+  "media_output_http_url": {
+    "type": "str",
+    "flag": false,
+    "arg": "--media-output-http-url",
+    "default_value": null,
+    "value": null,
+    "description": "Base URL for rewriting media file paths in responses (e.g. http://localhost:8000/media). If unset, returns raw filesystem paths.",
+    "env_var": "DYN_MEDIA_OUTPUT_HTTP_URL",
+    "module": "dynamo_runtime",
+    "config_class": "Dynamo Runtime Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Media Output Http Url"
+  },
+  "disaggregation_mode": {
+    "type": "str",
+    "flag": false,
+    "arg": "--disaggregation-mode",
+    "default_value": null,
+    "value": null,
+    "description": "Worker disaggregation mode: 'agg' (default, aggregated), 'prefill' (prefill-only worker), or 'decode' (decode-only worker).",
+    "choices": [
+      "agg",
+      "prefill",
+      "decode",
+      "encode"
+    ],
+    "env_var": "DYN_VLLM_DISAGGREGATION_MODE",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Disaggregation Mode"
+  },
+  "is_prefill_worker": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--is-prefill-worker",
+    "false_arg": "--no-is-prefill-worker",
+    "description": "DEPRECATED: use --disaggregation-mode=prefill. Enable prefill functionality for this worker.",
+    "env_var": "DYN_VLLM_IS_PREFILL_WORKER",
+    "status": "deprecated",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Is Prefill Worker"
+  },
+  "is_decode_worker": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--is-decode-worker",
+    "false_arg": "--no-is-decode-worker",
+    "description": "DEPRECATED: use --disaggregation-mode=decode. Mark this as a decode worker which does not publish KV events.",
+    "env_var": "DYN_VLLM_IS_DECODE_WORKER",
+    "status": "deprecated",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Is Decode Worker"
+  },
+  "use_vllm_tokenizer": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--use-vllm-tokenizer",
+    "false_arg": "--no-use-vllm-tokenizer",
+    "description": "Use vLLM's tokenizer for pre and post processing. This bypasses Dynamo's preprocessor and only v1/chat/completions will be available through the Dynamo frontend.",
+    "env_var": "DYN_VLLM_USE_TOKENIZER",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Use vLLM Tokenizer"
+  },
+  "route_to_encoder": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--route-to-encoder",
+    "false_arg": "--no-route-to-encoder",
+    "description": "Enable routing to separate encoder workers for multimodal processing.",
+    "env_var": "DYN_VLLM_ROUTE_TO_ENCODER",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Route To Encoder"
+  },
+  "multimodal_encode_worker": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--multimodal-encode-worker",
+    "false_arg": "--no-multimodal-encode-worker",
+    "description": "Run as multimodal encode worker component for processing images/videos.",
+    "env_var": "DYN_VLLM_MULTIMODAL_ENCODE_WORKER",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Multimodal Encode Worker"
+  },
+  "multimodal_worker": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--multimodal-worker",
+    "false_arg": "--no-multimodal-worker",
+    "description": "Run as multimodal worker component for LLM inference with multimodal data.",
+    "env_var": "DYN_VLLM_MULTIMODAL_WORKER",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Multimodal Worker"
+  },
+  "multimodal_decode_worker": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--multimodal-decode-worker",
+    "false_arg": "--no-multimodal-decode-worker",
+    "description": "Run as multimodal decode worker in disaggregated mode.",
+    "env_var": "DYN_VLLM_MULTIMODAL_DECODE_WORKER",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Multimodal Decode Worker"
+  },
+  "mm_prompt_template": {
+    "type": "str",
+    "flag": false,
+    "arg": "--mm-prompt-template",
+    "default_value": "USER: <image>\n<prompt> ASSISTANT:",
+    "value": null,
+    "description": "Different multi-modal models expect the prompt to contain different special media prompts. The processor will use this argument to construct the final prompt. User prompt will replace '<prompt>' in the provided template. For example, if the user prompt is 'please describe the image' and the prompt template is 'USER: <image> <prompt> ASSISTANT:', the resulting prompt is 'USER: <image> please describe the image ASSISTANT:'.\n<prompt> ASSISTANT:",
+    "env_var": "DYN_VLLM_MM_PROMPT_TEMPLATE",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "MM Prompt Template"
+  },
+  "frontend_decoding": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--frontend-decoding",
+    "false_arg": "--no-frontend-decoding",
+    "description": "Enable frontend decoding of multimodal images. When enabled, images are decoded in the Rust frontend and transferred to the backend via NIXL RDMA. Without this flag, images are decoded in the Python backend (default behavior).",
+    "env_var": "DYN_VLLM_FRONTEND_DECODING",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Frontend Decoding"
+  },
+  "embedding_transfer_mode": {
+    "type": "str",
+    "flag": false,
+    "arg": "--embedding-transfer-mode",
+    "default_value": "nixl-write",
+    "value": null,
+    "description": "Worker embedding transfer mode: 'local' (default, local file system), 'nixl-write' (NIXL transfer with WRITE), or 'nixl-read' (NIXL transfer with READ).",
+    "choices": [
+      "local",
+      "nixl-write",
+      "nixl-read"
+    ],
+    "env_var": "DYN_VLLM_EMBEDDING_TRANSFER_MODE",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Embedding Transfer Mode"
+  },
+  "headless": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--headless",
+    "false_arg": "--no-headless",
+    "description": "Run in headless mode for multi-node TP/PP. Secondary nodes run vLLM workers only, no dynamo endpoints. See vLLM multi-node data parallel documentation for more details.",
+    "env_var": "DYN_VLLM_HEADLESS",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Headless"
+  },
+  "model_express_url": {
+    "type": "str",
+    "flag": false,
+    "arg": "--model-express-url",
+    "default_value": null,
+    "value": null,
+    "description": "ModelExpress P2P server URL (e.g., http://mx-server:8080). Required when using --load-format=mx-source or --load-format=mx-target.",
+    "env_var": "MODEL_EXPRESS_URL",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Model Express Url"
+  },
+  "gms_shadow_mode": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--gms-shadow-mode",
+    "false_arg": "--no-gms-shadow-mode",
+    "description": "Enable GMS shadow/standby mode. Shadow engines skip KV cache allocation at startup, automatically sleep after initialization, and wake on demand when the active engine dies. Requires --load-format=gms.",
+    "env_var": "DYN_VLLM_GMS_SHADOW_MODE",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Gms Shadow Mode"
+  },
+  "benchmark_mode": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-mode",
+    "default_value": null,
+    "value": null,
+    "description": "Run self-benchmark on startup before accepting requests. Sweeps prefill ISLs and/or decode (context_length x batch_size) points, collecting ForwardPassMetrics at each operating point.",
+    "choices": [
+      "prefill",
+      "decode",
+      "agg"
+    ],
+    "env_var": "DYN_BENCHMARK_MODE",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Mode"
+  },
+  "benchmark_prefill_granularity": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-prefill-granularity",
+    "default_value": 16,
+    "value": null,
+    "description": "Number of ISL sample points for prefill sweep (default: 16).",
+    "env_var": "DYN_BENCHMARK_PREFILL_GRANULARITY",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Prefill Granularity"
+  },
+  "benchmark_decode_length_granularity": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-decode-length-granularity",
+    "default_value": 6,
+    "value": null,
+    "description": "Number of context length sample points for decode sweep (default: 6).",
+    "env_var": "DYN_BENCHMARK_DECODE_LENGTH_GRANULARITY",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Decode Length Granularity"
+  },
+  "benchmark_decode_batch_granularity": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-decode-batch-granularity",
+    "default_value": 6,
+    "value": null,
+    "description": "Number of batch size sample points per context length (default: 6).",
+    "env_var": "DYN_BENCHMARK_DECODE_BATCH_GRANULARITY",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Decode Batch Granularity"
+  },
+  "benchmark_warmup_iterations": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-warmup-iterations",
+    "default_value": 5,
+    "value": null,
+    "description": "Warmup iterations before benchmark (default: 5).",
+    "env_var": "DYN_BENCHMARK_WARMUP_ITERATIONS",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Warmup Iterations"
+  },
+  "benchmark_output_path": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-output-path",
+    "default_value": "/tmp/benchmark_results.json",
+    "value": null,
+    "description": "Path to write benchmark results JSON (default: /tmp/benchmark_results.json).",
+    "env_var": "DYN_BENCHMARK_OUTPUT_PATH",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Output Path"
+  },
+  "benchmark_timeout": {
+    "type": "str",
+    "flag": false,
+    "arg": "--benchmark-timeout",
+    "default_value": 300,
+    "value": null,
+    "description": "Maximum seconds to wait for benchmark to complete (default: 300). Worker startup fails if exceeded.",
+    "env_var": "DYN_BENCHMARK_TIMEOUT",
+    "module": "dynamo_vllm",
+    "config_class": "Dynamo vLLM Options",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Benchmark Timeout"
+  },
+  "enable_prefix_caching": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-prefix-caching",
+    "false_arg": "--no-enable-prefix-caching",
+    "description": "Whether to enable prefix caching.",
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Prefix Caching"
+  },
+  "max_lora_rank": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-lora-rank",
+    "default_value": 16,
+    "value": null,
+    "choices": [
+      1,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      320,
+      512
+    ],
+    "description": "Max LoRA rank.",
+    "module": "lora",
+    "config_class": "LoRAConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max LoRA Rank"
+  },
+  "lora_dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--lora-dtype",
+    "default_value": "auto",
+    "value": null,
+    "choices": [
+      "auto",
+      "bfloat16",
+      "float16"
+    ],
+    "description": "Data type for LoRA. If auto, will default to base model dtype.",
+    "module": "lora",
+    "config_class": "LoRAConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "LoRA Dtype"
   },
   "speculative_config": {
     "type": "str",
@@ -282,7 +924,36 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Speculative Config"
+  },
+  "enable_prompt_embeds": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-prompt-embeds",
+    "false_arg": "--no-enable-prompt-embeds",
+    "description": "If `True`, enables passing text embeddings as inputs via the\n`prompt_embeds` key.\n\nWARNING: The vLLM engine may crash if incorrect shape of embeddings is passed.\nOnly enable this flag for trusted users!",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Prompt Embeds"
+  },
+  "enable_log_requests": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-log-requests",
+    "false_arg": "--no-enable-log-requests",
+    "description": "Enable logging request information, dependent on log level:\n- INFO: Request ID, parameters and LoRA request.\n- DEBUG: Prompt inputs (e.g: text, token IDs).\nYou can set the minimum log level via `VLLM_LOGGING_LEVEL`.",
+    "module": "engine",
+    "config_class": "EngineArgs",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Log Requests"
   },
   "uvicorn_log_level": {
     "type": "str",
@@ -302,7 +973,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Uvicorn Log Level"
   },
   "model_tag": {
     "type": "str",
@@ -314,20 +986,8 @@
     "module": "positional arguments",
     "config_class": "positional arguments",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "headless": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--headless",
-    "false_arg": null,
-    "description": "Run in headless mode. See multi-node data parallel documentation for more details.",
-    "module": "engine",
-    "config_class": "EngineArgs",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Model Tag"
   },
   "api_server_count": {
     "type": "int",
@@ -339,7 +999,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "API Server Count"
   },
   "config": {
     "type": "str",
@@ -351,7 +1012,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Config"
   },
   "disable_log_stats": {
     "type": "bool",
@@ -364,7 +1026,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Log Stats"
   },
   "aggregate_engine_logging": {
     "type": "bool",
@@ -377,7 +1040,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Aggregate Engine Logging"
   },
   "fail_on_environ_validation": {
     "type": "bool",
@@ -390,7 +1054,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Fail On Environ Validation"
   },
   "shutdown_timeout": {
     "type": "int",
@@ -402,7 +1067,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Shutdown Timeout"
   },
   "gdn_prefill_backend": {
     "type": "str",
@@ -418,20 +1084,8 @@
     "module": "engine",
     "config_class": "EngineArgs",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "enable_log_requests": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--enable-log-requests",
-    "false_arg": "--no-enable-log-requests",
-    "description": "Enable logging request information, dependent on log level:\n- INFO: Request ID, parameters and LoRA request.\n- DEBUG: Prompt inputs (e.g: text, token IDs).\nYou can set the minimum log level via `VLLM_LOGGING_LEVEL`.",
-    "module": "engine",
-    "config_class": "EngineArgs",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Gdn Prefill Backend"
   },
   "trust_request_chat_template": {
     "type": "bool",
@@ -444,7 +1098,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Trust Request Chat Template"
   },
   "default_chat_template_kwargs": {
     "type": "str",
@@ -456,7 +1111,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Default Chat Template Kwargs"
   },
   "response_role": {
     "type": "str",
@@ -468,7 +1124,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Response Role"
   },
   "return_tokens_as_token_ids": {
     "type": "bool",
@@ -481,7 +1138,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Return Tokens As Token Ids"
   },
   "enable_auto_tool_choice": {
     "type": "bool",
@@ -494,20 +1152,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "exclude_tools_when_tool_choice_none": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--exclude-tools-when-tool-choice-none",
-    "false_arg": "--no-exclude-tools-when-tool-choice-none",
-    "description": "",
-    "module": "frontend",
-    "config_class": "Frontend",
-    "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Auto Tool Choice"
   },
   "tool_parser_plugin": {
     "type": "str",
@@ -519,7 +1165,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tool Parser Plugin"
   },
   "tool_server": {
     "type": "str",
@@ -531,7 +1178,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tool Server"
   },
   "log_config_file": {
     "type": "str",
@@ -543,7 +1191,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Log Config File"
   },
   "max_log_len": {
     "type": "str",
@@ -555,7 +1204,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Log Len"
   },
   "enable_prompt_tokens_details": {
     "type": "bool",
@@ -568,7 +1218,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Prompt Tokens Details"
   },
   "enable_server_load_tracking": {
     "type": "bool",
@@ -581,7 +1232,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Server Load Tracking"
   },
   "enable_force_include_usage": {
     "type": "bool",
@@ -594,7 +1246,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Force Include Usage"
   },
   "enable_tokenizer_info_endpoint": {
     "type": "bool",
@@ -607,7 +1260,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Tokenizer Info Endpoint"
   },
   "enable_log_outputs": {
     "type": "bool",
@@ -620,7 +1274,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Log Outputs"
   },
   "enable_log_deltas": {
     "type": "bool",
@@ -633,7 +1288,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Log Deltas"
   },
   "log_error_stack": {
     "type": "bool",
@@ -646,7 +1302,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Log Error Stack"
   },
   "tokens_only": {
     "type": "bool",
@@ -659,7 +1316,34 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tokens Only"
+  },
+  "host": {
+    "type": "str",
+    "flag": false,
+    "arg": "--host",
+    "default_value": null,
+    "value": null,
+    "description": "Host name.",
+    "module": "frontend",
+    "config_class": "Frontend",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Host"
+  },
+  "port": {
+    "type": "int",
+    "flag": false,
+    "arg": "--port",
+    "default_value": 8000,
+    "value": null,
+    "description": "Port number.",
+    "module": "frontend",
+    "config_class": "Frontend",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Port"
   },
   "uds": {
     "type": "str",
@@ -671,7 +1355,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Uds"
   },
   "disable_uvicorn_access_log": {
     "type": "bool",
@@ -684,7 +1369,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Uvicorn Access Log"
   },
   "disable_access_log_for_endpoints": {
     "type": "str",
@@ -696,7 +1382,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Access Log For Endpoints"
   },
   "allow_credentials": {
     "type": "bool",
@@ -709,7 +1396,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allow Credentials"
   },
   "allowed_origins": {
     "type": "str",
@@ -723,7 +1411,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allowed Origins"
   },
   "allowed_methods": {
     "type": "str",
@@ -737,7 +1426,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allowed Methods"
   },
   "allowed_headers": {
     "type": "str",
@@ -751,7 +1441,48 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allowed Headers"
+  },
+  "api_key": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--api-key",
+    "default_value": null,
+    "value": null,
+    "description": "If provided, the server will require one of these keys to be presented in\nthe header.",
+    "multiple": true,
+    "module": "frontend",
+    "config_class": "Frontend",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "API Key"
+  },
+  "ssl_keyfile": {
+    "type": "str",
+    "flag": false,
+    "arg": "--ssl-keyfile",
+    "default_value": null,
+    "value": null,
+    "description": "The file path to the SSL key file.",
+    "module": "frontend",
+    "config_class": "Frontend",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "SSL Keyfile"
+  },
+  "ssl_certfile": {
+    "type": "str",
+    "flag": false,
+    "arg": "--ssl-certfile",
+    "default_value": null,
+    "value": null,
+    "description": "The file path to the SSL cert file.",
+    "module": "frontend",
+    "config_class": "Frontend",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "SSL Certfile"
   },
   "ssl_ca_certs": {
     "type": "str",
@@ -763,7 +1494,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "SSL Ca Certs"
   },
   "enable_ssl_refresh": {
     "type": "bool",
@@ -776,7 +1508,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable SSL Refresh"
   },
   "ssl_cert_reqs": {
     "type": "int",
@@ -788,7 +1521,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "SSL Cert Reqs"
   },
   "ssl_ciphers": {
     "type": "str",
@@ -800,7 +1534,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "SSL Ciphers"
   },
   "root_path": {
     "type": "str",
@@ -812,7 +1547,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Root Path"
   },
   "middleware": {
     "type": "List[str]",
@@ -825,7 +1561,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Middleware"
   },
   "enable_request_id_headers": {
     "type": "bool",
@@ -838,7 +1575,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Request Id Headers"
   },
   "disable_fastapi_docs": {
     "type": "bool",
@@ -851,7 +1589,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Fastapi Docs"
   },
   "h11_max_incomplete_event_size": {
     "type": "int",
@@ -863,7 +1602,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "H11 Max Incomplete Event Size"
   },
   "h11_max_header_count": {
     "type": "int",
@@ -875,7 +1615,8 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "H11 Max Header Count"
   },
   "enable_offline_docs": {
     "type": "bool",
@@ -888,7 +1629,21 @@
     "module": "frontend",
     "config_class": "Frontend",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Offline Docs"
+  },
+  "model": {
+    "type": "str",
+    "flag": false,
+    "arg": "--model",
+    "default_value": "Qwen/Qwen3-0.6B",
+    "value": null,
+    "description": "Name or path of the Hugging Face model to use. It is also used as the\ncontent for `model_name` tag in metrics output when `served_model_name` is\nnot specified.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Model"
   },
   "runner": {
     "type": "str",
@@ -906,7 +1661,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Runner"
   },
   "convert": {
     "type": "str",
@@ -924,7 +1680,21 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Convert"
+  },
+  "tokenizer": {
+    "type": "str",
+    "flag": false,
+    "arg": "--tokenizer",
+    "default_value": null,
+    "value": null,
+    "description": "Name or path of the Hugging Face tokenizer to use. If unspecified, model\nname or path will be used.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Tokenizer"
   },
   "tokenizer_mode": {
     "type": "str",
@@ -936,7 +1706,56 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tokenizer Mode"
+  },
+  "trust_remote_code": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--trust-remote-code",
+    "false_arg": "--no-trust-remote-code",
+    "description": "Trust remote code (e.g., from HuggingFace) when downloading the model\nand tokenizer.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Trust Remote Code"
+  },
+  "dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--dtype",
+    "default_value": "auto",
+    "value": null,
+    "choices": [
+      "auto",
+      "bfloat16",
+      "float",
+      "float16",
+      "float32",
+      "half"
+    ],
+    "description": "Data type for model weights and activations:\n\n- \"auto\" will use FP16 precision for FP32 and FP16 models, and BF16\n  precision for BF16 models.\n- \"half\" for FP16. Recommended for AWQ quantization.\n- \"float16\" is the same as \"half\".\n- \"bfloat16\" for a balance between precision and range.\n- \"float\" is shorthand for FP32 precision.\n- \"float32\" for FP32 precision.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Dtype"
+  },
+  "seed": {
+    "type": "int",
+    "flag": false,
+    "arg": "--seed",
+    "default_value": 0,
+    "value": null,
+    "description": "Random seed for reproducibility.\n\nWe must set the global seed because otherwise,\ndifferent tensor parallel workers would sample different tokens,\nleading to inconsistent results.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Seed"
   },
   "hf_config_path": {
     "type": "str",
@@ -948,7 +1767,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Hf Config Path"
   },
   "allowed_local_media_path": {
     "type": "str",
@@ -960,7 +1780,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allowed Local Media Path"
   },
   "allowed_media_domains": {
     "type": "List[str]",
@@ -973,7 +1794,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Allowed Media Domains"
   },
   "revision": {
     "type": "str",
@@ -985,7 +1807,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Revision"
   },
   "code_revision": {
     "type": "str",
@@ -997,7 +1820,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Code Revision"
   },
   "tokenizer_revision": {
     "type": "str",
@@ -1009,7 +1833,62 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Tokenizer Revision"
+  },
+  "max_model_len": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-model-len",
+    "default_value": null,
+    "value": null,
+    "description": "Model context length (prompt and output). If unspecified, will be\nautomatically derived from the model config.\n\nWhen passing via `--max-model-len`, supports k/m/g/K/M/G in human-readable\nformat. Examples:\n\n- 1k -> 1000\n- 1K -> 1024\n- 25.6k -> 25,600\n- -1 or 'auto' -> Automatically choose the maximum model length that fits in\n  GPU memory. This will use the model's maximum context length if it fits,\n  otherwise it will find the largest length that can be accommodated.\n\nParse human-readable integers like '1k', '2M', etc.\n    Including decimal values with decimal multipliers.\n    Also accepts -1 or 'auto' as a special value for auto-detection.\n\n    Examples:\n    - '1k' -> 1,000\n    - '1K' -> 1,024\n    - '25.6k' -> 25,600\n    - '-1' or 'auto' -> -1 (special value for auto-detection)",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Model Len"
+  },
+  "quantization": {
+    "type": "str",
+    "flag": false,
+    "arg": "--quantization",
+    "default_value": null,
+    "value": null,
+    "description": "Method used to quantize the weights. If `None`, we first check the\n`quantization_config` attribute in the model config file. If that is\n`None`, we assume the model weights are not quantized and use `dtype` to\ndetermine the data type of the weights.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Quantization"
+  },
+  "allow_deprecated_quantization": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--allow-deprecated-quantization",
+    "false_arg": "--no-allow-deprecated-quantization",
+    "description": "Whether to allow deprecated quantization methods.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Allow Deprecated Quantization"
+  },
+  "enforce_eager": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enforce-eager",
+    "false_arg": "--no-enforce-eager",
+    "description": "Whether to always use eager-mode PyTorch. If True, we will disable CUDA\ngraph and always execute the model in eager mode. If False, we will use\nCUDA graph and eager execution in hybrid for maximal performance and\nflexibility.",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enforce Eager"
   },
   "enable_return_routed_experts": {
     "type": "bool",
@@ -1022,7 +1901,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Return Routed Experts"
   },
   "max_logprobs": {
     "type": "int",
@@ -1034,7 +1914,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Logprobs"
   },
   "logprobs_mode": {
     "type": "str",
@@ -1052,7 +1933,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Logprobs Mode"
   },
   "disable_sliding_window": {
     "type": "bool",
@@ -1065,7 +1947,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Sliding Window"
   },
   "disable_cascade_attn": {
     "type": "bool",
@@ -1078,7 +1961,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Cascade Attn"
   },
   "skip_tokenizer_init": {
     "type": "bool",
@@ -1091,20 +1975,22 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Skip Tokenizer Init"
   },
-  "enable_prompt_embeds": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
+  "served_model_name": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--served-model-name",
+    "default_value": null,
     "value": null,
-    "true_arg": "--enable-prompt-embeds",
-    "false_arg": "--no-enable-prompt-embeds",
-    "description": "If `True`, enables passing text embeddings as inputs via the\n`prompt_embeds` key.\n\nWARNING: The vLLM engine may crash if incorrect shape of embeddings is passed.\nOnly enable this flag for trusted users!",
+    "description": "The model name(s) used in the API. If multiple names are provided, the\nserver will respond to any of the provided names. The model name in the\nmodel field of a response will be the first name in this list. If not\nspecified, the model name will be the same as the `--model` argument. Noted\nthat this name(s) will also be used in `model_name` tag content of\nprometheus metrics, if multiple names provided, metrics tag will take the\nfirst one.",
+    "multiple": true,
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Served Model Name"
   },
   "config_format": {
     "type": "str",
@@ -1116,7 +2002,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Config Format"
   },
   "hf_token": {
     "type": "str",
@@ -1128,7 +2015,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Hf Token"
   },
   "hf_overrides": {
     "type": "str",
@@ -1140,7 +2028,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Hf Overrides"
   },
   "pooler_config": {
     "type": "str",
@@ -1152,7 +2041,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Pooler Config"
   },
   "generation_config": {
     "type": "str",
@@ -1164,7 +2054,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Generation Config"
   },
   "override_generation_config": {
     "type": "str",
@@ -1176,7 +2067,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Override Generation Config"
   },
   "enable_sleep_mode": {
     "type": "bool",
@@ -1189,7 +2081,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Sleep Mode"
   },
   "model_impl": {
     "type": "str",
@@ -1201,7 +2094,21 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Model Impl"
+  },
+  "override_attention_dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--override-attention-dtype",
+    "default_value": null,
+    "value": null,
+    "description": "Override dtype for attention",
+    "module": "model",
+    "config_class": "ModelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Override Attention Dtype"
   },
   "logits_processors": {
     "type": "List[str]",
@@ -1214,7 +2121,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Logits Processors"
   },
   "io_processor_plugin": {
     "type": "str",
@@ -1226,7 +2134,8 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Io Processor Plugin"
   },
   "renderer_num_workers": {
     "type": "int",
@@ -1238,7 +2147,21 @@
     "module": "model",
     "config_class": "ModelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Renderer Num Workers"
+  },
+  "load_format": {
+    "type": "str",
+    "flag": false,
+    "arg": "--load-format",
+    "default_value": "auto",
+    "value": null,
+    "description": "The format of the model weights to load.\n\n- \"auto\" will try to load the weights in the safetensors format and fall\n  back to the pytorch bin format if safetensors format is not available.\n- \"pt\" will load the weights in the pytorch bin format.\n- \"safetensors\" will load the weights in the safetensors format.\n- \"instanttensor\" will load the Safetensors weights on CUDA devices using\n  InstantTensor, which enables distributed loading with pipelined prefetching\n  and fast direct I/O.\n- \"npcache\" will load the weights in pytorch format and store a numpy cache\n  to speed up the loading.\n- \"dummy\" will initialize the weights with random values, which is mainly\n  for profiling.\n- \"tensorizer\" will use CoreWeave's tensorizer library for fast weight\n  loading. See the Tensorize vLLM Model script in the Examples section for\n  more information.\n- \"runai_streamer\" will load the Safetensors weights using Run:ai Model\n  Streamer.\n- \"runai_streamer_sharded\" will load weights from pre-sharded checkpoint\n  files using Run:ai Model Streamer.\n- \"bitsandbytes\" will load the weights using bitsandbytes quantization.\n- \"sharded_state\" will load weights from pre-sharded checkpoint files,\n  supporting efficient loading of tensor-parallel models.\n- \"gguf\" will load weights from GGUF format files (details specified in\n  https://github.com/ggml-org/ggml/blob/master/docs/gguf.md).\n- \"mistral\" will load weights from consolidated safetensors files used by\n  Mistral models.\n- Other custom values can be supported via plugins.",
+    "module": "load",
+    "config_class": "LoadConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Load Format"
   },
   "download_dir": {
     "type": "str",
@@ -1250,7 +2173,8 @@
     "module": "load",
     "config_class": "LoadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Download Dir"
   },
   "safetensors_load_strategy": {
     "type": "str",
@@ -1262,7 +2186,8 @@
     "module": "load",
     "config_class": "LoadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Safetensors Load Strategy"
   },
   "model_loader_extra_config": {
     "type": "str",
@@ -1274,7 +2199,8 @@
     "module": "load",
     "config_class": "LoadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Model Loader Extra Config"
   },
   "ignore_patterns": {
     "type": "List[str]",
@@ -1289,7 +2215,8 @@
     "module": "load",
     "config_class": "LoadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Ignore Patterns"
   },
   "use_tqdm_on_load": {
     "type": "bool",
@@ -1302,7 +2229,8 @@
     "module": "load",
     "config_class": "LoadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Use Tqdm On Load"
   },
   "pt_load_map_location": {
     "type": "str",
@@ -1314,7 +2242,8 @@
     "module": "load",
     "config_class": "LoadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Pt Load Map Location"
   },
   "attention_backend": {
     "type": "str",
@@ -1326,7 +2255,8 @@
     "module": "attention",
     "config_class": "AttentionConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Attention Backend"
   },
   "reasoning_parser_plugin": {
     "type": "str",
@@ -1338,7 +2268,34 @@
     "module": "structured_outputs",
     "config_class": "StructuredOutputsConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Reasoning Parser Plugin"
+  },
+  "distributed_executor_backend": {
+    "type": "str",
+    "flag": false,
+    "arg": "--distributed-executor-backend",
+    "default_value": null,
+    "value": null,
+    "description": "Backend to use for distributed model workers, either \"ray\" or \"mp\"\n(multiprocessing). If the product of pipeline_parallel_size and tensor_parallel_size\nis less than or equal to the number of GPUs available, \"mp\" will be used to\nkeep processing on a single host. Otherwise, an error will be raised. To use \"mp\"\nyou must also set nnodes, and to use \"ray\" you must manually set\ndistributed_executor_backend to \"ray\".\n\nNote that tpu only support Ray for distributed inference.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Distributed Executor Backend"
+  },
+  "pipeline_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--pipeline-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Number of pipeline parallel groups.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Pipeline Parallel Size"
   },
   "master_addr": {
     "type": "str",
@@ -1350,7 +2307,47 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Master Addr"
+  },
+  "master_port": {
+    "type": "int",
+    "flag": false,
+    "arg": "--master-port",
+    "default_value": 29501,
+    "value": null,
+    "description": "distributed master port for multi-node distributed \ninference when distributed_executor_backend is mp.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Master Port"
+  },
+  "nnodes": {
+    "type": "int",
+    "flag": false,
+    "arg": "--nnodes",
+    "default_value": 1,
+    "value": null,
+    "description": "num of nodes for multi-node distributed\ninference when distributed_executor_backend is mp.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Nnodes"
+  },
+  "node_rank": {
+    "type": "int",
+    "flag": false,
+    "arg": "--node-rank",
+    "default_value": 0,
+    "value": null,
+    "description": "distributed node rank for multi-node distributed \ninference when distributed_executor_backend is mp.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Node Rank"
   },
   "distributed_timeout_seconds": {
     "type": "str",
@@ -1362,7 +2359,34 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Distributed Timeout Seconds"
+  },
+  "tensor_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--tensor-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Number of tensor parallel groups.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Tensor Parallel Size"
+  },
+  "decode_context_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--decode-context-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Number of decode context parallel groups, because the world size does\nnot change by dcp, it simply reuse the GPUs of TP group, and tp_size\nneeds to be divisible by dcp_size.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Decode Context Parallel Size"
   },
   "dcp_comm_backend": {
     "type": "str",
@@ -1378,7 +2402,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dcp Comm Backend"
   },
   "dcp_kv_cache_interleave_size": {
     "type": "int",
@@ -1390,7 +2415,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dcp KV Cache Interleave Size"
   },
   "cp_kv_cache_interleave_size": {
     "type": "int",
@@ -1402,7 +2428,154 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Cp KV Cache Interleave Size"
+  },
+  "prefill_context_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--prefill-context-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Number of prefill context parallel groups.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Prefill Context Parallel Size"
+  },
+  "data_parallel_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--data-parallel-size",
+    "default_value": 1,
+    "value": null,
+    "description": "Number of data parallel groups. MoE layers will be sharded according to\nthe product of the tensor parallel size and data parallel size.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Size"
+  },
+  "data_parallel_rank": {
+    "type": "int",
+    "flag": false,
+    "arg": "--data-parallel-rank",
+    "default_value": null,
+    "value": null,
+    "description": "Data parallel rank of this instance. When set, enables external load balancer mode.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Rank"
+  },
+  "data_parallel_start_rank": {
+    "type": "int",
+    "flag": false,
+    "arg": "--data-parallel-start-rank",
+    "default_value": null,
+    "value": null,
+    "description": "Starting data parallel rank for secondary nodes.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Start Rank"
+  },
+  "data_parallel_size_local": {
+    "type": "int",
+    "flag": false,
+    "arg": "--data-parallel-size-local",
+    "default_value": null,
+    "value": null,
+    "description": "Number of data parallel replicas to run on this node.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Size Local"
+  },
+  "data_parallel_address": {
+    "type": "str",
+    "flag": false,
+    "arg": "--data-parallel-address",
+    "default_value": null,
+    "value": null,
+    "description": "Address of data parallel cluster head-node.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Address"
+  },
+  "data_parallel_rpc_port": {
+    "type": "int",
+    "flag": false,
+    "arg": "--data-parallel-rpc-port",
+    "default_value": null,
+    "value": null,
+    "description": "Port for data parallel RPC communication.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Rpc Port"
+  },
+  "data_parallel_backend": {
+    "type": "str",
+    "flag": false,
+    "arg": "--data-parallel-backend",
+    "default_value": "mp",
+    "value": null,
+    "description": "Backend for data parallel, either \"mp\" or \"ray\".",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Backend"
+  },
+  "data_parallel_hybrid_lb": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--data-parallel-hybrid-lb",
+    "false_arg": "--no-data-parallel-hybrid-lb",
+    "description": "Whether to use \"hybrid\" DP LB mode. Applies only to online serving\nand when data_parallel_size > 0. Enables running an AsyncLLM\nand API server on a \"per-node\" basis where vLLM load balances\nbetween local data parallel ranks, but an external LB balances\nbetween vLLM nodes/replicas. Set explicitly in conjunction with\n--data-parallel-start-rank.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel Hybrid Lb"
+  },
+  "data_parallel_external_lb": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--data-parallel-external-lb",
+    "false_arg": "--no-data-parallel-external-lb",
+    "description": "Whether to use \"external\" DP LB mode. Applies only to online serving\nand when data_parallel_size > 0. This is useful for a \"one-pod-per-rank\"\nwide-EP setup in Kubernetes. Set implicitly when --data-parallel-rank\nis provided explicitly to vllm serve.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Data Parallel External Lb"
+  },
+  "enable_expert_parallel": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-expert-parallel",
+    "false_arg": "--no-enable-expert-parallel",
+    "description": "Use expert parallelism instead of tensor parallelism for MoE layers.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Expert Parallel"
   },
   "enable_ep_weight_filter": {
     "type": "bool",
@@ -1415,7 +2588,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Ep Weight Filter"
   },
   "all2all_backend": {
     "type": "str",
@@ -1439,7 +2613,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "All2all Backend"
   },
   "enable_dbo": {
     "type": "bool",
@@ -1452,7 +2627,21 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Dbo"
+  },
+  "ubatch_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--ubatch-size",
+    "default_value": 0,
+    "value": null,
+    "description": "Number of ubatch size.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Ubatch Size"
   },
   "enable_elastic_ep": {
     "type": "bool",
@@ -1465,7 +2654,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Elastic Ep"
   },
   "dbo_decode_token_threshold": {
     "type": "int",
@@ -1477,7 +2667,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dbo Decode Token Threshold"
   },
   "dbo_prefill_token_threshold": {
     "type": "int",
@@ -1489,7 +2680,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Dbo Prefill Token Threshold"
   },
   "disable_nccl_for_dp_synchronization": {
     "type": "bool",
@@ -1502,7 +2694,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable NCCL For Dp Synchronization"
   },
   "enable_eplb": {
     "type": "bool",
@@ -1515,7 +2708,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Eplb"
   },
   "eplb_config": {
     "type": "str",
@@ -1535,7 +2729,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Eplb Config"
   },
   "expert_placement_strategy": {
     "type": "str",
@@ -1551,7 +2746,21 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Expert Placement Strategy"
+  },
+  "max_parallel_loading_workers": {
+    "type": "str",
+    "flag": false,
+    "arg": "--max-parallel-loading-workers",
+    "default_value": null,
+    "value": null,
+    "description": "Maximum number of parallel loading workers when loading model\nsequentially in multiple batches. To avoid RAM OOM when using tensor\nparallel and large models.",
+    "module": "parallel",
+    "config_class": "ParallelConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Parallel Loading Workers"
   },
   "ray_workers_use_nsight": {
     "type": "bool",
@@ -1564,7 +2773,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Ray Workers Use Nsight"
   },
   "disable_custom_all_reduce": {
     "type": "bool",
@@ -1577,7 +2787,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Custom All Reduce"
   },
   "worker_cls": {
     "type": "str",
@@ -1589,7 +2800,8 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Worker Cls"
   },
   "worker_extension_cls": {
     "type": "str",
@@ -1601,7 +2813,34 @@
     "module": "parallel",
     "config_class": "ParallelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Worker Extension Cls"
+  },
+  "block_size": {
+    "type": "int",
+    "flag": false,
+    "arg": "--block-size",
+    "default_value": null,
+    "value": null,
+    "description": "Size of a contiguous cache block in number of tokens.\nAccepts None (meaning \"use default\"). After construction, always int.",
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Block Size"
+  },
+  "gpu_memory_utilization": {
+    "type": "float",
+    "flag": false,
+    "arg": "--gpu-memory-utilization",
+    "default_value": 0.9,
+    "value": null,
+    "description": "The fraction of GPU memory to be used for the model executor, which can\nrange from 0 to 1. For example, a value of 0.5 would imply 50% GPU memory\nutilization. If unspecified, will use the default value of 0.9. This is a\nper-instance limit, and only applies to the current vLLM instance. It does\nnot matter if you have another vLLM instance running on the same GPU. For\nexample, if you have two vLLM instances running on the same GPU, you can\nset the GPU memory utilization to 0.5 for each instance.",
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "GPU Memory Utilization"
   },
   "kv_cache_memory_bytes": {
     "type": "str",
@@ -1613,7 +2852,31 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Cache Memory Bytes"
+  },
+  "kv_cache_dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--kv-cache-dtype",
+    "default_value": "auto",
+    "value": null,
+    "choices": [
+      "auto",
+      "bfloat16",
+      "float16",
+      "fp8",
+      "fp8_ds_mla",
+      "fp8_e4m3",
+      "fp8_e5m2",
+      "fp8_inc"
+    ],
+    "description": "Data type for kv cache storage. If \"auto\", will use model data type.\nCUDA 11.8+ supports fp8 (=fp8_e4m3) and fp8_e5m2. ROCm (AMD GPU) supports\nfp8 (=fp8_e4m3). Intel Gaudi (HPU) supports fp8 (using fp8_inc).\nSome models (namely DeepSeekV3.2) default to fp8, set to bfloat16 to use\nbfloat16 instead, this is an invalid option for models that do not default\nto fp8.",
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "KV Cache Dtype"
   },
   "num_gpu_blocks_override": {
     "type": "str",
@@ -1625,7 +2888,8 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Num GPU Blocks Override"
   },
   "prefix_caching_hash_algo": {
     "type": "str",
@@ -1643,7 +2907,8 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Prefix Caching Hash Algo"
   },
   "calculate_kv_scales": {
     "type": "bool",
@@ -1656,7 +2921,22 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Calculate KV Scales"
+  },
+  "kv_cache_dtype_skip_layers": {
+    "type": "List[str]",
+    "flag": false,
+    "arg": "--kv-cache-dtype-skip-layers",
+    "default_value": [],
+    "value": null,
+    "description": "Layer patterns to skip KV cache quantization. Accepts layer indices\n(e.g., '0', '2', '4') or attention type names (e.g., 'sliding_window').",
+    "multiple": true,
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "KV Cache Dtype Skip Layers"
   },
   "kv_sharing_fast_prefill": {
     "type": "bool",
@@ -1669,7 +2949,44 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Sharing Fast Prefill"
+  },
+  "mamba_cache_dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--mamba-cache-dtype",
+    "default_value": "auto",
+    "value": null,
+    "choices": [
+      "auto",
+      "float16",
+      "float32"
+    ],
+    "description": "The data type to use for the Mamba cache (both the conv as well as the\nssm state). If set to 'auto', the data type will be inferred from the model\nconfig.",
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mamba Cache Dtype"
+  },
+  "mamba_ssm_cache_dtype": {
+    "type": "str",
+    "flag": false,
+    "arg": "--mamba-ssm-cache-dtype",
+    "default_value": "auto",
+    "value": null,
+    "choices": [
+      "auto",
+      "float16",
+      "float32"
+    ],
+    "description": "The data type to use for the Mamba cache (ssm state only, conv state will\nstill be controlled by mamba_cache_dtype). If set to 'auto', the data type\nfor the ssm state will be determined by mamba_cache_dtype.",
+    "module": "cache",
+    "config_class": "CacheConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Mamba Ssm Cache Dtype"
   },
   "mamba_block_size": {
     "type": "str",
@@ -1681,7 +2998,8 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Mamba Block Size"
   },
   "mamba_cache_mode": {
     "type": "str",
@@ -1698,7 +3016,8 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Mamba Cache Mode"
   },
   "kv_offloading_size": {
     "type": "str",
@@ -1710,7 +3029,8 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Offloading Size"
   },
   "kv_offloading_backend": {
     "type": "str",
@@ -1726,7 +3046,8 @@
     "module": "cache",
     "config_class": "CacheConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Offloading Backend"
   },
   "offload_backend": {
     "type": "str",
@@ -1743,7 +3064,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Offload Backend"
   },
   "cpu_offload_gb": {
     "type": "float",
@@ -1755,7 +3077,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "CPU Offload Gb"
   },
   "cpu_offload_params": {
     "type": "List[str]",
@@ -1768,7 +3091,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "CPU Offload Params"
   },
   "offload_group_size": {
     "type": "int",
@@ -1780,7 +3104,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Offload Group Size"
   },
   "offload_num_in_group": {
     "type": "int",
@@ -1792,7 +3117,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Offload Num In Group"
   },
   "offload_prefetch_step": {
     "type": "int",
@@ -1804,7 +3130,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Offload Prefetch Step"
   },
   "offload_params": {
     "type": "List[str]",
@@ -1817,7 +3144,8 @@
     "module": "offload",
     "config_class": "OffloadConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Offload Params"
   },
   "language_model_only": {
     "type": "bool",
@@ -1830,7 +3158,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Language Model Only"
   },
   "mm_processor_kwargs": {
     "type": "str",
@@ -1842,7 +3171,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Processor Kwargs"
   },
   "mm_processor_cache_gb": {
     "type": "float",
@@ -1854,7 +3184,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Processor Cache Gb"
   },
   "mm_processor_cache_type": {
     "type": "str",
@@ -1870,7 +3201,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Processor Cache Type"
   },
   "mm_shm_cache_max_object_size_mb": {
     "type": "int",
@@ -1882,7 +3214,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Shm Cache Max Object Size Mb"
   },
   "mm_encoder_tp_mode": {
     "type": "str",
@@ -1898,7 +3231,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Encoder TP Mode"
   },
   "mm_encoder_attn_backend": {
     "type": "str",
@@ -1910,7 +3244,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "MM Encoder Attn Backend"
   },
   "interleave_mm_strings": {
     "type": "bool",
@@ -1923,7 +3258,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Interleave MM Strings"
   },
   "skip_mm_profiling": {
     "type": "bool",
@@ -1936,7 +3272,8 @@
     "module": "multimodal",
     "config_class": "MultiModalConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Skip MM Profiling"
   },
   "enable_tower_connector_lora": {
     "type": "bool",
@@ -1949,7 +3286,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Tower Connector LoRA"
   },
   "max_cpu_loras": {
     "type": "str",
@@ -1961,7 +3299,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max CPU Loras"
   },
   "fully_sharded_loras": {
     "type": "bool",
@@ -1974,7 +3313,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Fully Sharded Loras"
   },
   "lora_target_modules": {
     "type": "List[str]",
@@ -1987,7 +3327,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "LoRA Target Modules"
   },
   "default_mm_loras": {
     "type": "str",
@@ -1999,7 +3340,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Default MM Loras"
   },
   "specialize_active_lora": {
     "type": "bool",
@@ -2012,7 +3354,8 @@
     "module": "lora",
     "config_class": "LoRAConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Specialize Active LoRA"
   },
   "show_hidden_metrics_for_version": {
     "type": "str",
@@ -2024,7 +3367,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Show Hidden Metrics For Version"
   },
   "otlp_traces_endpoint": {
     "type": "str",
@@ -2036,7 +3380,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Otlp Traces Endpoint"
   },
   "collect_detailed_traces": {
     "type": "List[str]",
@@ -2061,7 +3406,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Collect Detailed Traces"
   },
   "kv_cache_metrics": {
     "type": "bool",
@@ -2074,7 +3420,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Cache Metrics"
   },
   "kv_cache_metrics_sample": {
     "type": "float",
@@ -2086,7 +3433,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "KV Cache Metrics Sample"
   },
   "cudagraph_metrics": {
     "type": "bool",
@@ -2099,7 +3447,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Cudagraph Metrics"
   },
   "enable_layerwise_nvtx_tracing": {
     "type": "bool",
@@ -2112,7 +3461,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Layerwise Nvtx Tracing"
   },
   "enable_mfu_metrics": {
     "type": "bool",
@@ -2125,7 +3475,8 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Mfu Metrics"
   },
   "enable_logging_iteration_details": {
     "type": "bool",
@@ -2138,7 +3489,47 @@
     "module": "observability",
     "config_class": "ObservabilityConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Logging Iteration Details"
+  },
+  "max_num_batched_tokens": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-num-batched-tokens",
+    "default_value": null,
+    "value": null,
+    "description": "Maximum number of tokens that can be processed in a single iteration.\n\nThe default value here is mainly for convenience when testing.\nIn real usage, this should be set in `EngineArgs.create_engine_config`.\n\nParse human-readable integers like '1k', '2M', etc.\n    Including decimal values with decimal multipliers.\n\n    Examples:\n    - '1k' -> 1,000\n    - '1K' -> 1,024\n    - '25.6k' -> 25,600",
+    "module": "scheduler",
+    "config_class": "SchedulerConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Num Batched Tokens"
+  },
+  "max_num_seqs": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-num-seqs",
+    "default_value": null,
+    "value": null,
+    "description": "Maximum number of sequences to be processed in a single iteration.\n\nThe default value here is mainly for convenience when testing.\nIn real usage, this should be set in `EngineArgs.create_engine_config`.",
+    "module": "scheduler",
+    "config_class": "SchedulerConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Num Seqs"
+  },
+  "max_num_partial_prefills": {
+    "type": "int",
+    "flag": false,
+    "arg": "--max-num-partial-prefills",
+    "default_value": 1,
+    "value": null,
+    "description": "For chunked prefill, the maximum number of sequences that can be\npartially prefilled concurrently.",
+    "module": "scheduler",
+    "config_class": "SchedulerConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Max Num Partial Prefills"
   },
   "max_long_partial_prefills": {
     "type": "int",
@@ -2150,7 +3541,8 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Long Partial Prefills"
   },
   "long_prefill_token_threshold": {
     "type": "int",
@@ -2162,7 +3554,39 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Long Prefill Token Threshold"
+  },
+  "scheduling_policy": {
+    "type": "str",
+    "flag": false,
+    "arg": "--scheduling-policy",
+    "default_value": "fcfs",
+    "value": null,
+    "choices": [
+      "fcfs",
+      "priority"
+    ],
+    "description": "The scheduling policy to use:\n\n- \"fcfs\" means first come first served, i.e. requests are handled in order \n  of arrival.\n- \"priority\" means requests are handled based on given priority (lower\n  value means earlier handling) and time of arrival deciding any ties).",
+    "module": "scheduler",
+    "config_class": "SchedulerConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Scheduling Policy"
+  },
+  "enable_chunked_prefill": {
+    "type": "bool",
+    "flag": true,
+    "default_value": false,
+    "value": null,
+    "true_arg": "--enable-chunked-prefill",
+    "false_arg": "--no-enable-chunked-prefill",
+    "description": "If True, prefill requests can be chunked based\non the remaining `max_num_batched_tokens`.\n\nThe default value here is mainly for convenience when testing.\nIn real usage, this should be set in `EngineArgs.create_engine_config`.",
+    "module": "scheduler",
+    "config_class": "SchedulerConfig",
+    "ui": "less_frequent",
+    "aic": false,
+    "display_name": "Enable Chunked Prefill"
   },
   "scheduler_cls": {
     "type": "str",
@@ -2174,7 +3598,8 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Scheduler Cls"
   },
   "scheduler_reserve_full_isl": {
     "type": "bool",
@@ -2187,7 +3612,8 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Scheduler Reserve Full Isl"
   },
   "disable_hybrid_kv_cache_manager": {
     "type": "bool",
@@ -2200,7 +3626,8 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Disable Hybrid KV Cache Manager"
   },
   "async_scheduling": {
     "type": "bool",
@@ -2213,7 +3640,8 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Async Scheduling"
   },
   "stream_interval": {
     "type": "int",
@@ -2225,7 +3653,8 @@
     "module": "scheduler",
     "config_class": "SchedulerConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Stream Interval"
   },
   "cudagraph_capture_sizes": {
     "type": "List[int]",
@@ -2238,7 +3667,8 @@
     "module": "compilation",
     "config_class": "CompilationConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Cudagraph Capture Sizes"
   },
   "max_cudagraph_capture_size": {
     "type": "int",
@@ -2250,7 +3680,8 @@
     "module": "compilation",
     "config_class": "CompilationConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Max Cudagraph Capture Size"
   },
   "enable_flashinfer_autotune": {
     "type": "bool",
@@ -2263,7 +3694,8 @@
     "module": "kernel",
     "config_class": "KernelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Enable Flashinfer Autotune"
   },
   "moe_backend": {
     "type": "str",
@@ -2286,7 +3718,8 @@
     "module": "kernel",
     "config_class": "KernelConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Moe Backend"
   },
   "ec_transfer_config": {
     "type": "str",
@@ -2298,7 +3731,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Ec Transfer Config"
   },
   "compilation_config": {
     "type": "str",
@@ -2368,7 +3802,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Compilation Config"
   },
   "attention_config": {
     "type": "str",
@@ -2391,7 +3826,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Attention Config"
   },
   "reasoning_config": {
     "type": "str",
@@ -2403,7 +3839,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Reasoning Config"
   },
   "kernel_config": {
     "type": "str",
@@ -2418,7 +3855,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Kernel Config"
   },
   "additional_config": {
     "type": "str",
@@ -2430,7 +3868,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Additional Config"
   },
   "structured_outputs_config": {
     "type": "str",
@@ -2449,7 +3888,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Structured Outputs Config"
   },
   "profiler_config": {
     "type": "str",
@@ -2476,7 +3916,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Profiler Config"
   },
   "optimization_level": {
     "type": "str",
@@ -2488,7 +3929,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Optimization Level"
   },
   "performance_mode": {
     "type": "str",
@@ -2505,7 +3947,8 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
+    "aic": false,
+    "display_name": "Performance Mode"
   },
   "weight_transfer_config": {
     "type": "str",
@@ -2517,677 +3960,7 @@
     "module": "vllm",
     "config_class": "VllmConfig",
     "ui": "less_frequent",
-    "aic": false
-  },
-  "model": {
-    "type": "str",
-    "flag": false,
-    "arg": "--model",
-    "default_value": "Qwen/Qwen3-0.6B",
-    "value": null,
-    "description": "Name or path of the Hugging Face model to use. It is also used as the\ncontent for `model_name` tag in metrics output when `served_model_name` is\nnot specified.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--dtype",
-    "default_value": "auto",
-    "value": null,
-    "choices": [
-      "auto",
-      "bfloat16",
-      "float",
-      "float16",
-      "float32",
-      "half"
-    ],
-    "description": "Data type for model weights and activations:\n\n- \"auto\" will use FP16 precision for FP32 and FP16 models, and BF16\n  precision for BF16 models.\n- \"half\" for FP16. Recommended for AWQ quantization.\n- \"float16\" is the same as \"half\".\n- \"bfloat16\" for a balance between precision and range.\n- \"float\" is shorthand for FP32 precision.\n- \"float32\" for FP32 precision.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "tensor_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--tensor-parallel-size",
-    "default_value": 1,
-    "value": null,
-    "description": "Number of tensor parallel groups.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "pipeline_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--pipeline-parallel-size",
-    "default_value": 1,
-    "value": null,
-    "description": "Number of pipeline parallel groups.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "gpu_memory_utilization": {
-    "type": "float",
-    "flag": false,
-    "arg": "--gpu-memory-utilization",
-    "default_value": 0.9,
-    "value": null,
-    "description": "The fraction of GPU memory to be used for the model executor, which can\nrange from 0 to 1. For example, a value of 0.5 would imply 50% GPU memory\nutilization. If unspecified, will use the default value of 0.9. This is a\nper-instance limit, and only applies to the current vLLM instance. It does\nnot matter if you have another vLLM instance running on the same GPU. For\nexample, if you have two vLLM instances running on the same GPU, you can\nset the GPU memory utilization to 0.5 for each instance.",
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_model_len": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max-model-len",
-    "default_value": null,
-    "value": null,
-    "description": "Model context length (prompt and output). If unspecified, will be\nautomatically derived from the model config.\n\nWhen passing via `--max-model-len`, supports k/m/g/K/M/G in human-readable\nformat. Examples:\n\n- 1k -> 1000\n- 1K -> 1024\n- 25.6k -> 25,600\n- -1 or 'auto' -> Automatically choose the maximum model length that fits in\n  GPU memory. This will use the model's maximum context length if it fits,\n  otherwise it will find the largest length that can be accommodated.\n\nParse human-readable integers like '1k', '2M', etc.\n    Including decimal values with decimal multipliers.\n    Also accepts -1 or 'auto' as a special value for auto-detection.\n\n    Examples:\n    - '1k' -> 1,000\n    - '1K' -> 1,024\n    - '25.6k' -> 25,600\n    - '-1' or 'auto' -> -1 (special value for auto-detection)",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "host": {
-    "type": "str",
-    "flag": false,
-    "arg": "--host",
-    "default_value": null,
-    "value": null,
-    "description": "Host name.",
-    "module": "frontend",
-    "config_class": "Frontend",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "port": {
-    "type": "int",
-    "flag": false,
-    "arg": "--port",
-    "default_value": 8000,
-    "value": null,
-    "description": "Port number.",
-    "module": "frontend",
-    "config_class": "Frontend",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "served_model_name": {
-    "type": "List[str]",
-    "flag": false,
-    "arg": "--served-model-name",
-    "default_value": null,
-    "value": null,
-    "description": "The model name(s) used in the API. If multiple names are provided, the\nserver will respond to any of the provided names. The model name in the\nmodel field of a response will be the first name in this list. If not\nspecified, the model name will be the same as the `--model` argument. Noted\nthat this name(s) will also be used in `model_name` tag content of\nprometheus metrics, if multiple names provided, metrics tag will take the\nfirst one.",
-    "multiple": true,
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "api_key": {
-    "type": "List[str]",
-    "flag": false,
-    "arg": "--api-key",
-    "default_value": null,
-    "value": null,
-    "description": "If provided, the server will require one of these keys to be presented in\nthe header.",
-    "multiple": true,
-    "module": "frontend",
-    "config_class": "Frontend",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "trust_remote_code": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--trust-remote-code",
-    "false_arg": "--no-trust-remote-code",
-    "description": "Trust remote code (e.g., from HuggingFace) when downloading the model\nand tokenizer.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "quantization": {
-    "type": "str",
-    "flag": false,
-    "arg": "--quantization",
-    "default_value": null,
-    "value": null,
-    "description": "Method used to quantize the weights. If `None`, we first check the\n`quantization_config` attribute in the model config file. If that is\n`None`, we assume the model weights are not quantized and use `dtype` to\ndetermine the data type of the weights.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "kv_cache_dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--kv-cache-dtype",
-    "default_value": "auto",
-    "value": null,
-    "choices": [
-      "auto",
-      "bfloat16",
-      "float16",
-      "fp8",
-      "fp8_ds_mla",
-      "fp8_e4m3",
-      "fp8_e5m2",
-      "fp8_inc"
-    ],
-    "description": "Data type for kv cache storage. If \"auto\", will use model data type.\nCUDA 11.8+ supports fp8 (=fp8_e4m3) and fp8_e5m2. ROCm (AMD GPU) supports\nfp8 (=fp8_e4m3). Intel Gaudi (HPU) supports fp8 (using fp8_inc).\nSome models (namely DeepSeekV3.2) default to fp8, set to bfloat16 to use\nbfloat16 instead, this is an invalid option for models that do not default\nto fp8.",
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_num_seqs": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max-num-seqs",
-    "default_value": null,
-    "value": null,
-    "description": "Maximum number of sequences to be processed in a single iteration.\n\nThe default value here is mainly for convenience when testing.\nIn real usage, this should be set in `EngineArgs.create_engine_config`.",
-    "module": "scheduler",
-    "config_class": "SchedulerConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "enable_prefix_caching": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--enable-prefix-caching",
-    "false_arg": "--no-enable-prefix-caching",
-    "description": "Whether to enable prefix caching.",
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_num_batched_tokens": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max-num-batched-tokens",
-    "default_value": null,
-    "value": null,
-    "description": "Maximum number of tokens that can be processed in a single iteration.\n\nThe default value here is mainly for convenience when testing.\nIn real usage, this should be set in `EngineArgs.create_engine_config`.\n\nParse human-readable integers like '1k', '2M', etc.\n    Including decimal values with decimal multipliers.\n\n    Examples:\n    - '1k' -> 1,000\n    - '1K' -> 1,024\n    - '25.6k' -> 25,600",
-    "module": "scheduler",
-    "config_class": "SchedulerConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "enable_chunked_prefill": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--enable-chunked-prefill",
-    "false_arg": "--no-enable-chunked-prefill",
-    "description": "If True, prefill requests can be chunked based\non the remaining `max_num_batched_tokens`.\n\nThe default value here is mainly for convenience when testing.\nIn real usage, this should be set in `EngineArgs.create_engine_config`.",
-    "module": "scheduler",
-    "config_class": "SchedulerConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "scheduling_policy": {
-    "type": "str",
-    "flag": false,
-    "arg": "--scheduling-policy",
-    "default_value": "fcfs",
-    "value": null,
-    "choices": [
-      "fcfs",
-      "priority"
-    ],
-    "description": "The scheduling policy to use:\n\n- \"fcfs\" means first come first served, i.e. requests are handled in order \n  of arrival.\n- \"priority\" means requests are handled based on given priority (lower\n  value means earlier handling) and time of arrival deciding any ties).",
-    "module": "scheduler",
-    "config_class": "SchedulerConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "load_format": {
-    "type": "str",
-    "flag": false,
-    "arg": "--load-format",
-    "default_value": "auto",
-    "value": null,
-    "description": "The format of the model weights to load.\n\n- \"auto\" will try to load the weights in the safetensors format and fall\n  back to the pytorch bin format if safetensors format is not available.\n- \"pt\" will load the weights in the pytorch bin format.\n- \"safetensors\" will load the weights in the safetensors format.\n- \"instanttensor\" will load the Safetensors weights on CUDA devices using\n  InstantTensor, which enables distributed loading with pipelined prefetching\n  and fast direct I/O.\n- \"npcache\" will load the weights in pytorch format and store a numpy cache\n  to speed up the loading.\n- \"dummy\" will initialize the weights with random values, which is mainly\n  for profiling.\n- \"tensorizer\" will use CoreWeave's tensorizer library for fast weight\n  loading. See the Tensorize vLLM Model script in the Examples section for\n  more information.\n- \"runai_streamer\" will load the Safetensors weights using Run:ai Model\n  Streamer.\n- \"runai_streamer_sharded\" will load weights from pre-sharded checkpoint\n  files using Run:ai Model Streamer.\n- \"bitsandbytes\" will load the weights using bitsandbytes quantization.\n- \"sharded_state\" will load weights from pre-sharded checkpoint files,\n  supporting efficient loading of tensor-parallel models.\n- \"gguf\" will load weights from GGUF format files (details specified in\n  https://github.com/ggml-org/ggml/blob/master/docs/gguf.md).\n- \"mistral\" will load weights from consolidated safetensors files used by\n  Mistral models.\n- Other custom values can be supported via plugins.",
-    "module": "load",
-    "config_class": "LoadConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "tokenizer": {
-    "type": "str",
-    "flag": false,
-    "arg": "--tokenizer",
-    "default_value": null,
-    "value": null,
-    "description": "Name or path of the Hugging Face tokenizer to use. If unspecified, model\nname or path will be used.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "distributed_executor_backend": {
-    "type": "str",
-    "flag": false,
-    "arg": "--distributed-executor-backend",
-    "default_value": null,
-    "value": null,
-    "description": "Backend to use for distributed model workers, either \"ray\" or \"mp\"\n(multiprocessing). If the product of pipeline_parallel_size and tensor_parallel_size\nis less than or equal to the number of GPUs available, \"mp\" will be used to\nkeep processing on a single host. Otherwise, an error will be raised. To use \"mp\"\nyou must also set nnodes, and to use \"ray\" you must manually set\ndistributed_executor_backend to \"ray\".\n\nNote that tpu only support Ray for distributed inference.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "enforce_eager": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--enforce-eager",
-    "false_arg": "--no-enforce-eager",
-    "description": "Whether to always use eager-mode PyTorch. If True, we will disable CUDA\ngraph and always execute the model in eager mode. If False, we will use\nCUDA graph and eager execution in hybrid for maximal performance and\nflexibility.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "ssl_keyfile": {
-    "type": "str",
-    "flag": false,
-    "arg": "--ssl-keyfile",
-    "default_value": null,
-    "value": null,
-    "description": "The file path to the SSL key file.",
-    "module": "frontend",
-    "config_class": "Frontend",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "ssl_certfile": {
-    "type": "str",
-    "flag": false,
-    "arg": "--ssl-certfile",
-    "default_value": null,
-    "value": null,
-    "description": "The file path to the SSL cert file.",
-    "module": "frontend",
-    "config_class": "Frontend",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "seed": {
-    "type": "int",
-    "flag": false,
-    "arg": "--seed",
-    "default_value": 0,
-    "value": null,
-    "description": "Random seed for reproducibility.\n\nWe must set the global seed because otherwise,\ndifferent tensor parallel workers would sample different tokens,\nleading to inconsistent results.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "allow_deprecated_quantization": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--allow-deprecated-quantization",
-    "false_arg": "--no-allow-deprecated-quantization",
-    "description": "Whether to allow deprecated quantization methods.",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "override_attention_dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--override-attention-dtype",
-    "default_value": null,
-    "value": null,
-    "description": "Override dtype for attention",
-    "module": "model",
-    "config_class": "ModelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "master_port": {
-    "type": "int",
-    "flag": false,
-    "arg": "--master-port",
-    "default_value": 29501,
-    "value": null,
-    "description": "distributed master port for multi-node distributed \ninference when distributed_executor_backend is mp.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "nnodes": {
-    "type": "int",
-    "flag": false,
-    "arg": "--nnodes",
-    "default_value": 1,
-    "value": null,
-    "description": "num of nodes for multi-node distributed\ninference when distributed_executor_backend is mp.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "node_rank": {
-    "type": "int",
-    "flag": false,
-    "arg": "--node-rank",
-    "default_value": 0,
-    "value": null,
-    "description": "distributed node rank for multi-node distributed \ninference when distributed_executor_backend is mp.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "decode_context_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--decode-context-parallel-size",
-    "default_value": 1,
-    "value": null,
-    "description": "Number of decode context parallel groups, because the world size does\nnot change by dcp, it simply reuse the GPUs of TP group, and tp_size\nneeds to be divisible by dcp_size.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "prefill_context_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--prefill-context-parallel-size",
-    "default_value": 1,
-    "value": null,
-    "description": "Number of prefill context parallel groups.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--data-parallel-size",
-    "default_value": 1,
-    "value": null,
-    "description": "Number of data parallel groups. MoE layers will be sharded according to\nthe product of the tensor parallel size and data parallel size.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_rank": {
-    "type": "int",
-    "flag": false,
-    "arg": "--data-parallel-rank",
-    "default_value": null,
-    "value": null,
-    "description": "Data parallel rank of this instance. When set, enables external load balancer mode.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_start_rank": {
-    "type": "int",
-    "flag": false,
-    "arg": "--data-parallel-start-rank",
-    "default_value": null,
-    "value": null,
-    "description": "Starting data parallel rank for secondary nodes.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_size_local": {
-    "type": "int",
-    "flag": false,
-    "arg": "--data-parallel-size-local",
-    "default_value": null,
-    "value": null,
-    "description": "Number of data parallel replicas to run on this node.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_address": {
-    "type": "str",
-    "flag": false,
-    "arg": "--data-parallel-address",
-    "default_value": null,
-    "value": null,
-    "description": "Address of data parallel cluster head-node.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_rpc_port": {
-    "type": "int",
-    "flag": false,
-    "arg": "--data-parallel-rpc-port",
-    "default_value": null,
-    "value": null,
-    "description": "Port for data parallel RPC communication.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_backend": {
-    "type": "str",
-    "flag": false,
-    "arg": "--data-parallel-backend",
-    "default_value": "mp",
-    "value": null,
-    "description": "Backend for data parallel, either \"mp\" or \"ray\".",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_hybrid_lb": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--data-parallel-hybrid-lb",
-    "false_arg": "--no-data-parallel-hybrid-lb",
-    "description": "Whether to use \"hybrid\" DP LB mode. Applies only to online serving\nand when data_parallel_size > 0. Enables running an AsyncLLM\nand API server on a \"per-node\" basis where vLLM load balances\nbetween local data parallel ranks, but an external LB balances\nbetween vLLM nodes/replicas. Set explicitly in conjunction with\n--data-parallel-start-rank.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "data_parallel_external_lb": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--data-parallel-external-lb",
-    "false_arg": "--no-data-parallel-external-lb",
-    "description": "Whether to use \"external\" DP LB mode. Applies only to online serving\nand when data_parallel_size > 0. This is useful for a \"one-pod-per-rank\"\nwide-EP setup in Kubernetes. Set implicitly when --data-parallel-rank\nis provided explicitly to vllm serve.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "enable_expert_parallel": {
-    "type": "bool",
-    "flag": true,
-    "default_value": false,
-    "value": null,
-    "true_arg": "--enable-expert-parallel",
-    "false_arg": "--no-enable-expert-parallel",
-    "description": "Use expert parallelism instead of tensor parallelism for MoE layers.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "ubatch_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--ubatch-size",
-    "default_value": 0,
-    "value": null,
-    "description": "Number of ubatch size.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_parallel_loading_workers": {
-    "type": "str",
-    "flag": false,
-    "arg": "--max-parallel-loading-workers",
-    "default_value": null,
-    "value": null,
-    "description": "Maximum number of parallel loading workers when loading model\nsequentially in multiple batches. To avoid RAM OOM when using tensor\nparallel and large models.",
-    "module": "parallel",
-    "config_class": "ParallelConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "block_size": {
-    "type": "int",
-    "flag": false,
-    "arg": "--block-size",
-    "default_value": null,
-    "value": null,
-    "description": "Size of a contiguous cache block in number of tokens.\nAccepts None (meaning \"use default\"). After construction, always int.",
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "kv_cache_dtype_skip_layers": {
-    "type": "List[str]",
-    "flag": false,
-    "arg": "--kv-cache-dtype-skip-layers",
-    "default_value": [],
-    "value": null,
-    "description": "Layer patterns to skip KV cache quantization. Accepts layer indices\n(e.g., '0', '2', '4') or attention type names (e.g., 'sliding_window').",
-    "multiple": true,
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "mamba_cache_dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--mamba-cache-dtype",
-    "default_value": "auto",
-    "value": null,
-    "choices": [
-      "auto",
-      "float16",
-      "float32"
-    ],
-    "description": "The data type to use for the Mamba cache (both the conv as well as the\nssm state). If set to 'auto', the data type will be inferred from the model\nconfig.",
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "mamba_ssm_cache_dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--mamba-ssm-cache-dtype",
-    "default_value": "auto",
-    "value": null,
-    "choices": [
-      "auto",
-      "float16",
-      "float32"
-    ],
-    "description": "The data type to use for the Mamba cache (ssm state only, conv state will\nstill be controlled by mamba_cache_dtype). If set to 'auto', the data type\nfor the ssm state will be determined by mamba_cache_dtype.",
-    "module": "cache",
-    "config_class": "CacheConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_lora_rank": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max-lora-rank",
-    "default_value": 16,
-    "value": null,
-    "choices": [
-      1,
-      8,
-      16,
-      32,
-      64,
-      128,
-      256,
-      320,
-      512
-    ],
-    "description": "Max LoRA rank.",
-    "module": "lora",
-    "config_class": "LoRAConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "lora_dtype": {
-    "type": "str",
-    "flag": false,
-    "arg": "--lora-dtype",
-    "default_value": "auto",
-    "value": null,
-    "choices": [
-      "auto",
-      "bfloat16",
-      "float16"
-    ],
-    "description": "Data type for LoRA. If auto, will default to base model dtype.",
-    "module": "lora",
-    "config_class": "LoRAConfig",
-    "ui": "less_frequent",
-    "aic": true
-  },
-  "max_num_partial_prefills": {
-    "type": "int",
-    "flag": false,
-    "arg": "--max-num-partial-prefills",
-    "default_value": 1,
-    "value": null,
-    "description": "For chunked prefill, the maximum number of sequences that can be\npartially prefilled concurrently.",
-    "module": "scheduler",
-    "config_class": "SchedulerConfig",
-    "ui": "less_frequent",
-    "aic": true
+    "aic": false,
+    "display_name": "Weight Transfer Config"
   }
 }
