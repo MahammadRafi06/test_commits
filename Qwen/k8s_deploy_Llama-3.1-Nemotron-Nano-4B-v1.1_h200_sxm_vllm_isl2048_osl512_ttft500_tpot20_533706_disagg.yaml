@@ -2,7 +2,7 @@ apiVersion: nvidia.com/v1alpha1
 kind: DynamoGraphDeployment
 metadata:
   name: dynamo-disagg
-  namespace: None
+  namespace: default
   annotations:
     clustra.ai/public-model-alias: nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
     clustra.ai/public-api: 'true'
