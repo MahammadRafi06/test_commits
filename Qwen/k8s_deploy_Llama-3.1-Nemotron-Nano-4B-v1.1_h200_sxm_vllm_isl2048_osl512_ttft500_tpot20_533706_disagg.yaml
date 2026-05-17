@@ -1,0 +1,105 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: dynamo-disagg
+  namespace: None
+  annotations:
+    clustra.ai/public-model-alias: nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
+    clustra.ai/public-api: 'true'
+    clustra.ai/raw-model-id: nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
+  labels:
+    clustra.ai/public-api: 'true'
+    clustra.ai/public-model-alias: nvidia-llama-3-1-nemotron-nano-4b-v1-1
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          imagePullPolicy: IfNotPresent
+          command:
+          - python3
+          - -m
+          - dynamo.frontend
+          args:
+          - --router-mode
+          - random
+          - --dyn-chat-processor
+          - vllm
+    VllmPrefillWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: prefill
+      replicas: 2
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+          - python3
+          - -m
+          - dynamo.vllm
+          args:
+          - --model
+          - nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
+          - --tensor-parallel-size
+          - '1'
+          - --pipeline-parallel-size
+          - '1'
+          - --data-parallel-size
+          - '1'
+          - --kv-cache-dtype
+          - auto
+          - --max-num-seqs
+          - '1'
+          - --max-num-batched-tokens
+          - '3548'
+          - --is-prefill-worker
+          - --kv-transfer-config
+          - '{"kv_connector":"NixlConnector","kv_role":"kv_both"}'
+          - --enable-lora
+    VllmDecodeWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: decode
+      replicas: 2
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/vllm-runtime:1.1.0
+          workingDir: /workspace/examples/backends/vllm
+          imagePullPolicy: IfNotPresent
+          command:
+          - python3
+          - -m
+          - dynamo.vllm
+          args:
+          - --model
+          - nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
+          - --tensor-parallel-size
+          - '1'
+          - --pipeline-parallel-size
+          - '1'
+          - --data-parallel-size
+          - '1'
+          - --kv-cache-dtype
+          - auto
+          - --max-num-seqs
+          - '512'
+          - --max-num-batched-tokens
+          - '512'
+          - --is-decode-worker
+          - --kv-transfer-config
+          - '{"kv_connector":"NixlConnector","kv_role":"kv_both"}'
+          - --enable-lora
+          - --performance-mode
+          - balanced
