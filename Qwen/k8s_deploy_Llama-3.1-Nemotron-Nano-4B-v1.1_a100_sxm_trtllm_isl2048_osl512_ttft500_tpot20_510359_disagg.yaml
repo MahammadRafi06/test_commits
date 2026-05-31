@@ -85,7 +85,7 @@ spec:
             \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
             \ 3072\ncuda_graph_config:\n  enable_padding: False # Pad CUDA graph\n\
             \  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler:\
-            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\
+            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"/model-store/hub/models--nvidia--Llama-3.1-Nemotron-Nano-4B-v1.1/snapshots/d552708a9d575fa8d4a690b988fd870d65279f98\"\
             \n  --served-model-name \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n \
             \ --extra-engine-args \"/workspace/engine_configs/prefill_config.yaml\"\
             \n)\nargs+=(--disaggregation-mode prefill)\nexec python3 -m dynamo.trtllm\
@@ -115,7 +115,6 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 10
     TRTLLMDecodeWorker:
-      envFromSecret: hf-token-secret
       componentType: worker
       subComponentType: decode
       replicas: 1
@@ -168,7 +167,7 @@ spec:
             \ 3072\ncuda_graph_config:\n  enable_padding: True # Pad CUDA graph\n\
             \  batch_sizes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,20,24,28,32,32,40,48,56,64,64,80,96,112,128,128,160,192,224,256,256,320,384,448,512,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80]\n\
             disable_overlap_scheduler: False\nprint_iter_log: False\nYAML\nargs=(\n\
-            \  --model-path \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n  --served-model-name\
+            \  --model-path \"/model-store/hub/models--nvidia--Llama-3.1-Nemotron-Nano-4B-v1.1/snapshots/d552708a9d575fa8d4a690b988fd870d65279f98\"\n  --served-model-name\
             \ \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n  --extra-engine-args \"\
             /workspace/engine_configs/decode_config.yaml\"\n)\nargs+=(--disaggregation-mode\
             \ decode)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
