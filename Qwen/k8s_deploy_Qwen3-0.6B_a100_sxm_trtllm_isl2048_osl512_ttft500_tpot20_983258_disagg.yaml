@@ -74,7 +74,7 @@ spec:
           - -c
           args:
           - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/prefill_config.yaml\
-            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ <<'YAML'\nbackend: pytorch\ndtype: float16\ntensor_parallel_size: 1\npipeline_parallel_size:\
             \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
             \ 1\nmax_num_tokens: 2560\nkv_cache_config:\n  free_gpu_memory_fraction:\
             \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
@@ -152,7 +152,7 @@ spec:
           - -c
           args:
           - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/decode_config.yaml\
-            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ <<'YAML'\nbackend: pytorch\ndtype: float16\ntensor_parallel_size: 1\npipeline_parallel_size:\
             \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
             \ 128\nmax_num_tokens: 128\nkv_cache_config:\n  free_gpu_memory_fraction:\
             \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
