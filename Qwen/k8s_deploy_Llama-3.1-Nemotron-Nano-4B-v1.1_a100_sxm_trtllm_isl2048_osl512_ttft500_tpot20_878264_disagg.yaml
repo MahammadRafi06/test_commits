@@ -1,0 +1,158 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: qwen8
+  namespace: model-serving
+  annotations:
+    clustra.ai/public-model-alias: nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
+    clustra.ai/public-api: 'true'
+    clustra.ai/raw-model-id: nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1
+  labels:
+    clustra.ai/public-api: 'true'
+    clustra.ai/public-model-alias: nvidia-llama-3-1-nemotron-nano-4b-v1-1
+spec:
+  services:
+    Frontend:
+      envFromSecret: hf-token-secret
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          imagePullPolicy: IfNotPresent
+    TRTLLMPrefillWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: prefill
+      replicas: 1
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        volumes:
+        - name: engine-configs
+          emptyDir: {}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: engine-configs
+            mountPath: /workspace/engine_configs
+          - name: tmp
+            mountPath: /tmp
+          command:
+          - /bin/bash
+          - -c
+          args:
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/prefill_config.yaml\
+            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
+            \ 1\nmax_num_tokens: 2560\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
+            \ tokens_per_block: 32\n  enable_block_reuse: False\ncache_transceiver_config:\n\
+            \  backend: DEFAULT # The communication backend type to use for the cache\
+            \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
+            \ 3072\ncuda_graph_config:\n  enable_padding: False # Pad CUDA graph\n\
+            \  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler:\
+            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\
+            \n  --served-model-name \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n \
+            \ --extra-engine-args \"/workspace/engine_configs/prefill_config.yaml\"\
+            \n)\nargs+=(--disaggregation-mode prefill)\nexec python3 -m dynamo.trtllm\
+            \ \"${args[@]}\"\n"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+    TRTLLMDecodeWorker:
+      envFromSecret: hf-token-secret
+      componentType: worker
+      subComponentType: decode
+      replicas: 1
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        volumes:
+        - name: engine-configs
+          emptyDir: {}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: engine-configs
+            mountPath: /workspace/engine_configs
+          - name: tmp
+            mountPath: /tmp
+          command:
+          - /bin/bash
+          - -c
+          args:
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/decode_config.yaml\
+            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
+            \ 72\nmax_num_tokens: 96\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
+            \ tokens_per_block: 32\n  enable_block_reuse: False\ncache_transceiver_config:\n\
+            \  backend: DEFAULT # The communication backend type to use for the cache\
+            \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
+            \ 3072\ncuda_graph_config:\n  enable_padding: True # Pad CUDA graph\n\
+            \  batch_sizes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,20,24,28,32,32,40,48,56,64,64,80,96,112,128,128,160,192,224,256,256,320,384,448,512,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80]\n\
+            disable_overlap_scheduler: False\nprint_iter_log: False\nYAML\nargs=(\n\
+            \  --model-path \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n  --served-model-name\
+            \ \"nvidia/Llama-3.1-Nemotron-Nano-4B-v1.1\"\n  --extra-engine-args \"\
+            /workspace/engine_configs/decode_config.yaml\"\n)\nargs+=(--disaggregation-mode\
+            \ decode)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
