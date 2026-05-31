@@ -1,11 +1,11 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: model-serving
-  labels:
-    clustra.ai/model-cache-access: 'true'
-  annotations:
-    argocd.argoproj.io/sync-wave: '-10'
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: model-serving
+#   labels:
+#     clustra.ai/model-cache-access: 'true'
+#   annotations:
+#     argocd.argoproj.io/sync-wave: '-10'
 ---
 apiVersion: v1
 kind: PersistentVolume
