@@ -13,15 +13,27 @@ metadata:
 spec:
   services:
     Frontend:
-      envFromSecret: hf-token-secret
       componentType: frontend
       replicas: 1
       extraPodSpec:
+        volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /model-store
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+          volumeMounts:
+          - name: model-cache
+            mountPath: /model-store
     TRTLLMPrefillWorker:
-      envFromSecret: hf-token-secret
       componentType: worker
       subComponentType: prefill
       replicas: 1
@@ -36,15 +48,29 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 10Gi
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           workingDir: /workspace/components/backends/trtllm
           imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /model-store
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+          - name: DYN_TRTLLM_MAX_SEQ_LEN
+            value: '4096'
           volumeMounts:
           - name: engine-configs
             mountPath: /workspace/engine_configs
           - name: tmp
             mountPath: /tmp
+          - name: model-cache
+            mountPath: /model-store
           command:
           - /bin/bash
           - -c
@@ -104,15 +130,29 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 10Gi
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           workingDir: /workspace/components/backends/trtllm
           imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /model-store
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+          - name: DYN_TRTLLM_MAX_SEQ_LEN
+            value: '4096'
           volumeMounts:
           - name: engine-configs
             mountPath: /workspace/engine_configs
           - name: tmp
             mountPath: /tmp
+          - name: model-cache
+            mountPath: /model-store
           command:
           - /bin/bash
           - -c
