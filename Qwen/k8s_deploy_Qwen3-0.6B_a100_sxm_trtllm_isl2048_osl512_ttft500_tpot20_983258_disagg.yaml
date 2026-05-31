@@ -13,15 +13,29 @@ metadata:
 spec:
   services:
     Frontend:
-      envFromSecret: hf-token-secret
       componentType: frontend
       replicas: 1
       extraPodSpec:
+        volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
+            readOnly: true
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /model-store
+          - name: HF_HUB_OFFLINE
+            value: "1"
+          - name: TRANSFORMERS_OFFLINE
+            value: "1"
+          volumeMounts:
+          - name: model-cache
+            mountPath: /model-store
+            readOnly: true
     TRTLLMPrefillWorker:
-      envFromSecret: hf-token-secret
       componentType: worker
       subComponentType: prefill
       replicas: 1
@@ -36,15 +50,29 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 10Gi
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
+            readOnly: true
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           workingDir: /workspace/components/backends/trtllm
           imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /model-store
+          - name: HF_HUB_OFFLINE
+            value: "1"
+          - name: TRANSFORMERS_OFFLINE
+            value: "1"
           volumeMounts:
           - name: engine-configs
             mountPath: /workspace/engine_configs
           - name: tmp
             mountPath: /tmp
+          - name: model-cache
+            mountPath: /model-store
+            readOnly: true
           command:
           - /bin/bash
           - -c
@@ -59,7 +87,7 @@ spec:
             \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
             \ 3072\ncuda_graph_config:\n  enable_padding: False # Pad CUDA graph\n\
             \  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler:\
-            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"Qwen/Qwen3-0.6B\"\
+            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"/model-store/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca\"\
             \n  --served-model-name \"Qwen/Qwen3-0.6B\"\n  --extra-engine-args \"\
             /workspace/engine_configs/prefill_config.yaml\"\n)\nargs+=(--disaggregation-mode\
             \ prefill)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
@@ -88,7 +116,6 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 10
     TRTLLMDecodeWorker:
-      envFromSecret: hf-token-secret
       componentType: worker
       subComponentType: decode
       replicas: 1
@@ -103,15 +130,29 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 10Gi
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
+            readOnly: true
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           workingDir: /workspace/components/backends/trtllm
           imagePullPolicy: IfNotPresent
+          env:
+          - name: HF_HOME
+            value: /model-store
+          - name: HF_HUB_OFFLINE
+            value: "1"
+          - name: TRANSFORMERS_OFFLINE
+            value: "1"
           volumeMounts:
           - name: engine-configs
             mountPath: /workspace/engine_configs
           - name: tmp
             mountPath: /tmp
+          - name: model-cache
+            mountPath: /model-store
+            readOnly: true
           command:
           - /bin/bash
           - -c
@@ -127,7 +168,8 @@ spec:
             \ 3072\ncuda_graph_config:\n  enable_padding: True # Pad CUDA graph\n\
             \  batch_sizes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,20,24,28,32,32,40,48,56,64,64,80,96,112,128,128,160,192,224,256,256,320,384,448,512,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136]\n\
             disable_overlap_scheduler: False\nprint_iter_log: False\nYAML\nargs=(\n\
-            \  --model-path \"Qwen/Qwen3-0.6B\"\n  --served-model-name \"Qwen/Qwen3-0.6B\"\
+            \  --model-path \"/model-store/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca\"\
+            \n  --served-model-name \"Qwen/Qwen3-0.6B\"\
             \n  --extra-engine-args \"/workspace/engine_configs/decode_config.yaml\"\
             \n)\nargs+=(--disaggregation-mode decode)\nexec python3 -m dynamo.trtllm\
             \ \"${args[@]}\"\n"
