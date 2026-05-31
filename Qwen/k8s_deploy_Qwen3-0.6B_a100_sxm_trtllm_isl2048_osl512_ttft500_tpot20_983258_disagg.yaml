@@ -27,9 +27,9 @@ spec:
           - name: HF_HOME
             value: /model-store
           - name: HF_HUB_OFFLINE
-            value: "1"
+            value: '1'
           - name: TRANSFORMERS_OFFLINE
-            value: "1"
+            value: '1'
           volumeMounts:
           - name: model-cache
             mountPath: /model-store
@@ -59,9 +59,11 @@ spec:
           - name: HF_HOME
             value: /model-store
           - name: HF_HUB_OFFLINE
-            value: "1"
+            value: '1'
           - name: TRANSFORMERS_OFFLINE
-            value: "1"
+            value: '1'
+          - name: DYN_TRTLLM_MAX_SEQ_LEN
+            value: '4096'
           volumeMounts:
           - name: engine-configs
             mountPath: /workspace/engine_configs
@@ -73,20 +75,16 @@ spec:
           - /bin/bash
           - -c
           args:
-          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/prefill_config.yaml\
-            \ <<'YAML'\nbackend: pytorch\nmax_seq_len: 4096\ntensor_parallel_size: 1\npipeline_parallel_size:\
-            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
-            \ 1\nmax_num_tokens: 8192\nkv_cache_config:\n  free_gpu_memory_fraction:\
-            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
-            \ tokens_per_block: 32\n  enable_block_reuse: False\ncache_transceiver_config:\n\
-            \  backend: DEFAULT # The communication backend type to use for the cache\
-            \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
-            \ 3072\ncuda_graph_config:\n  enable_padding: False # Pad CUDA graph\n\
-            \  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler:\
-            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"/model-store/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca\"\
-            \n  --served-model-name \"Qwen/Qwen3-0.6B\"\n  --extra-engine-args \"\
-            /workspace/engine_configs/prefill_config.yaml\"\n)\nargs+=(--disaggregation-mode\
-            \ prefill)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/prefill_config.yaml <<'YAML'\n\
+            backend: pytorch\nmax_seq_len: 4096\ntensor_parallel_size: 1\npipeline_parallel_size: 1\nenable_attention_dp:\
+            \ False\nenable_chunked_prefill: False\nmax_batch_size: 1\nmax_num_tokens: 8192\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n  tokens_per_block: 32\n  enable_block_reuse:\
+            \ False\ncache_transceiver_config:\n  backend: DEFAULT # The communication backend type to use for the cache transceiver\
+            \ (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer: 3072\ncuda_graph_config:\n  enable_padding:\
+            \ False # Pad CUDA graph\n  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler: True\nprint_iter_log:\
+            \ False\nYAML\nargs=(\n  --model-path \"/model-store/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca\"\
+            \n  --served-model-name \"Qwen/Qwen3-0.6B\"\n  --extra-engine-args \"/workspace/engine_configs/prefill_config.yaml\"\
+            \n)\nargs+=(--disaggregation-mode prefill)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
           startupProbe:
             httpGet:
               path: /health
@@ -137,9 +135,11 @@ spec:
           - name: HF_HOME
             value: /model-store
           - name: HF_HUB_OFFLINE
-            value: "1"
+            value: '1'
           - name: TRANSFORMERS_OFFLINE
-            value: "1"
+            value: '1'
+          - name: DYN_TRTLLM_MAX_SEQ_LEN
+            value: '4096'
           volumeMounts:
           - name: engine-configs
             mountPath: /workspace/engine_configs
@@ -151,22 +151,16 @@ spec:
           - /bin/bash
           - -c
           args:
-          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/decode_config.yaml\
-            \ <<'YAML'\nbackend: pytorch\nmax_seq_len: 4096\ntensor_parallel_size: 1\npipeline_parallel_size:\
-            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
-            \ 128\nmax_num_tokens: 8192\nkv_cache_config:\n  free_gpu_memory_fraction:\
-            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
-            \ tokens_per_block: 32\n  enable_block_reuse: False\ncache_transceiver_config:\n\
-            \  backend: DEFAULT # The communication backend type to use for the cache\
-            \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
-            \ 3072\ncuda_graph_config:\n  enable_padding: True # Pad CUDA graph\n\
-            \  batch_sizes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,20,24,28,32,32,40,48,56,64,64,80,96,112,128,128,160,192,224,256,256,320,384,448,512,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136]\n\
-            disable_overlap_scheduler: False\nprint_iter_log: False\nYAML\nargs=(\n\
-            \  --model-path \"/model-store/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca\"\
-            \n  --served-model-name \"Qwen/Qwen3-0.6B\"\
-            \n  --extra-engine-args \"/workspace/engine_configs/decode_config.yaml\"\
-            \n)\nargs+=(--disaggregation-mode decode)\nexec python3 -m dynamo.trtllm\
-            \ \"${args[@]}\"\n"
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/decode_config.yaml <<'YAML'\n\
+            backend: pytorch\nmax_seq_len: 4096\ntensor_parallel_size: 1\npipeline_parallel_size: 1\nenable_attention_dp:\
+            \ False\nenable_chunked_prefill: False\nmax_batch_size: 128\nmax_num_tokens: 8192\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n  tokens_per_block: 32\n  enable_block_reuse:\
+            \ False\ncache_transceiver_config:\n  backend: DEFAULT # The communication backend type to use for the cache transceiver\
+            \ (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer: 3072\ncuda_graph_config:\n  enable_padding:\
+            \ True # Pad CUDA graph\n  batch_sizes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,20,24,28,32,32,40,48,56,64,64,80,96,112,128,128,160,192,224,256,256,320,384,448,512,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136]\n\
+            disable_overlap_scheduler: False\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"/model-store/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca\"\
+            \n  --served-model-name \"Qwen/Qwen3-0.6B\"\n  --extra-engine-args \"/workspace/engine_configs/decode_config.yaml\"\
+            \n)\nargs+=(--disaggregation-mode decode)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
           startupProbe:
             httpGet:
               path: /health
