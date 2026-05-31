@@ -1,0 +1,291 @@
+apiVersion: nvidia.com/v1alpha1
+kind: DynamoGraphDeployment
+metadata:
+  name: nvdia2
+  namespace: model-serving
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+    clustra.ai/public-model-alias: Qwen/WebWorld-8B
+    clustra.ai/public-api: 'true'
+    clustra.ai/raw-model-id: Qwen/WebWorld-8B
+  labels:
+    clustra.ai/model-cache-id: shared-hf-cache
+    clustra.ai/model-cache-policy: read-write
+    clustra.ai/public-api: 'true'
+    clustra.ai/public-model-alias: qwen-webworld-8b
+spec:
+  services:
+    Frontend:
+      componentType: frontend
+      replicas: 1
+      extraPodSpec:
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.0.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              ephemeral-storage: 40Gi
+          env:
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          - name: HF_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HUGGINGFACE_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: TRANSFORMERS_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_MODULES_CACHE
+            value: /tmp/huggingface/modules
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+      volumeMounts:
+      - name: model-cache
+        mountPoint: /home/dynamo/.cache/huggingface
+      envs:
+      - name: HF_HOME
+        value: /home/dynamo/.cache/huggingface
+      - name: HF_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HUGGINGFACE_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: TRANSFORMERS_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_MODULES_CACHE
+        value: /tmp/huggingface/modules
+      - name: HF_HUB_OFFLINE
+        value: '1'
+      - name: TRANSFORMERS_OFFLINE
+        value: '1'
+    TRTLLMPrefillWorker:
+      componentType: worker
+      subComponentType: prefill
+      replicas: 1
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        volumes:
+        - name: engine-configs
+          emptyDir: {}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.0.1
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: engine-configs
+            mountPath: /workspace/engine_configs
+          - name: tmp
+            mountPath: /tmp
+          command:
+          - /bin/bash
+          - -c
+          args:
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/prefill_config.yaml\
+            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
+            \ 1\nmax_num_tokens: 2560\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
+            \ tokens_per_block: 32\n  enable_block_reuse: False\ncache_transceiver_config:\n\
+            \  backend: DEFAULT # The communication backend type to use for the cache\
+            \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
+            \ 3072\ncuda_graph_config:\n  enable_padding: False # Pad CUDA graph\n\
+            \  batch_sizes: [1,2,4,8,16,32,64,128,256]\ndisable_overlap_scheduler:\
+            \ True\nprint_iter_log: False\nYAML\nargs=(\n  --model-path \"/home/dynamo/.cache/huggingface/hub/models--Qwen--WebWorld-8B/snapshots/26c65891f0a59c9b1dcc435eaadcc08ce6102a94\"\
+            \n  --served-model-name \"Qwen/WebWorld-8B\"\n  --extra-engine-args \"\
+            /workspace/engine_configs/prefill_config.yaml\"\n)\nargs+=(--disaggregation-mode\
+            \ prefill)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          env:
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          - name: HF_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HUGGINGFACE_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: TRANSFORMERS_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_MODULES_CACHE
+            value: /tmp/huggingface/modules
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+        nodeSelector:
+          workload: model-serving
+        tolerations:
+        - key: dedicated
+          operator: Equal
+          value: model-serving
+          effect: NoSchedule
+      volumeMounts:
+      - name: model-cache
+        mountPoint: /home/dynamo/.cache/huggingface
+      envs:
+      - name: HF_HOME
+        value: /home/dynamo/.cache/huggingface
+      - name: HF_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HUGGINGFACE_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: TRANSFORMERS_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_MODULES_CACHE
+        value: /tmp/huggingface/modules
+      - name: HF_HUB_OFFLINE
+        value: '1'
+      - name: TRANSFORMERS_OFFLINE
+        value: '1'
+    TRTLLMDecodeWorker:
+      componentType: worker
+      subComponentType: decode
+      replicas: 1
+      resources:
+        limits:
+          gpu: '1'
+      extraPodSpec:
+        volumes:
+        - name: engine-configs
+          emptyDir: {}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10Gi
+        mainContainer:
+          image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.0.1
+          workingDir: /workspace/components/backends/trtllm
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: engine-configs
+            mountPath: /workspace/engine_configs
+          - name: tmp
+            mountPath: /tmp
+          command:
+          - /bin/bash
+          - -c
+          args:
+          - "set -euo pipefail\nmkdir -p /workspace/engine_configs\ncat > /workspace/engine_configs/decode_config.yaml\
+            \ <<'YAML'\nbackend: pytorch\ntensor_parallel_size: 1\npipeline_parallel_size:\
+            \ 1\nenable_attention_dp: False\nenable_chunked_prefill: False\nmax_batch_size:\
+            \ 44\nmax_num_tokens: 64\nkv_cache_config:\n  free_gpu_memory_fraction:\
+            \ 0.8  # Fraction of GPU memory usable for KV-cache\n  dtype: auto\n \
+            \ tokens_per_block: 32\n  enable_block_reuse: False\ncache_transceiver_config:\n\
+            \  backend: DEFAULT # The communication backend type to use for the cache\
+            \ transceiver (\"DEFAULT\",\"UCX\",\"NIXL\",\"MPI\")\n  max_tokens_in_buffer:\
+            \ 3072\ncuda_graph_config:\n  enable_padding: True # Pad CUDA graph\n\
+            \  batch_sizes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,20,24,28,32,32,40,48,56,64,64,80,96,112,128,128,160,192,224,256,256,320,384,448,512,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52]\n\
+            disable_overlap_scheduler: False\nprint_iter_log: False\nYAML\nargs=(\n\
+            \  --model-path \"/home/dynamo/.cache/huggingface/hub/models--Qwen--WebWorld-8B/snapshots/26c65891f0a59c9b1dcc435eaadcc08ce6102a94\"\
+            \n  --served-model-name \"Qwen/WebWorld-8B\"\n  --extra-engine-args \"\
+            /workspace/engine_configs/decode_config.yaml\"\n)\nargs+=(--disaggregation-mode\
+            \ decode)\nexec python3 -m dynamo.trtllm \"${args[@]}\"\n"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /live
+              port: 9090
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          env:
+          - name: HF_HOME
+            value: /home/dynamo/.cache/huggingface
+          - name: HF_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HUGGINGFACE_HUB_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: TRANSFORMERS_CACHE
+            value: /home/dynamo/.cache/huggingface/hub
+          - name: HF_MODULES_CACHE
+            value: /tmp/huggingface/modules
+          - name: HF_HUB_OFFLINE
+            value: '1'
+          - name: TRANSFORMERS_OFFLINE
+            value: '1'
+        nodeSelector:
+          workload: model-serving
+        tolerations:
+        - key: dedicated
+          operator: Equal
+          value: model-serving
+          effect: NoSchedule
+      volumeMounts:
+      - name: model-cache
+        mountPoint: /home/dynamo/.cache/huggingface
+      envs:
+      - name: HF_HOME
+        value: /home/dynamo/.cache/huggingface
+      - name: HF_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HUGGINGFACE_HUB_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: TRANSFORMERS_CACHE
+        value: /home/dynamo/.cache/huggingface/hub
+      - name: HF_MODULES_CACHE
+        value: /tmp/huggingface/modules
+      - name: HF_HUB_OFFLINE
+        value: '1'
+      - name: TRANSFORMERS_OFFLINE
+        value: '1'
+  pvcs:
+  - name: model-cache
+    create: false
+  envs:
+  - name: HF_HOME
+    value: /home/dynamo/.cache/huggingface
+  - name: HF_HUB_CACHE
+    value: /home/dynamo/.cache/huggingface/hub
+  - name: HUGGINGFACE_HUB_CACHE
+    value: /home/dynamo/.cache/huggingface/hub
+  - name: TRANSFORMERS_CACHE
+    value: /home/dynamo/.cache/huggingface/hub
+  - name: HF_MODULES_CACHE
+    value: /tmp/huggingface/modules
+  - name: HF_HUB_OFFLINE
+    value: '1'
+  - name: TRANSFORMERS_OFFLINE
+    value: '1'
