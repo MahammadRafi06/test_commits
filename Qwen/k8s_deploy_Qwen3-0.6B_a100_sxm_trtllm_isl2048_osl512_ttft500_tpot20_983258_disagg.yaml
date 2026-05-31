@@ -20,7 +20,6 @@ spec:
         - name: model-cache
           persistentVolumeClaim:
             claimName: model-cache
-            readOnly: true
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           imagePullPolicy: IfNotPresent
@@ -34,7 +33,6 @@ spec:
           volumeMounts:
           - name: model-cache
             mountPath: /model-store
-            readOnly: true
     TRTLLMPrefillWorker:
       componentType: worker
       subComponentType: prefill
@@ -53,7 +51,6 @@ spec:
         - name: model-cache
           persistentVolumeClaim:
             claimName: model-cache
-            readOnly: true
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           workingDir: /workspace/components/backends/trtllm
@@ -72,7 +69,6 @@ spec:
             mountPath: /tmp
           - name: model-cache
             mountPath: /model-store
-            readOnly: true
           command:
           - /bin/bash
           - -c
@@ -133,7 +129,6 @@ spec:
         - name: model-cache
           persistentVolumeClaim:
             claimName: model-cache
-            readOnly: true
         mainContainer:
           image: nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:1.1.0
           workingDir: /workspace/components/backends/trtllm
@@ -152,7 +147,6 @@ spec:
             mountPath: /tmp
           - name: model-cache
             mountPath: /model-store
-            readOnly: true
           command:
           - /bin/bash
           - -c
