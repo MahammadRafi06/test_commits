@@ -146,7 +146,7 @@ spec:
           - name: DYN_TRTLLM_MAX_SEQ_LEN
             value: '4096'
         nodeSelector:
-          workload: model-serving
+          workload: gpu
         tolerations:
         - key: dedicated
           operator: Equal
@@ -257,7 +257,7 @@ spec:
           - name: DYN_TRTLLM_MAX_SEQ_LEN
             value: '4096'
         nodeSelector:
-          workload: model-serving
+          workload: gpu
         tolerations:
         - key: dedicated
           operator: Equal
